@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">FYP</string>
+    <string name="Connect_Trail">Enter Trail Pin</string>
+    <string name="Connect_Submit">Connect</string>
+    <string name="User_name">Choose a username</string>
+    <string name="Username_Submit">Start</string>
 </resources>
