@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         //String message = ;
         String my_url = "http://54.255.245.23:3000/user/register";
         new MyHttpRequestTask().execute(my_url,"");
-        Intent intent = new Intent(this, UsernameActivity.class);
+        Intent intent = new Intent(this, UserName.class);
         startActivity(intent);
     }
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
