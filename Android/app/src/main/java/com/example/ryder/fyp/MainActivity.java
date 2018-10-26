@@ -2,8 +2,8 @@ package com.example.ryder.fyp;
 
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, UsernameActivity.class);
         startActivity(intent);
     }
-    private class MyHttpRequestTask extends AsyncTask<String,Integer,String>{
+    private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
 
         @Override
         protected String doInBackground(String... params) {
