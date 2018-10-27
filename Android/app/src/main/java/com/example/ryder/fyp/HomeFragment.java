@@ -1,8 +1,13 @@
 package com.example.ryder.fyp;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +23,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class HomeFragment extends Fragment implements OnMapReadyCallback{
     MapView mMapView;
     GoogleMap mGoogleMap;
+
+    private LocationListener locationListener;
+    private LocationManager locationManager;
+
+    private final long MIN_TIME = 1000; //1 second
+    private final long MIN_DIST = 5; //metres?
+
+    private LatLng latLng;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -58,6 +71,35 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
         mGoogleMap.addMarker(new MarkerOptions().position(Admin).title("SMU Admin Building"));
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(Sis, 15));
 
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+
+            }
+        };
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+        try{
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,MIN_TIME,MIN_DIST,locationListener);
+        }
+        catch (SecurityException e){
+            e.printStackTrace();
+        }
 
     }
 
