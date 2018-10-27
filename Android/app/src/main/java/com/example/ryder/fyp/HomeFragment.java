@@ -32,8 +32,21 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
         mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
-        mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(43.1, -87.9)));
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(43.1, -87.9), 10));
+        LatLng Sob = new LatLng(1.2953, 103.8506);
+        LatLng Soa = new LatLng(1.2979, 103.8489);
+        LatLng SoeSoss = new LatLng(1.2974, 103.8495);
+        LatLng Sis = new LatLng(1.2949, 103.8495);
+        LatLng Sol = new LatLng(1.2962, 103.8501);
+        LatLng LksLib = new LatLng(1.2968, 103.8522);
+        LatLng Admin = new LatLng(1.2968, 103.8522);
+        mGoogleMap.addMarker(new MarkerOptions().position(Sob).title("School of Business"));
+        mGoogleMap.addMarker(new MarkerOptions().position(Soa).title("School of Accountancy"));
+        mGoogleMap.addMarker(new MarkerOptions().position(SoeSoss).title("School of Economics/ School of Social Sciences"));
+        mGoogleMap.addMarker(new MarkerOptions().position(Sis).title("School of Information Systems"));
+        mGoogleMap.addMarker(new MarkerOptions().position(Sol).title("School of Law"));
+        mGoogleMap.addMarker(new MarkerOptions().position(LksLib).title("Li Ka Shing Library"));
+        mGoogleMap.addMarker(new MarkerOptions().position(Admin).title("SMU Admin Building"));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(Sis, 15));
     }
 
     @Override
