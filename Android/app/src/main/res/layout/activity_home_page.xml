@@ -12,10 +12,6 @@
         android:layout_height="match_parent"
         android:layout_above="@id/bottom_navigation">
 
-        <com.google.android.gms.maps.MapView
-            android:id="@+id/mapView"
-            android:layout_width="490dp"
-            android:layout_height="499dp" />
     </FrameLayout>
 
 
