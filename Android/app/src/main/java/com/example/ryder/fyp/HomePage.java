@@ -1,11 +1,15 @@
 package com.example.ryder.fyp;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 public class HomePage extends AppCompatActivity {
 
@@ -42,5 +46,6 @@ public class HomePage extends AppCompatActivity {
                     return true;
                 }
             };
+
 
 }
