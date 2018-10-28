@@ -1,11 +1,21 @@
 package com.example.ryder.fyp;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import com.example.ryder.fyp.utility.HttpConnectionUtility;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -14,10 +24,12 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {
-
+    private static final int REQUEST_PERMISSION_READ_EXTERNAL_STORAGE = 10;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         EditText editText = (EditText) findViewById(R.id.editText3);
         //String message = ;
-        String my_url = "http://54.255.245.23:3000/user/retrieveAllUser";
+        String my_url = "http://10.124.5.151:3000/upload/uploadSubmission";
         new MyHttpRequestTask().execute(my_url,"");
         Intent intent = new Intent(this, UserName.class);
         startActivity(intent);
@@ -37,62 +49,71 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            String my_url = params[0];
-            String my_data = params[1];
-            try {
-                URL url = new URL(my_url);
-//                System.out.println(url);
-                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                // setting the  Request Method Type
-                httpURLConnection.setRequestMethod("GET");
-                // adding the headers for request
-                httpURLConnection.setRequestProperty("Content-Type", "application/text");
-                try{
-                    int responseCode = httpURLConnection.getResponseCode();
-                    System.out.println("Response Code: " + responseCode);
-                    if(responseCode == HttpURLConnection.HTTP_OK){
-                        BufferedReader in = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
-                        String input;
-                        StringBuffer response = new StringBuffer();
-
-                        while((input = in.readLine()) != null){
-                            response.append(input);
-                        }
-                        in.close();
-                        System.out.println(response.toString());
-                    }
-
-                    //to tell the connection object that we will be wrting some data on the server and then will fetch the output result
-//                    httpURLConnection.setDoOutput(true);
-//                    // this is used for just in case we don't know about the data size associated with our request
-//                    httpURLConnection.setChunkedStreamingMode(0);
-
-                    // to write tha data in our request
-//                    OutputStream outputStream = new BufferedOutputStream(httpURLConnection.getOutputStream());
-//                    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
-//                    outputStreamWriter.write(my_data);
-//                    outputStreamWriter.flush();
-//                    outputStreamWriter.close();
-
-                    // to log the response code of your request
-//                    Log.d(ApplicationConstant.TAG, "MyHttpRequestTask doInBackground : " +httpURLConnection.getResponseCode());
-//                     to log the response message from your server after you have tried the request.
-//                    //Log.d(ApplicationConstant.TAG, "MyHttpRequestTask doInBackground : " +httpURLConnection.getResponseMessage());
-
-
-                }catch (Exception e){
-                    e.printStackTrace();
-                }finally {
-                    // this is done so that there are no open connections left when this task is going to complete
-                    httpURLConnection.disconnect();
-                }
-
-
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-
-            return null;
+//            System.out.println("activated");
+            String filepath = "/storage/emulated/0/Pictures/ASCII.PNG";
+            Map<String, String> req = new HashMap<>();
+//            String state = Environment.getExternalStorageState();
+            showPhoneStatePermission();
+//            if (Environment.MEDIA_MOUNTED.equals(state) ||
+//                    Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)){
+//                System.out.println("environment: " + Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES));
+//            }
+//            req.put("username", "THINN");
+//            req.put("user_id", "10");
+//            req.put("team_id", "1");
+            String response = HttpConnectionUtility.multipartPost(params[0], new HashMap<String,String>(), filepath, "image", "image/png");
+            System.out.print("response: " + response);
+            return response;
         }
+    }
+
+    private void showPhoneStatePermission() {
+        int permissionCheck = ContextCompat.checkSelfPermission(
+                this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_PHONE_STATE)) {
+                showExplanation("Permission Needed", "Rationale", Manifest.permission.READ_EXTERNAL_STORAGE, REQUEST_PERMISSION_READ_EXTERNAL_STORAGE);
+            } else {
+                requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE, REQUEST_PERMISSION_READ_EXTERNAL_STORAGE);
+            }
+        } else {
+//            Toast.makeText(MainActivity.this, "Permission (already) Granted!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode,
+            String permissions[],
+            int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_PERMISSION_READ_EXTERNAL_STORAGE:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(MainActivity.this, "Permission Granted!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Permission Denied!", Toast.LENGTH_SHORT).show();
+                }
+        }
+    }
+    private void showExplanation(String title,
+                                 String message,
+                                 final String permission,
+                                 final int permissionRequestCode) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        requestPermission(permission, permissionRequestCode);
+                    }
+                });
+        builder.create().show();
+    }
+
+    private void requestPermission(String permissionName, int permissionRequestCode) {
+        ActivityCompat.requestPermissions(this,
+                new String[]{permissionName}, permissionRequestCode);
     }
 }
