@@ -2,6 +2,7 @@ package com.example.ryder.fyp;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -18,6 +19,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback{
@@ -71,6 +73,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
         mGoogleMap.addMarker(new MarkerOptions().position(LksLib).title("Li Ka Shing Library"));
         mGoogleMap.addMarker(new MarkerOptions().position(Admin).title("SMU Admin Building"));
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(Sis, 15));
+        mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener()
+            {
+            @Override
+            public boolean onMarkerClick(Marker arg0) {
+                Intent intent = new Intent(getActivity(), Narrative.class);
+                startActivity(intent);
+                return true;
+            }
+        });
 
         locationListener = new LocationListener() {
             @Override
