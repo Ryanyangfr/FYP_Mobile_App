@@ -50,6 +50,8 @@ public class HttpConnectionUtility{
                     }
                     in.close();
 //                    System.out.println(response.toString());
+                }else{
+                    return null;
                 }
 
             }catch (Exception e){
