@@ -14,7 +14,7 @@ public class UserName extends AppCompatActivity {
         setContentView(R.layout.activity_user_name);
     }
     public void sendUserName(View view) {
-        Intent intent = new Intent(this, HomePage.class);
+        Intent intent = new Intent(this, StoryContainer.class);
         startActivity(intent);
     }
 }

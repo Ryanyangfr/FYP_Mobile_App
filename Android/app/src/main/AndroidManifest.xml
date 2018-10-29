@@ -40,7 +40,7 @@
         <activity android:name=".HomePage" />
         <activity android:name=".UserName" />
         <activity android:name=".CameraPage" />
-        <activity android:name=".Narrative"/>
+        <activity android:name=".Narrative" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -67,7 +67,8 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
 
-        <activity android:name=".Narrative"></activity>
+        <activity android:name=".Narrative" />
+        <activity android:name=".StoryContainer"></activity>
     </application>
 
 </manifest>

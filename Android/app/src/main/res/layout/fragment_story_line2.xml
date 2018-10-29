@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".StoryLine.StoryLine2">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Only with the knowledge of the stories will you be able to participate in missions to prove your worth as the island’s ambassador! To uncover the keys to unlock the treasure boxes, as a team, you will have to play a game together. After reading the special story of the hotspot, you and your team will have to participate in missions to earn badges. The team who completed the trail with the most badges and fastest time will be awarded as the ambassadors of the island!"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+</RelativeLayout>
