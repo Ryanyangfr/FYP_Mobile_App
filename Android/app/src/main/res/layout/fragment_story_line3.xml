@@ -7,12 +7,17 @@
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="To enter the trail, enter the unique trail ID on the app and you will be assigned to a special team! However, do keep in mind that you will only be given an hour to complete the quest. Have fun and good luck!"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="209dp"
+        android:layout_marginBottom="225dp"
+        android:text="Do keep in mind that you will only be given an hour to complete the quest. Have fun and good luck!"
         android:textAlignment="center"
-        android:textSize="24sp"
-        android:textStyle="bold" />
+        android:textSize="24sp" />
 
     <Button
         android:id="@+id/button2"
@@ -25,6 +30,7 @@
         android:background="@color/colorPrimary"
         android:onClick="startTrail"
         android:text="Start"
-        android:textColor="@color/common_google_signin_btn_text_dark_default" />
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:textSize="20sp" />
 
 </RelativeLayout>
