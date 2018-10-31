@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.smu.engagingu.QuizActivity">
+
+    <TextView
+        android:id="@+id/text_view_question"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="113dp"
+        android:text="questionsssss BRO"
+        android:textSize="30sp" />
+    
+    <RadioGroup
+        android:id="@+id/radio_group"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+    <RadioButton
+        android:id="@+id/radio_button1"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="Option 1"/>
+
+        <RadioButton
+            android:id="@+id/radio_button2"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Option 2"/>
+        <RadioButton
+            android:id="@+id/radio_button3"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Option 3"/>
+        <RadioButton
+            android:id="@+id/radio_button4"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Option 4"/>
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/button_confirm_next"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="87dp"
+        android:text="Confirm"/>
+
+    <TextView
+        android:id="@+id/text_view_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="148dp"
+        android:layout_marginTop="33dp"
+        android:text="TextView" />
+</RelativeLayout>

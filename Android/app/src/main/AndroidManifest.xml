@@ -78,6 +78,9 @@
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
+
+        <activity android:name="com.smu.engagingu.QuizActivity" />
+        <activity android:name="com.smu.engagingu.QuizStartingPage" />
     </application>
 
 </manifest>
