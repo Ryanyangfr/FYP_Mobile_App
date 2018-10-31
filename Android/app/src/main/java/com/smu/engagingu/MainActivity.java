@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        showPhoneStatePermission();
     }
 
     public void sendMessage(View view) {
@@ -96,12 +97,12 @@ public class MainActivity extends AppCompatActivity {
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.READ_PHONE_STATE)) {
-                showExplanation("Permission Needed", "Rationale", Manifest.permission.READ_EXTERNAL_STORAGE, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
+                showExplanation("Permission Needed", "Rationale", Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
             } else {
                 requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
             }
         } else {
-//            Toast.makeText(MainActivity.this, "Permission (already) Granted!", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(MainActivity.this, "The app was not allowed to read your store.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -140,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
                 new String[]{permissionName}, permissionRequestCode);
     }
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
+
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();

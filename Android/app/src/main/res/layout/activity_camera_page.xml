@@ -21,8 +21,16 @@
         android:id="@+id/btnTakePicture"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/btnUpload"
         android:layout_centerHorizontal="true"
         android:text="Take a picture!"/>
+
+    <Button
+        android:id="@+id/btnUpload"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="Upload Picture"/>
 
 </RelativeLayout>

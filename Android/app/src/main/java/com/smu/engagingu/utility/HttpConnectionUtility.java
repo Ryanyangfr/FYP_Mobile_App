@@ -121,6 +121,9 @@ public class HttpConnectionUtility{
         DataOutputStream outputStream = null;
         InputStream inputStream = null;
 
+        System.out.println(filepath);
+        System.out.println(params);
+
         String twoHyphens = "--";
         String boundary = "*****" + Long.toString(System.currentTimeMillis()) + "*****";
         String lineEnd = "\r\n";
@@ -190,8 +193,10 @@ public class HttpConnectionUtility{
 
 
             if (200 != connection.getResponseCode()) {
+                System.out.println("ResponseCode: " + connection.getResponseCode());
 //                throw new CustomException("Failed to upload code:" + connection.getResponseCode() + " " + connection.getResponseMessage());
             }
+
 
             inputStream = connection.getInputStream();
 
@@ -204,6 +209,7 @@ public class HttpConnectionUtility{
 
             return result;
         } catch (Exception e) {
+            e.printStackTrace();
 //            logger.error(e);
 //            throw new CustomException(e);
         }

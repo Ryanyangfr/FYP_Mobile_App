@@ -2,8 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.smu.engagingu.fyp">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <uses-feature
         android:name="android.hardware.camera.autofocus"
         android:required="false" />
@@ -19,6 +17,7 @@
          location permissions for the 'MyLocation' functionality. 
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <!-- <uses-permission android:name="android.permission.READ_PHONE_STATE" /> -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -31,13 +30,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name="com.smu.engagingu.MainActivity">
-            <intent-filter android:autoVerify="true">
+
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.LAUNCHER" />
 
                 <data
                     android:host="engagingu"
@@ -49,6 +52,7 @@
         <activity android:name="com.smu.engagingu.CameraPage" />
         <activity android:name="com.smu.engagingu.Narrative" />
         <activity android:name="com.smu.engagingu.StoryContainer" />
+        <activity android:name="com.smu.engagingu.TutorialContainer"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -74,8 +78,6 @@
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
-
-        <activity android:name="com.smu.engagingu.TutorialContainer"></activity>
     </application>
 
 </manifest>

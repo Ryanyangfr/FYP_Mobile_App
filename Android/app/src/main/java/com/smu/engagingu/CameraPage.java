@@ -1,33 +1,39 @@
 package com.smu.engagingu;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.smu.engagingu.fyp.R;
+import com.smu.engagingu.utility.HttpConnectionUtility;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class CameraPage extends AppCompatActivity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
-    Button button;
+    Button takePictureButton;
+    Button uploadButton;
     ImageView mImageView;
     Uri photoURI;
     String mCurrentPhotoPath;
@@ -36,8 +42,8 @@ public class CameraPage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_page);
-        button = findViewById(R.id.btnTakePicture);
-        button.setOnClickListener(new View.OnClickListener(){
+        takePictureButton = findViewById(R.id.btnTakePicture);
+        takePictureButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
 
@@ -47,6 +53,27 @@ public class CameraPage extends AppCompatActivity {
                 }catch(Exception e){
                     e.printStackTrace();
                 }
+            }
+        });
+        uploadButton = findViewById(R.id.btnUpload);
+        uploadButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                String team_id = "1";
+                String trail_instance_id = "1";
+                String question = "HOWS LIFE";
+                try {
+                    String responseCode = new PictureUploader().execute(team_id,trail_instance_id,question).get();
+                    System.out.println("Response Code: " + responseCode);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                Toast toast = Toast.makeText(CameraPage.this,"Photo Successfully Uploaded!", Toast.LENGTH_SHORT);
+                toast.show();
+                Intent intent = new Intent(CameraPage.this,HomePage.class);
+                startActivity(intent);
             }
         });
     }
@@ -169,6 +196,20 @@ public class CameraPage extends AppCompatActivity {
         System.out.println("Uri in galleryAddPic: " + contentUri);
         mediaScanIntent.setData(contentUri);
         this.sendBroadcast(mediaScanIntent);
+    }
+
+    private class PictureUploader extends AsyncTask<String,Integer,String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            //team_id, trail_instance_id, question to get from database
+            Map<String,String> jsonMap = new HashMap<>();
+            jsonMap.put("team_id", params[0]);
+            jsonMap.put("trail_instance_id", params[1]);
+            jsonMap.put("question", params[2]);
+            String responseCode = HttpConnectionUtility.multipartPost("http://54.255.245.23:3000/upload/uploadSubmission", jsonMap, mCurrentPhotoPath, "image", "image/png");
+            return responseCode;
+        }
     }
 
 }
