@@ -1,4 +1,4 @@
-package com.example.ryder.fyp.StoryLine;
+package com.smu.engagingu.StoryLine;
 
 import android.content.Context;
 import android.net.Uri;
@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.ryder.fyp.R;
+import com.smu.engagingu.fyp.R;
 
 /**
  * A simple {@link Fragment} subclass.

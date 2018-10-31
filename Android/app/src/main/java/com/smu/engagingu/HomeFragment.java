@@ -1,4 +1,4 @@
-package com.example.ryder.fyp;
+package com.smu.engagingu;
 
 import android.Manifest;
 import android.content.Context;
@@ -14,7 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.ryder.fyp.utility.HttpConnectionUtility;
+import com.smu.engagingu.fyp.R;
+import com.smu.engagingu.utility.HttpConnectionUtility;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;

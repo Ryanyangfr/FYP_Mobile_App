@@ -1,8 +1,6 @@
-package com.example.ryder.fyp;
+package com.smu.engagingu;
 
 import android.annotation.SuppressLint;
-import android.app.Fragment;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.internal.BottomNavigationItemView;
 import android.support.design.internal.BottomNavigationMenuView;
@@ -11,8 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
+
+import com.smu.engagingu.fyp.R;
 
 import java.lang.reflect.Field;
 

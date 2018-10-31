@@ -1,9 +1,4 @@
-package com.example.ryder.fyp.utility;
-
-import android.Manifest;
-import android.os.AsyncTask;
-import android.os.Environment;
-import android.support.v4.content.ContextCompat;
+package com.smu.engagingu.utility;
 
 import org.json.JSONObject;
 
@@ -14,12 +9,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;

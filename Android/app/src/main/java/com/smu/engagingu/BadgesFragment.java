@@ -1,4 +1,4 @@
-package com.example.ryder.fyp;
+package com.smu.engagingu;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.smu.engagingu.fyp.R;
 
 
 public class BadgesFragment extends Fragment {

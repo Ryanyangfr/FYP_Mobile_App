@@ -1,4 +1,4 @@
-    package com.example.ryder.fyp;
+    package com.smu.engagingu;
 
     import android.content.Intent;
     import android.net.Uri;
@@ -9,9 +9,10 @@
     import android.support.v7.app.AppCompatActivity;
     import android.view.View;
 
-    import com.example.ryder.fyp.StoryLine.StoryLine1;
-    import com.example.ryder.fyp.StoryLine.StoryLine2;
-    import com.example.ryder.fyp.StoryLine.StoryLine3;
+    import com.smu.engagingu.StoryLine.StoryLine1;
+    import com.smu.engagingu.StoryLine.StoryLine2;
+    import com.smu.engagingu.StoryLine.StoryLine3;
+    import com.smu.engagingu.fyp.R;
 
     public class StoryContainer extends AppCompatActivity implements StoryLine1.OnFragmentInteractionListener,StoryLine2.OnFragmentInteractionListener,StoryLine3.OnFragmentInteractionListener {
 
@@ -27,7 +28,7 @@
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager)findViewById(R.id.pager);
-        final PagerAdapter pagerAdapter = new com.example.ryder.fyp.utility.PagerAdapter(getSupportFragmentManager(),tabLayout.getTabCount());
+        final PagerAdapter pagerAdapter = new com.smu.engagingu.utility.PagerAdapter(getSupportFragmentManager(),tabLayout.getTabCount());
         viewPager.setAdapter(pagerAdapter);
         viewPager.setOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

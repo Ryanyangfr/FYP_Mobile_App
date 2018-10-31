@@ -1,10 +1,12 @@
-package com.example.ryder.fyp;
+package com.smu.engagingu;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
+
+import com.smu.engagingu.fyp.R;
+
 
 public class UserName extends AppCompatActivity {
 

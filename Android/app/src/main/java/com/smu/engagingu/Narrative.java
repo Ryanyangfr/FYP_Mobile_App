@@ -1,7 +1,9 @@
-package com.example.ryder.fyp;
+package com.smu.engagingu;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.smu.engagingu.fyp.R;
 
 public class Narrative extends AppCompatActivity {
 

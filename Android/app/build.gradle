@@ -3,9 +3,9 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "com.example.ryder.fyp"
-        minSdkVersion 27
-        targetSdkVersion 28
+        applicationId "com.smu.engagingu.fyp"
+        minSdkVersion 24
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -29,5 +29,4 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.google.android.gms:play-services-maps:16.0.0'
-
 }

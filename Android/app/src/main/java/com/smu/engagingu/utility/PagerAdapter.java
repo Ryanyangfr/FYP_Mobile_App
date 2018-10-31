@@ -1,12 +1,12 @@
-package com.example.ryder.fyp.utility;
+package com.smu.engagingu.utility;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.example.ryder.fyp.StoryLine.StoryLine1;
-import com.example.ryder.fyp.StoryLine.StoryLine2;
-import com.example.ryder.fyp.StoryLine.StoryLine3;
+import com.smu.engagingu.StoryLine.StoryLine1;
+import com.smu.engagingu.StoryLine.StoryLine2;
+import com.smu.engagingu.StoryLine.StoryLine3;
 
 public class PagerAdapter extends FragmentStatePagerAdapter {
 

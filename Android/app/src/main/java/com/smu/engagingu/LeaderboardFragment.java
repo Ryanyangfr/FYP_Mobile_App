@@ -1,4 +1,4 @@
-package com.example.ryder.fyp;
+package com.smu.engagingu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +21,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.example.ryder.fyp.utility.HttpConnectionUtility;
+import com.smu.engagingu.fyp.R;
+import com.smu.engagingu.utility.HttpConnectionUtility;
 
 public class LeaderboardFragment extends Fragment {
     //json string
