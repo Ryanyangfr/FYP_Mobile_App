@@ -75,7 +75,10 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
 
-        <activity android:name="com.smu.engagingu.TutorialContainer"></activity>
+        <activity android:name="com.smu.engagingu.TutorialContainer" />
+        <activity android:name="com.smu.engagingu.QuizActivity" />
+        <activity android:name="com.smu.engagingu.QuizStartingPage" />
+        <activity android:name="com.smu.engagingu.QuizActivit"></activity>
     </application>
 
 </manifest>
