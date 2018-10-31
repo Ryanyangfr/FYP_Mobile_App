@@ -17,4 +17,16 @@
         android:textAlignment="center"
         android:textSize="24sp" />
 
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="133dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="232dp"
+        android:layout_marginEnd="19dp"
+        android:layout_marginBottom="52dp"
+        android:text="Swipe for more >>" />
+
 </RelativeLayout>
