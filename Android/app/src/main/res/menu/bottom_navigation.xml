@@ -3,14 +3,18 @@
 
     <item
         android:id="@+id/nav_home"
-        android:icon="@drawable/ic_baseline_home_24px"
-        android:title="Home"/>
+        android:icon="@drawable/ic_place_black_24dp"
+        android:title="Hotspots"/>
+    <item
+        android:id="@+id/nav_leaderboard"
+        android:icon="@drawable/ic_baseline_help_outline_24px"
+        android:title="Leaderboard"/>
     <item
         android:id="@+id/nav_submissions"
         android:icon="@drawable/ic_baseline_mail_outline_24px"
         android:title="Submissions"/>
     <item
-        android:id="@+id/nav_leaderboard"
-        android:icon="@drawable/ic_baseline_help_outline_24px"
-        android:title="Leaderboard"/>
+        android:id="@+id/nav_badges"
+        android:icon="@drawable/ic_stars_black_24dp"
+        android:title="Badges"/>
 </menu>

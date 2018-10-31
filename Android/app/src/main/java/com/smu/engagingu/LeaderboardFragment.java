@@ -1,4 +1,4 @@
-package com.example.ryder.fyp;
+package com.smu.engagingu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +21,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.example.ryder.fyp.utility.HttpConnectionUtility;
+import com.smu.engagingu.fyp.R;
+import com.smu.engagingu.utility.HttpConnectionUtility;
 
 public class LeaderboardFragment extends Fragment {
     //json string
@@ -34,9 +35,7 @@ public class LeaderboardFragment extends Fragment {
             //System.out.println("hello"+jsonString);
             View view = inflater.inflate(R.layout.fragment_leaderboard, container, false);
             initList();
-            for(int i =0 ; i < teamList.size(); i++){
-                System.out.println(teamList.get(i));
-            }
+
             ListView listView = (ListView)view.findViewById(R.id.listView1);
             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                     getContext(),
@@ -63,7 +62,10 @@ public class LeaderboardFragment extends Fragment {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        try{
+        if (jsonString==null){
+            teamList.add("No Records available at the moment");
+        }else {
+            try {
                 JSONArray jsonMainNode = new JSONArray(jsonString);
 
                 for (int i = 0; i < jsonMainNode.length(); i++) {
@@ -72,9 +74,9 @@ public class LeaderboardFragment extends Fragment {
 //                    System.out.println()
                     teamList.add(name);
                 }
-        }
-        catch(JSONException e){
-            e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
@@ -85,6 +87,9 @@ public class LeaderboardFragment extends Fragment {
 //            jsonString = response;
 //            System.out.println("Debug:"+ jsonString+ "2"+response);
             hasGottenInput = true;
+            if (response == null){
+                return null;
+            }
             return response;
         }
     }
