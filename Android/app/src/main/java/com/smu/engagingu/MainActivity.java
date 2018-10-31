@@ -1,6 +1,7 @@
 package com.smu.engagingu;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,8 +18,12 @@ import android.widget.Toast;
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.utility.HttpConnectionUtility;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -30,14 +35,39 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void sendMessage(View view) {
+        String jsonString = null;
+        String trailInstanceID =null;
+        try {
+            jsonString= new MyHttpRequestTask().execute("http://54.255.245.23:3000/getInstance").get();
+            JSONObject jsonObject = new JSONObject(jsonString);
+            trailInstanceID = jsonObject.getString("trail_instance_id");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         EditText editText = (EditText) findViewById(R.id.editText3);
+        String message = editText.getText().toString();
         //String message = ;
-        String my_url = "http://10.124.5.151:3000/upload/uploadSubmission";
-        new MyHttpRequestTask().execute(my_url,"");
-        Intent intent = new Intent(this, UserName.class);
-        startActivity(intent);
+        //String my_url = "http://10.124.5.151:3000/upload/uploadSubmission";
+        //new MyHttpRequestTask().execute(my_url,"");
+
+        if(message.equals(trailInstanceID)) {
+            Intent intent = new Intent(this, UserName.class);
+            startActivity(intent);
+        }else{
+            Context context = getApplicationContext();
+            CharSequence text = "Wrong PIN! Please try again.";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+        }
     }
+    /*
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
 
         @Override
@@ -59,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
             return response;
         }
     }
-
+*/
     private void showPhoneStatePermission() {
         int permissionCheck = ContextCompat.checkSelfPermission(
                 this, Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -108,5 +138,16 @@ public class MainActivity extends AppCompatActivity {
     private void requestPermission(String permissionName, int permissionRequestCode) {
         ActivityCompat.requestPermissions(this,
                 new String[]{permissionName}, permissionRequestCode);
+    }
+    private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
+        @Override
+        protected String doInBackground(String... params) {
+            Map<String, String> req = new HashMap<>();
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/getInstance");
+            if (response == null){
+                return null;
+            }
+            return response;
+        }
     }
 }
