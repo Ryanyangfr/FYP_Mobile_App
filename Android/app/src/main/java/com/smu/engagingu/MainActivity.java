@@ -27,7 +27,7 @@ import java.util.concurrent.ExecutionException;
 
 
 public class MainActivity extends AppCompatActivity {
-    private static final int REQUEST_PERMISSION_READ_EXTERNAL_STORAGE = 10;
+    private static final int REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 10;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,13 +92,13 @@ public class MainActivity extends AppCompatActivity {
 */
     private void showPhoneStatePermission() {
         int permissionCheck = ContextCompat.checkSelfPermission(
-                this, Manifest.permission.READ_EXTERNAL_STORAGE);
+                this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.READ_PHONE_STATE)) {
-                showExplanation("Permission Needed", "Rationale", Manifest.permission.READ_EXTERNAL_STORAGE, REQUEST_PERMISSION_READ_EXTERNAL_STORAGE);
+                showExplanation("Permission Needed", "Rationale", Manifest.permission.READ_EXTERNAL_STORAGE, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
             } else {
-                requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE, REQUEST_PERMISSION_READ_EXTERNAL_STORAGE);
+                requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
             }
         } else {
 //            Toast.makeText(MainActivity.this, "Permission (already) Granted!", Toast.LENGTH_SHORT).show();
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
             String permissions[],
             int[] grantResults) {
         switch (requestCode) {
-            case REQUEST_PERMISSION_READ_EXTERNAL_STORAGE:
+            case REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE:
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(MainActivity.this, "Permission Granted!", Toast.LENGTH_SHORT).show();
