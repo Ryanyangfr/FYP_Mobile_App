@@ -105,6 +105,10 @@ public class QuizActivity extends AppCompatActivity {
         });
     }
     private void showNextQuestion(){
+        rb1.setTextColor(Color.BLACK);
+        rb2.setTextColor(Color.BLACK);
+        rb3.setTextColor(Color.BLACK);
+        rb4.setTextColor(Color.BLACK);
         if(questionCounter<questionCountTotal) {
             currentQuestion = questionsList.get(questionCounter);
 
@@ -130,8 +134,10 @@ public class QuizActivity extends AppCompatActivity {
 
         if(answerNum == currentQuestion.getAnswerNr()){
             score++;
+            System.out.println("score: "+score);
             textViewScore.setText("Score: "+ score);
         }
+        textViewScore.setText("Score: "+ score);
         showSolution();
     }
     private void showSolution(){

@@ -62,5 +62,5 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="148dp"
         android:layout_marginTop="33dp"
-        android:text="TextView" />
+        android:text="Score: 0" />
 </RelativeLayout>
