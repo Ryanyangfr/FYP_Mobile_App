@@ -163,7 +163,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/hotspot/getAllHotspots");
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/hotspot/getAllHotspots?trail_instance_id=1");
             if (response == null){
                 return null;
             }

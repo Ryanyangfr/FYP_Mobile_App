@@ -1,8 +1,11 @@
 package com.smu.engagingu;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -26,6 +29,7 @@ public class CameraPage extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     Button button;
     ImageView mImageView;
+    Uri photoURI;
     String mCurrentPhotoPath;
 
     @Override
@@ -54,15 +58,13 @@ public class CameraPage extends AppCompatActivity {
             File photoFile = null;
             try{
                 photoFile = createImageFile();
-                System.out.println(photoFile.getAbsolutePath());
-                System.out.println(photoFile.getName());
             } catch (IOException e){
                 e.printStackTrace();
             }
 
             // Continue only if the File was successfully created
             if (photoFile != null){
-                Uri photoURI = FileProvider.getUriForFile(this, "com.example.android.fileprovider", photoFile);
+                photoURI = FileProvider.getUriForFile(this, "com.example.android.fileprovider", photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             }
@@ -76,7 +78,7 @@ public class CameraPage extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
-            loadImagefromFile();
+            loadImageFromFile();
         }
     }
 
@@ -97,17 +99,44 @@ public class CameraPage extends AppCompatActivity {
         return image;
     }
 
-    private void galleryAddPic() {
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File f = new File(mCurrentPhotoPath);
-        Uri contentUri = Uri.fromFile(f);
-        mediaScanIntent.setData(contentUri);
-        this.sendBroadcast(mediaScanIntent);
+    private Bitmap checkImageIfNeedRotation(Bitmap img){
+
+        try{
+            ExifInterface ei = new ExifInterface(mCurrentPhotoPath);
+            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+            switch(orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    return rotateImage(img, 90);
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    return rotateImage(img, 180);
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    return rotateImage(img, 270);
+                default:
+                    return img;
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return img;
     }
 
-    public void loadImagefromFile(){
+    private Bitmap rotateImage(Bitmap img, int degree) {
 
-        mImageView = (ImageView)this.findViewById(R.id.imageView);
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+        Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
+        img.recycle();
+        return rotatedImg;
+    }
+
+
+    public void loadImageFromFile(){
+        
+
+        mImageView = this.findViewById(R.id.imageView);
         mImageView.setVisibility(View.VISIBLE);
 
         int targetW = mImageView.getWidth();
@@ -128,6 +157,17 @@ public class CameraPage extends AppCompatActivity {
         bmOptions.inSampleSize = scaleFactor;
 
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        mImageView.setImageBitmap(bitmap);
+        Bitmap rotatedBitmap = checkImageIfNeedRotation(bitmap);
+        mImageView.setImageBitmap(rotatedBitmap);
     }
+
+    private void galleryAddPic() {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(mCurrentPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        System.out.println("Uri in galleryAddPic: " + contentUri);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
+    }
+
 }
