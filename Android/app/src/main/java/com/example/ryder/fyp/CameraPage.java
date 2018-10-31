@@ -1,4 +1,4 @@
-package com.smu.engagingu;
+package com.example.ryder.fyp;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,12 +14,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import com.smu.engagingu.fyp.R;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static android.os.Environment.getExternalStoragePublicDirectory;
 
 public class CameraPage extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package com.smu.engagingu;
+package com.example.ryder.fyp;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -14,9 +15,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.smu.engagingu.fyp.R;
-import com.smu.engagingu.utility.HttpConnectionUtility;
+import com.example.ryder.fyp.utility.HttpConnectionUtility;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 

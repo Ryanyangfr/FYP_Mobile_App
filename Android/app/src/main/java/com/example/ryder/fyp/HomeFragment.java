@@ -1,34 +1,24 @@
-package com.smu.engagingu;
+package com.example.ryder.fyp;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.smu.engagingu.fyp.R;
-import com.smu.engagingu.utility.HttpConnectionUtility;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.concurrent.ExecutionException;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback{
     MapView mMapView;
@@ -44,14 +34,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PackageManager.PERMISSION_GRANTED);
-        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
         View v = inflater.inflate(R.layout.fragment_home, container, false);
 
         mMapView = (MapView) v.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync((OnMapReadyCallback) this); //this is important
-
+        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PackageManager.PERMISSION_GRANTED);
+        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
 
         return v;
     }
@@ -66,38 +55,21 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
         catch (SecurityException e){
             e.printStackTrace();
         }
-        try {
-            String response = new HomeFragment.MyHttpRequestTask().execute("http://54.255.245.23:3000/hotspot/getAllHotspots").get();
-            JSONArray jsonMainNode = new JSONArray(response);
-            for (int i = 0; i < jsonMainNode.length(); i++) {
-                JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
-                JSONArray latlng = jsonChildNode.getJSONArray("coordinates");
-                String latString = latlng.getString(0);
-                String lngString = latlng.getString(1);
-                double lat = Double.parseDouble(latString);
-                double lng = Double.parseDouble(lngString);
-                System.out.println("LAT: "+lat);
-                System.out.println("LNG: "+lng);
-                String placeName = jsonChildNode.getString("name");
-                mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat,lng)).title(placeName));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(1.2974,103.8495), 15));
-        mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener()
-            {
-            @Override
-            public boolean onMarkerClick(Marker arg0) {
-                Intent intent = new Intent(getActivity(), Narrative.class);
-                startActivity(intent);
-                return true;
-            }
-        });
+        LatLng Sob = new LatLng(1.2953, 103.8506);
+        LatLng Soa = new LatLng(1.2956, 103.8498);
+        LatLng SoeSoss = new LatLng(1.2979, 103.8489);
+        LatLng Sis = new LatLng(1.2974, 103.8495);
+        LatLng Sol = new LatLng(1.2949, 103.8495);
+        LatLng LksLib = new LatLng(1.2962, 103.8501);
+        LatLng Admin = new LatLng(1.2968, 103.8522);
+        mGoogleMap.addMarker(new MarkerOptions().position(Sob).title("School of Business"));
+        mGoogleMap.addMarker(new MarkerOptions().position(Soa).title("School of Accountancy"));
+        mGoogleMap.addMarker(new MarkerOptions().position(SoeSoss).title("School of Economics/ School of Social Sciences"));
+        mGoogleMap.addMarker(new MarkerOptions().position(Sis).title("School of Information Systems"));
+        mGoogleMap.addMarker(new MarkerOptions().position(Sol).title("School of Law"));
+        mGoogleMap.addMarker(new MarkerOptions().position(LksLib).title("Li Ka Shing Library"));
+        mGoogleMap.addMarker(new MarkerOptions().position(Admin).title("SMU Admin Building"));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(Sis, 15));
 
         locationListener = new LocationListener() {
             @Override
@@ -159,15 +131,5 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
     public void onLowMemory() {
         super.onLowMemory();
         mMapView.onLowMemory();
-    }
-    private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
-        @Override
-        protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/hotspot/getAllHotspots");
-            if (response == null){
-                return null;
-            }
-            return response;
-        }
     }
 }
