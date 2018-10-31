@@ -119,6 +119,11 @@ public class HttpConnectionUtility{
         return response.toString();
     }
 
+    //urlTo = the url to send to (Server IP+Port)
+    //params = any information along with the content(image)
+    //filepath = path of where the media is stored in the phone
+    //filefield = "image"
+    //fileMimeType = "image/png"
     public static String multipartPost(String urlTo, Map<String, String> params, String filepath, String filefield, String fileMimeType){
         HttpURLConnection connection = null;
         DataOutputStream outputStream = null;
