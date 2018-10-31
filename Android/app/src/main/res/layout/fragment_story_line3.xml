@@ -29,7 +29,7 @@
         android:layout_marginBottom="128dp"
         android:background="@color/colorPrimary"
         android:onClick="startTrail"
-        android:text="Start"
+        android:text="Tutorial"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textSize="20sp" />
 

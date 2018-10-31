@@ -51,7 +51,7 @@
 
     }
     public void startTrail(View view){
-        Intent intent = new Intent(this, HomePage.class);
+        Intent intent = new Intent(this, TutorialContainer.class);
         startActivity(intent);
     }
         @Override
