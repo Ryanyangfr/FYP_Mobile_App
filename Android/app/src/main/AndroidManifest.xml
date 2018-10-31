@@ -68,8 +68,7 @@
             android:required="false" />
 
         <activity android:name="com.smu.engagingu.Narrative" />
-        <activity android:name="com.smu.engagingu.StoryContainer" />
-        <activity android:name="com.smu.engagingu.ARPage"></activity>
+        <activity android:name="com.smu.engagingu.StoryContainer"></activity>
     </application>
 
 </manifest>
