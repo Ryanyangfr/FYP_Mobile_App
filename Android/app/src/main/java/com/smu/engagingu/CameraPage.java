@@ -43,7 +43,7 @@ public class CameraPage extends AppCompatActivity {
 
                 try {
                     dispatchTakePictureIntent();
-                    galleryAddPic();
+
                 }catch(Exception e){
                     e.printStackTrace();
                 }
@@ -78,6 +78,7 @@ public class CameraPage extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
+            galleryAddPic();
             loadImageFromFile();
         }
     }
@@ -86,7 +87,7 @@ public class CameraPage extends AppCompatActivity {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File storageDir = Environment.getExternalStorageDirectory();
         System.out.println("Storage DIR" + storageDir.getAbsolutePath());
         File image = File.createTempFile(
                 imageFileName,    /*prefix */
