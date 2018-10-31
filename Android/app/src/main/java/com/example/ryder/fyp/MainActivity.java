@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         EditText editText = (EditText) findViewById(R.id.editText3);
         //String message = ;
-        String my_url = "http://54.255.245.23:3000/upload/uploadSubmission";
+        String my_url = "http://10.124.5.151:3000/upload/uploadSubmission";
         new MyHttpRequestTask().execute(my_url,"");
         Intent intent = new Intent(this, UserName.class);
         startActivity(intent);
@@ -58,10 +58,10 @@ public class MainActivity extends AppCompatActivity {
 //                    Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)){
 //                System.out.println("environment: " + Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES));
 //            }
-            req.put("question", "HOWS LIFE");
-            req.put("trail_instance_id", "1");
-            req.put("team_id", "1");
-            String response = HttpConnectionUtility.multipartPost(params[0], req, filepath, "image", "image/png");
+//            req.put("username", "THINN");
+//            req.put("user_id", "10");
+//            req.put("team_id", "1");
+            String response = HttpConnectionUtility.multipartPost(params[0], new HashMap<String,String>(), filepath, "image", "image/png");
             System.out.print("response: " + response);
             return response;
         }
