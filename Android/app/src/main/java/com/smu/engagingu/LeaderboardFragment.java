@@ -1,15 +1,5 @@
 package com.smu.engagingu;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,6 +13,16 @@ import android.widget.ListView;
 
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.utility.HttpConnectionUtility;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class LeaderboardFragment extends Fragment {
     //json string
@@ -84,9 +84,6 @@ public class LeaderboardFragment extends Fragment {
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
             String response = HttpConnectionUtility.get("http://54.255.245.23:3000/user/retrieveAllUser");
-//            jsonString = response;
-//            System.out.println("Debug:"+ jsonString+ "2"+response);
-            hasGottenInput = true;
             if (response == null){
                 return null;
             }

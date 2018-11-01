@@ -12,10 +12,13 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="400dp"
-        android:layout_height="500dp"
+        android:layout_width="358dp"
+        android:layout_height="302dp"
+        android:layout_above="@+id/btnTakePicture"
+        android:layout_below="@+id/selfieQuestionView"
         android:layout_centerHorizontal="true"
-        android:layout_above="@+id/btnTakePicture"/>
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="13dp" />
 
     <Button
         android:id="@+id/btnTakePicture"
@@ -32,5 +35,15 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:text="Upload Picture"/>
+
+    <TextView
+        android:id="@+id/selfieQuestionView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:text="TextView"
+        android:textSize="24sp" />
 
 </RelativeLayout>

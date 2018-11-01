@@ -22,6 +22,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.smu.engagingu.Quiz.Question;
+import com.smu.engagingu.Quiz.QuestionDatabase;
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.utility.HttpConnectionUtility;
 
@@ -29,19 +31,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback{
-    public static final String EXTRA_MESSAGE = "com.smu.engagingu.MESSAGE";
-    public static final String NARRATIVE_MESSAGE = "com.smu.engaginu.MESSAGE";
+    public static final String EXTRA_MESSAGE = "com.smu.engagingu.MESSAGE1";
+    public static final String NARRATIVE_MESSAGE = "com.smu.engagingu.MESSAGE2";
+    public static final String SELFIE_CHECK="com.smu.engagingu.MESSAGE3";
     MapView mMapView;
     GoogleMap mGoogleMap;
 
     private LocationListener locationListener;
     private LocationManager locationManager;
+    private Boolean completed;
 
     private final long MIN_TIME = 1000; //1 second
     private final long MIN_DIST = 5; //metres?
+    private String snippetText;
 
 
     private LatLng latLng;
@@ -91,7 +97,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
                 if(!(MainActivity.completedList.contains(placeName))) {
                     mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(placeName).snippet(narrative));
                 }else{
-                    mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat,lng)).title(placeName).snippet(narrative).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                    mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat,lng)).title(placeName).snippet("Completed").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 
                 }
             }
@@ -107,13 +113,39 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
             {
             @Override
             public boolean onMarkerClick(Marker arg0) {
-                String title = arg0.getTitle();
+                /*String title = arg0.getTitle();
                 String snippet = arg0.getSnippet();
                 Intent intent = new Intent(getActivity(), Narrative.class);
                 intent.putExtra(EXTRA_MESSAGE, title);
                 intent.putExtra(NARRATIVE_MESSAGE,snippet);
                 startActivity(intent);
+                return true;*/
+                snippetText = arg0.getSnippet();
+                if(!(snippetText.equals("Completed"))) {
+                    arg0.setSnippet("Click me to start mission");
+                    arg0.showInfoWindow();
+                }
                 return true;
+            }
+        });
+        mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                String title = marker.getTitle();
+                    QuestionDatabase qnsDB = new QuestionDatabase();
+                    ArrayList<Question> questionsList = qnsDB.getQuestionsMap().get(title);
+
+                    Intent intent = new Intent(getActivity(), Narrative.class);
+                    if (questionsList != null) {
+
+                        intent.putExtra(SELFIE_CHECK, "1");
+                    } else {
+
+                        intent.putExtra(SELFIE_CHECK, "0");
+                    }
+                    intent.putExtra(EXTRA_MESSAGE, title);
+                    intent.putExtra(NARRATIVE_MESSAGE, snippetText);
+                    startActivity(intent);
             }
         });
 

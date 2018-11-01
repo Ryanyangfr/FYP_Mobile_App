@@ -16,8 +16,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.smu.engagingu.Quiz.QuestionDatabase;
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.utility.HttpConnectionUtility;
 
@@ -30,6 +32,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class CameraPage extends AppCompatActivity {
+    public static final String EXTRA_MESSAGE = "com.smu.engagingu.MESSAGE";
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     Button takePictureButton;
@@ -37,12 +40,22 @@ public class CameraPage extends AppCompatActivity {
     ImageView mImageView;
     Uri photoURI;
     String mCurrentPhotoPath;
+    private String targetQuestion;
+    private String placeName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_page);
         takePictureButton = findViewById(R.id.btnTakePicture);
+        String jsonResponse = null;
+        Intent intent = getIntent();
+        placeName = intent.getStringExtra(Narrative.EXTRA_MESSAGE2);
+        TextView selfieQuestionView = findViewById(R.id.selfieQuestionView);
+        QuestionDatabase qDB = new QuestionDatabase(true);
+        HashMap<String,String> selfieQuestionMap = qDB.getSelfieQuestionsMap();
+        targetQuestion = selfieQuestionMap.get(placeName);
+        selfieQuestionView.setText(targetQuestion);
         takePictureButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -59,9 +72,9 @@ public class CameraPage extends AppCompatActivity {
         uploadButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                String team_id = "1";
+                String team_id = UserName.userID;
                 String trail_instance_id = "1";
-                String question = "HOWS LIFE";
+                String question = targetQuestion;
                 try {
                     String responseCode = new PictureUploader().execute(team_id,trail_instance_id,question).get();
                     System.out.println("Response Code: " + responseCode);
@@ -73,6 +86,7 @@ public class CameraPage extends AppCompatActivity {
                 Toast toast = Toast.makeText(CameraPage.this,"Photo Successfully Uploaded!", Toast.LENGTH_SHORT);
                 toast.show();
                 Intent intent = new Intent(CameraPage.this,HomePage.class);
+                intent.putExtra(EXTRA_MESSAGE, placeName);
                 startActivity(intent);
             }
         });
@@ -211,5 +225,4 @@ public class CameraPage extends AppCompatActivity {
             return responseCode;
         }
     }
-
 }

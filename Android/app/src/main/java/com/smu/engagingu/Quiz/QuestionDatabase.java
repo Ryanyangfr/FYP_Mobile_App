@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutionException;
 
 public class QuestionDatabase {
     private HashMap<String,ArrayList<Question>> QuestionsMap;
+    private HashMap<String,String> SelfieQuestionsMap;
 
     public QuestionDatabase() {
         QuestionsMap = new HashMap<>();
@@ -55,7 +56,34 @@ public class QuestionDatabase {
         }
     }
 
+    public QuestionDatabase(Boolean b) {
+        String response = null;
+        QuestionsMap = new HashMap<>();
+        SelfieQuestionsMap = new HashMap<>();
+        try {
+            response = new MyHttpRequestTask2().execute().get();
+            System.out.println(response);
+        } catch (InterruptedException e) {
 
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        try {
+            JSONArray mainChildNode = new JSONArray(response);
+            System.out.println("1"+mainChildNode);
+            for(int i =0 ; i < mainChildNode.length();i++){
+                JSONObject newChildNode = mainChildNode.getJSONObject(i);
+                String hotspot = newChildNode.getString("hotspot");
+                System.out.println("2"+hotspot);
+                String question = newChildNode.getString("question");
+                System.out.println("3"+question);
+                SelfieQuestionsMap.put(hotspot,question);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {
@@ -66,6 +94,21 @@ public class QuestionDatabase {
             }
             return response;
         }
+    }
+private class MyHttpRequestTask2 extends AsyncTask<String,Integer,String> {
+    @Override
+    protected String doInBackground(String... params) {
+        Map<String, String> req = new HashMap<>();
+        String response = HttpConnectionUtility.get("http://54.255.245.23:3000/upload/getSubmissionQuestion?trail_instance_id=1");
+        if (response == null){
+            return null;
+        }
+        return response;
+    }
+}
+
+    public HashMap<String, String> getSelfieQuestionsMap() {
+        return SelfieQuestionsMap;
     }
 
     public HashMap<String, ArrayList<Question>> getQuestionsMap() {
