@@ -14,15 +14,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.smu.engagingu.fyp.R;
-import com.smu.engagingu.utility.HttpConnectionUtility;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.smu.engagingu.fyp.R;
+import com.smu.engagingu.utility.HttpConnectionUtility;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,6 +32,8 @@ import org.json.JSONObject;
 import java.util.concurrent.ExecutionException;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback{
+    public static final String EXTRA_MESSAGE = "com.smu.engagingu.MESSAGE";
+    public static final String NARRATIVE_MESSAGE = "com.smu.engaginu.MESSAGE";
     MapView mMapView;
     GoogleMap mGoogleMap;
 
@@ -39,6 +42,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
 
     private final long MIN_TIME = 1000; //1 second
     private final long MIN_DIST = 5; //metres?
+
 
     private LatLng latLng;
     @Override
@@ -52,7 +56,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync((OnMapReadyCallback) this); //this is important
 
-
         return v;
     }
 
@@ -60,6 +63,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
         mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+        Intent intent = getActivity().getIntent();
+        String completedPlace = intent.getStringExtra(QuizActivity.EXTRA_MESSAGE);
+        if(completedPlace!=null) {
+            MainActivity.completedList.add(completedPlace);
+        }
         try{
             mGoogleMap.setMyLocationEnabled(true);
         }
@@ -79,7 +87,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
                 System.out.println("LAT: "+lat);
                 System.out.println("LNG: "+lng);
                 String placeName = jsonChildNode.getString("name");
-                mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat,lng)).title(placeName));
+                String narrative = jsonChildNode.getString("narrative");
+                if(!(MainActivity.completedList.contains(placeName))) {
+                    mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(placeName).snippet(narrative));
+                }else{
+                    mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat,lng)).title(placeName).snippet(narrative).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -93,7 +107,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
             {
             @Override
             public boolean onMarkerClick(Marker arg0) {
+                String title = arg0.getTitle();
+                String snippet = arg0.getSnippet();
                 Intent intent = new Intent(getActivity(), Narrative.class);
+                intent.putExtra(EXTRA_MESSAGE, title);
+                intent.putExtra(NARRATIVE_MESSAGE,snippet);
                 startActivity(intent);
                 return true;
             }

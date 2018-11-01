@@ -1,5 +1,6 @@
 package com.smu.engagingu;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -13,17 +14,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.smu.engagingu.Quiz.Question;
+import com.smu.engagingu.Quiz.QuestionDatabase;
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.utility.HttpConnectionUtility;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class QuizActivity extends AppCompatActivity {
@@ -43,40 +39,18 @@ public class QuizActivity extends AppCompatActivity {
 
     private int score;
     private boolean answered;
-
+    private String placeName;
+    public static final String EXTRA_MESSAGE = "com.smu.engagingu.MESSAGE";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         score = 0;
-        questionsList = new ArrayList<>();
+        Intent intent = getIntent();
+        placeName = intent.getStringExtra(QuizStartingPage.EXTRA_MESSAGE3);
+        System.out.println("QuizActivity: "+placeName);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
-        String response = null;
-        try {
-            response = new MyHttpRequestTask().execute("http://54.255.245.23:3000/hotspot/getAllHotspots").get();
-            System.out.println(response);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        JSONArray jsonMainNode = null;
-        try {
-            jsonMainNode = new JSONArray(response);
-            for(int i = 0; i< jsonMainNode.length();i++){
-                JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
-                String question= jsonChildNode.getString("quiz_question");
-                String answerString = jsonChildNode.getString("quiz_answer");
-                int answer = Integer.parseInt(answerString);
-                JSONArray optionsArray = jsonChildNode.getJSONArray("quiz_options");
-                String op1 = optionsArray.getString(0);
-                String op2 = optionsArray.getString(1);
-                String op3 = optionsArray.getString(2);
-                String op4 = optionsArray.getString(3);
-                questionsList.add(new Question(question,op1,op2,op3,op4,answer));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        QuestionDatabase qnsDB = new QuestionDatabase();
+        questionsList = qnsDB.getQuestionsMap().get(placeName);
         textViewQuestion = findViewById(R.id.text_view_question);
         textViewScore = findViewById(R.id.text_view_score);
         rbGroup = findViewById(R.id.radio_group);
@@ -85,7 +59,16 @@ public class QuizActivity extends AppCompatActivity {
         rb3 = findViewById(R.id.radio_button3);
         rb4 = findViewById(R.id.radio_button4);
         buttonConfirmNext = findViewById(R.id.button_confirm_next);
-        questionCountTotal = questionsList.size();
+        if(questionsList!=null) {
+            questionCountTotal = questionsList.size();
+        }else{
+            Context context = getApplicationContext();
+            CharSequence text = "Oops! Choose another Hotspot please";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+        }
 
         showNextQuestion();
 
@@ -173,15 +156,28 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void finishQuiz(){
+        try {
+            String response = new MyHttpRequestTask().execute("http://54.255.245.23:3000/team/updateScore").get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
         Intent intent = new Intent(QuizActivity.this,HomePage.class);
+        intent.putExtra(EXTRA_MESSAGE, placeName);
         startActivity(intent);
     }
-
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {
-            Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/quiz/getQuizzes?trail_instance_id=1");
+            String message = Integer.toString(score);
+            HashMap<String,String> userHash = new HashMap<>();
+            userHash.put("team_id",UserName.userID);
+            System.out.println("tid: "+UserName.userID);
+            userHash.put("trail_instance_id","1");
+            userHash.put("score",message);
+            System.out.println("message: "+message);
+            String response = HttpConnectionUtility.post("http://54.255.245.23:3000/team/updateScore",userHash);
             if (response == null){
                 return null;
             }

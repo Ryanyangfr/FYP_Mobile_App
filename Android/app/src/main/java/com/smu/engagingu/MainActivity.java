@@ -21,6 +21,7 @@ import com.smu.engagingu.utility.HttpConnectionUtility;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -28,6 +29,7 @@ import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 10;
+    public static ArrayList<String> completedList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
