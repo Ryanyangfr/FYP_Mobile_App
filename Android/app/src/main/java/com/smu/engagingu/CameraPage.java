@@ -176,7 +176,6 @@ public class CameraPage extends AppCompatActivity {
 
 
     public void loadImageFromFile(){
-        
 
         mImageView = this.findViewById(R.id.imageView);
         mImageView.setVisibility(View.VISIBLE);

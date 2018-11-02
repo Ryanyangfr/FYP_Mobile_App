@@ -18,7 +18,7 @@
     <TextView
         android:textSize="20sp"
         android:id="@+id/textView_hotspot"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/imageView"
         android:layout_alignEnd="@+id/imageView"
@@ -27,11 +27,11 @@
         android:layout_marginStart="30dp" />
 
     <TextView
-        android:textSize="14sp"
+        android:textSize="18sp"
         android:id="@+id/textView_question"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/textView_hotspot"
-        android:layout_alignBottom="@+id/imageView"
-        android:layout_marginStart="-2dp" />
+        android:layout_below="@+id/textView_hotspot"
+        />
 </RelativeLayout>
