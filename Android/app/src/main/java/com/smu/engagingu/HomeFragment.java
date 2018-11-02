@@ -110,8 +110,31 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
                 e.printStackTrace();
             }
         }else{
-            mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(1.2953, 103.8506)).title("Lee Kong Chian School of Business").snippet("In 2000, SMU commenced its curriculum with the School of Business, welcoming its first batch of cohort in August. The SMU School of Business and university-wide scholars programme was named in perpetuity after Dr Lee Kong Chian in recognition of the Lee Foundation generous contribution of S$50 million to SMU in 2004. Dr Lee Kong Chain is a well-known Southeast Asia businessmen, philanthropist and community leader. SMU school of business is therefore known as LKCSB (Lee Kong Chian School of Business)"));
-            MainActivity.firstTime = false;
+
+            try {
+                String response = new HomeFragment.MyHttpRequestTask2().execute("").get();
+                JSONArray jsonMainNode = new JSONArray(response);
+                for (int i = 0; i < jsonMainNode.length(); i++) {
+                    JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
+                    String teamID = jsonChildNode.getString("team");
+                    if(teamID.equals(UserName.userID)){
+                        String startingHotspot= jsonChildNode.getString("startingHotspot");
+                        JSONArray latlng = jsonChildNode.getJSONArray("coordinates");
+                        String latString = latlng.getString(0);
+                        String lngString = latlng.getString(1);
+                        String narrativeString = jsonChildNode.getString("narrative");
+                        mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(latString), Double.parseDouble(lngString))).title(startingHotspot).snippet(narrativeString));
+                        MainActivity.firstTime = false;
+                        break;
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }catch(InterruptedException e){
+                e.printStackTrace();
+            }catch(ExecutionException e){
+                e.printStackTrace();
+            }
         }
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(1.2974,103.8495), 15));
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener()
@@ -219,6 +242,16 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
         @Override
         protected String doInBackground(String... params) {
             String response = HttpConnectionUtility.get("http://54.255.245.23:3000/hotspot/getAllHotspots?trail_instance_id="+MainActivity.trailInstanceID);
+            if (response == null){
+                return null;
+            }
+            return response;
+        }
+    }
+    private class MyHttpRequestTask2 extends AsyncTask<String,Integer,String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/team/startingHotspot?trail_instance_id="+MainActivity.trailInstanceID);
             if (response == null){
                 return null;
             }

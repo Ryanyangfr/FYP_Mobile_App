@@ -117,7 +117,6 @@ public class QuizActivity extends AppCompatActivity {
 
         if(answerNum == currentQuestion.getAnswerNr()){
             score++;
-            System.out.println("score: "+score);
             textViewScore.setText("Score: "+ score);
         }
         textViewScore.setText("Score: "+ score);
@@ -132,19 +131,19 @@ public class QuizActivity extends AppCompatActivity {
         switch(currentQuestion.getAnswerNr()){
             case 1:
                 rb1.setTextColor(Color.GREEN);
-                textViewQuestion.setText("Answer 1 is correct");
+                textViewQuestion.setText("Option 1 was the correct answer");
                 break;
             case 2:
                 rb2.setTextColor(Color.GREEN);
-                textViewQuestion.setText("Answer 2 is correct");
+                textViewQuestion.setText("Option 2 was the correct answer");
                 break;
             case 3:
                 rb3.setTextColor(Color.GREEN);
-                textViewQuestion.setText("Answer 3 is correct");
+                textViewQuestion.setText("Option 3 was the correct answer");
                 break;
             case 4:
                 rb4.setTextColor(Color.GREEN);
-                textViewQuestion.setText("Answer 4 is correct");
+                textViewQuestion.setText("Option 4 was the correct answer");
                 break;
         }
 
@@ -174,7 +173,7 @@ public class QuizActivity extends AppCompatActivity {
             HashMap<String,String> userHash = new HashMap<>();
             userHash.put("team_id",UserName.userID);
             System.out.println("tid: "+UserName.userID);
-            userHash.put("trail_instance_id","175239");
+            userHash.put("trail_instance_id",MainActivity.trailInstanceID);
             userHash.put("score",message);
             System.out.println("message: "+message);
             String response = HttpConnectionUtility.post("http://54.255.245.23:3000/team/updateScore",userHash);
