@@ -80,33 +80,38 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
         catch (SecurityException e){
             e.printStackTrace();
         }
-        try {
-            String response = new HomeFragment.MyHttpRequestTask().execute("http://54.255.245.23:3000/hotspot/getAllHotspots").get();
-            JSONArray jsonMainNode = new JSONArray(response);
-            for (int i = 0; i < jsonMainNode.length(); i++) {
-                JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
-                JSONArray latlng = jsonChildNode.getJSONArray("coordinates");
-                String latString = latlng.getString(0);
-                String lngString = latlng.getString(1);
-                double lat = Double.parseDouble(latString);
-                double lng = Double.parseDouble(lngString);
-                System.out.println("LAT: "+lat);
-                System.out.println("LNG: "+lng);
-                String placeName = jsonChildNode.getString("name");
-                String narrative = jsonChildNode.getString("narrative");
-                if(!(MainActivity.completedList.contains(placeName))) {
-                    mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(placeName).snippet(narrative));
-                }else{
-                    mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat,lng)).title(placeName).snippet("Completed").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+        if(!MainActivity.firstTime && MainActivity.completedList.size()>0) {
+            try {
+                String response = new HomeFragment.MyHttpRequestTask().execute("").get();
+                JSONArray jsonMainNode = new JSONArray(response);
+                for (int i = 0; i < jsonMainNode.length(); i++) {
+                    JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
+                    JSONArray latlng = jsonChildNode.getJSONArray("coordinates");
+                    String latString = latlng.getString(0);
+                    String lngString = latlng.getString(1);
+                    double lat = Double.parseDouble(latString);
+                    double lng = Double.parseDouble(lngString);
+                    System.out.println("LAT: " + lat);
+                    System.out.println("LNG: " + lng);
+                    String placeName = jsonChildNode.getString("name");
+                    String narrative = jsonChildNode.getString("narrative");
+                    if (!(MainActivity.completedList.contains(placeName))) {
+                        mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(placeName).snippet(narrative));
+                    } else {
+                        mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(placeName).snippet("Completed").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 
+                    }
                 }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+        }else{
+            mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(1.2953, 103.8506)).title("Lee Kong Chian School of Business").snippet("In 2000, SMU commenced its curriculum with the School of Business, welcoming its first batch of cohort in August. The SMU School of Business and university-wide scholars programme was named in perpetuity after Dr Lee Kong Chian in recognition of the Lee Foundation generous contribution of S$50 million to SMU in 2004. Dr Lee Kong Chain is a well-known Southeast Asia businessmen, philanthropist and community leader. SMU school of business is therefore known as LKCSB (Lee Kong Chian School of Business)"));
+            MainActivity.firstTime = false;
         }
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(1.2974,103.8495), 15));
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener()
@@ -213,7 +218,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/hotspot/getAllHotspots?trail_instance_id=1");
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/hotspot/getAllHotspots?trail_instance_id="+MainActivity.trailInstanceID);
             if (response == null){
                 return null;
             }

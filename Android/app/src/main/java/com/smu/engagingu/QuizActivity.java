@@ -174,7 +174,7 @@ public class QuizActivity extends AppCompatActivity {
             HashMap<String,String> userHash = new HashMap<>();
             userHash.put("team_id",UserName.userID);
             System.out.println("tid: "+UserName.userID);
-            userHash.put("trail_instance_id","1");
+            userHash.put("trail_instance_id","175239");
             userHash.put("score",message);
             System.out.println("message: "+message);
             String response = HttpConnectionUtility.post("http://54.255.245.23:3000/team/updateScore",userHash);

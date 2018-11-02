@@ -30,6 +30,8 @@ import java.util.concurrent.ExecutionException;
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 10;
     public static ArrayList<String> completedList = new ArrayList<>();
+    public static Boolean firstTime = true;
+    public static String trailInstanceID = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void sendMessage(View view) {
         String jsonString = null;
-        String trailInstanceID =null;
         try {
             jsonString= new MyHttpRequestTask().execute("http://54.255.245.23:3000/getInstance").get();
             JSONObject jsonObject = new JSONObject(jsonString);

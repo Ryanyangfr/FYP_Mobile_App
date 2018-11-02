@@ -14,7 +14,7 @@
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
-         location permissions for the 'MyLocation' functionality. 
+         location permissions for the 'MyLocation' functionality.
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -30,13 +30,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name="com.smu.engagingu.MainActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter android:autoVerify="true">
-
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -52,7 +51,7 @@
         <activity android:name="com.smu.engagingu.CameraPage" />
         <activity android:name="com.smu.engagingu.Narrative" />
         <activity android:name="com.smu.engagingu.StoryContainer" />
-        <activity android:name="com.smu.engagingu.TutorialContainer"/>
+        <activity android:name="com.smu.engagingu.TutorialContainer" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -69,7 +68,7 @@
              Note that the API key is linked to the encryption key used to sign the APK.
              You need a different API key for each encryption key, including the release key that is used to
              sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
+             You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -81,6 +80,7 @@
 
         <activity android:name="com.smu.engagingu.QuizActivity" />
         <activity android:name="com.smu.engagingu.QuizStartingPage" />
+        <activity android:name="com.smu.engagingu.TeamDisplay"></activity>
     </application>
 
 </manifest>
