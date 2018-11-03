@@ -175,6 +175,7 @@ public class QuizActivity extends AppCompatActivity {
             System.out.println("tid: "+UserName.userID);
             userHash.put("trail_instance_id",MainActivity.trailInstanceID);
             userHash.put("score",message);
+            userHash.put("hotspot",placeName);
             System.out.println("message: "+message);
             String response = HttpConnectionUtility.post("http://54.255.245.23:3000/team/updateScore",userHash);
             if (response == null){

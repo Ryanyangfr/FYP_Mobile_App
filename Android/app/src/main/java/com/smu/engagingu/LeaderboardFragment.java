@@ -20,7 +20,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -40,7 +39,7 @@ public class LeaderboardFragment extends Fragment {
             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                     getContext(),
                     android.R.layout.simple_list_item_1,
-                    teamList );
+                    leaderboardList );
             listView.setAdapter(arrayAdapter);
 
             return view;
@@ -52,27 +51,29 @@ public class LeaderboardFragment extends Fragment {
         menuInflater.inflate(R.menu.menu, menu);
     }
 
-    List<String> teamList = new ArrayList<>();
+    ArrayList<String>leaderboardList = new ArrayList<>();
     private void initList(){
         String jsonString = null;
         try {
-            jsonString = new MyHttpRequestTask().execute("http://54.255.245.23:3000/user/retrieveAllUser").get();
+            jsonString = new MyHttpRequestTask().execute("").get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
         if (jsonString==null){
-            teamList.add("No Records available at the moment");
+            leaderboardList.add(null);
         }else {
             try {
                 JSONArray jsonMainNode = new JSONArray(jsonString);
 
                 for (int i = 0; i < jsonMainNode.length(); i++) {
                     JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
-                    String name = jsonChildNode.optString("username");
-//                    System.out.println()
-                    teamList.add(name);
+                    String teamName = jsonChildNode.optString("team");
+                    int hotspotsComplete = jsonChildNode.optInt("hotspots_completed");
+                    String leaderboardEntry = "no."+(i+1)+"  team: "+teamName+" hotspots completed: "+hotspotsComplete;
+//
+                    leaderboardList.add(leaderboardEntry);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -83,7 +84,7 @@ public class LeaderboardFragment extends Fragment {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/user/retrieveAllUser");
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/team/hotspotStatus?trail_instance_id=175239");
             if (response == null){
                 return null;
             }
