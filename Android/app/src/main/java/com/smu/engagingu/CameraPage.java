@@ -74,10 +74,10 @@ public class CameraPage extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 String team_id = InstanceDAO.teamID;
-                String trail_instance_id = "1";
+                String trail_instance_id = InstanceDAO.trailInstanceID;
                 String question = targetQuestion;
                 try {
-                    String responseCode = new PictureUploader().execute(team_id,trail_instance_id,question).get();
+                    String responseCode = new PictureUploader().execute(team_id,trail_instance_id,question,placeName).get();
                     System.out.println("Response Code: " + responseCode);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -221,6 +221,7 @@ public class CameraPage extends AppCompatActivity {
             jsonMap.put("team_id", params[0]);
             jsonMap.put("trail_instance_id", params[1]);
             jsonMap.put("question", params[2]);
+            jsonMap.put("hotspot",params[3]);
             String responseCode = HttpConnectionUtility.multipartPost("http://54.255.245.23:3000/upload/uploadSubmission", jsonMap, mCurrentPhotoPath, "image", "image/png");
             return responseCode;
         }
