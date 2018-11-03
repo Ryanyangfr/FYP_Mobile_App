@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.Quiz.QuestionDatabase;
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.utility.HttpConnectionUtility;
@@ -72,7 +73,7 @@ public class CameraPage extends AppCompatActivity {
         uploadButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                String team_id = UserName.userID;
+                String team_id = InstanceDAO.teamID;
                 String trail_instance_id = "1";
                 String question = targetQuestion;
                 try {

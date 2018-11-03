@@ -13,6 +13,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.Quiz.Question;
 import com.smu.engagingu.Quiz.QuestionDatabase;
 import com.smu.engagingu.fyp.R;
@@ -171,9 +172,9 @@ public class QuizActivity extends AppCompatActivity {
         protected String doInBackground(String... params) {
             String message = Integer.toString(score);
             HashMap<String,String> userHash = new HashMap<>();
-            userHash.put("team_id",UserName.userID);
-            System.out.println("tid: "+UserName.userID);
-            userHash.put("trail_instance_id",MainActivity.trailInstanceID);
+            userHash.put("team_id",InstanceDAO.teamID);
+            System.out.println("tid: "+InstanceDAO.teamID);
+            userHash.put("trail_instance_id",InstanceDAO.trailInstanceID);
             userHash.put("score",message);
             userHash.put("hotspot",placeName);
             System.out.println("message: "+message);

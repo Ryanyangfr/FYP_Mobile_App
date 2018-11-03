@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.utility.HttpConnectionUtility;
 
@@ -20,16 +21,14 @@ import java.util.concurrent.ExecutionException;
 
 
 public class UserName extends AppCompatActivity {
-    public static String userID;
     private String message;
-    public static final String UserName_EXTRA_MESSAGE = "com.smu.engagingu.UserName_MESSAGE";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_name);
     }
     public void sendUserName(View view) throws ExecutionException, InterruptedException {
-        userID= new MyHttpRequestTask().execute("http://54.255.245.23:3000/user/register").get();
+        InstanceDAO.teamID = new MyHttpRequestTask().execute("http://54.255.245.23:3000/user/register").get();
         if(message.equals("")){
             Context context = getApplicationContext();
             CharSequence text = "Please enter a valid username!";
@@ -39,7 +38,6 @@ public class UserName extends AppCompatActivity {
             toast.show();
         }else {
             Intent intent = new Intent(this, TeamDisplay.class);
-            intent.putExtra(UserName_EXTRA_MESSAGE, userID);
             startActivity(intent);
         }
     }

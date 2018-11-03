@@ -22,6 +22,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.Quiz.Question;
 import com.smu.engagingu.Quiz.QuestionDatabase;
 import com.smu.engagingu.fyp.R;
@@ -72,7 +73,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
         Intent intent = getActivity().getIntent();
         String completedPlace = intent.getStringExtra(QuizActivity.EXTRA_MESSAGE);
         if(completedPlace!=null) {
-            MainActivity.completedList.add(completedPlace);
+            InstanceDAO.completedList.add(completedPlace);
         }
         try{
             mGoogleMap.setMyLocationEnabled(true);
@@ -80,7 +81,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
         catch (SecurityException e){
             e.printStackTrace();
         }
-        if(!MainActivity.firstTime && MainActivity.completedList.size()>0) {
+        if(!InstanceDAO.firstTime && InstanceDAO.completedList.size()>0) {
             try {
                 String response = new HomeFragment.MyHttpRequestTask().execute("").get();
                 JSONArray jsonMainNode = new JSONArray(response);
@@ -95,7 +96,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
                     System.out.println("LNG: " + lng);
                     String placeName = jsonChildNode.getString("name");
                     String narrative = jsonChildNode.getString("narrative");
-                    if (!(MainActivity.completedList.contains(placeName))) {
+                    if (!(InstanceDAO.completedList.contains(placeName))) {
                         mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(placeName).snippet(narrative));
                     } else {
                         mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(placeName).snippet("Completed").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
@@ -117,14 +118,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
                 for (int i = 0; i < jsonMainNode.length(); i++) {
                     JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
                     String teamID = jsonChildNode.getString("team");
-                    if(teamID.equals(UserName.userID)){
+                    if(teamID.equals(InstanceDAO.teamID)){
                         String startingHotspot= jsonChildNode.getString("startingHotspot");
                         JSONArray latlng = jsonChildNode.getJSONArray("coordinates");
                         String latString = latlng.getString(0);
                         String lngString = latlng.getString(1);
                         String narrativeString = jsonChildNode.getString("narrative");
                         mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(latString), Double.parseDouble(lngString))).title(startingHotspot).snippet(narrativeString));
-                        MainActivity.firstTime = false;
+                        InstanceDAO.firstTime = false;
                         break;
                     }
                 }
@@ -241,7 +242,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/hotspot/getAllHotspots?trail_instance_id="+MainActivity.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/hotspot/getAllHotspots?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
@@ -251,7 +252,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
     private class MyHttpRequestTask2 extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/team/startingHotspot?trail_instance_id="+MainActivity.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/team/startingHotspot?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }

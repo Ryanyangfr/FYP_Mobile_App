@@ -2,7 +2,7 @@ package com.smu.engagingu.Quiz;
 
 import android.os.AsyncTask;
 
-import com.smu.engagingu.MainActivity;
+import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.utility.HttpConnectionUtility;
 
 import org.json.JSONArray;
@@ -87,7 +87,7 @@ public class QuestionDatabase {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/quiz/getQuizzes?trail_instance_id="+MainActivity.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/quiz/getQuizzes?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
@@ -98,7 +98,7 @@ private class MyHttpRequestTask2 extends AsyncTask<String,Integer,String> {
     @Override
     protected String doInBackground(String... params) {
         Map<String, String> req = new HashMap<>();
-        String response = HttpConnectionUtility.get("http://54.255.245.23:3000/upload/getSubmissionQuestion?trail_instance_id="+MainActivity.trailInstanceID);
+        String response = HttpConnectionUtility.get("http://54.255.245.23:3000/upload/getSubmissionQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
         if (response == null){
             return null;
         }

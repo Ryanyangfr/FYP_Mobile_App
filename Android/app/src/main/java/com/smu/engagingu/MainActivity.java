@@ -15,13 +15,13 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.utility.HttpConnectionUtility;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -29,9 +29,6 @@ import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 10;
-    public static ArrayList<String> completedList = new ArrayList<>();
-    public static Boolean firstTime = true;
-    public static String trailInstanceID = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             jsonString= new MyHttpRequestTask().execute("http://54.255.245.23:3000/getInstance").get();
             JSONObject jsonObject = new JSONObject(jsonString);
-            trailInstanceID = jsonObject.getString("trail_instance_id");
+            InstanceDAO.trailInstanceID = jsonObject.getString("trail_instance_id");
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -59,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         //String my_url = "http://10.124.5.151:3000/upload/uploadSubmission";
         //new MyHttpRequestTask().execute(my_url,"");
 
-        if(message.equals(trailInstanceID)) {
+        if(message.equals(InstanceDAO.trailInstanceID)) {
             Intent intent = new Intent(this, UserName.class);
             startActivity(intent);
         }else{
