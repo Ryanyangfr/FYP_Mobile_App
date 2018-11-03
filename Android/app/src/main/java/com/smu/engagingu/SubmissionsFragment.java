@@ -34,17 +34,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
@@ -76,9 +75,7 @@ public class SubmissionsFragment extends Fragment {
         SubmissionRetriever submissionRetriever = new SubmissionRetriever();
         try {
             submissionRetriever.execute(submissionEndPoint).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
 
@@ -86,25 +83,23 @@ public class SubmissionsFragment extends Fragment {
         System.out.println("Questions: " + QUESTIONS);
         System.out.println("ImageURLS: " + IMAGEURLS);
 
-        //Retrieve Images and save to phone
-        for (int i = 0; i < IMAGEURLS.size(); i++) {
+        if(needsToBeUpdated) {
+            //Retrieve Images and save to phone
+            for (int i = 0; i < IMAGEURLS.size(); i++) {
 
-            try {
-                //Create Image File
-                String imagePath = createImageFile();
-                System.out.println(i + " imagePath: " + imagePath);
-                IMAGEPATHS.add(imagePath);
+                try {
+                    //Create Image File
+                    String imagePath = createImageFile();
+                    System.out.println(i + " imagePath: " + imagePath);
+                    IMAGEPATHS.add(imagePath);
 
-                //Download image into Image file
-                new ImageRetriever().execute(IMAGEURLS.get(i), imagePath).get();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+                    //Download image into Image file
+                    new ImageRetriever().execute(IMAGEURLS.get(i), imagePath).get();
+                } catch (IOException | InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+
             }
-
         }
 
         ListView listView = view.findViewById(R.id.listView);
@@ -122,20 +117,34 @@ public class SubmissionsFragment extends Fragment {
             String submissionResponse = HttpConnectionUtility.get(params[0]);
             try {
                 JSONArray submissionJsonArr= new JSONArray(submissionResponse);
-                for(int i=0; i<submissionJsonArr.length(); i++){
-                    JSONObject jsonObj = submissionJsonArr.getJSONObject(i);
+                int jsonArrLength = submissionJsonArr.length();
+                JSONObject jsonSizeObj = submissionJsonArr.getJSONObject(jsonArrLength-1);
+                String size = jsonSizeObj.getString("size");
 
-                    String imageURL = jsonObj.getString("SubmissionURL");
-                    String hotspot = jsonObj.getString("hotspot");
-                    String question = jsonObj.getString("question");
+                System.out.println("Size: " + size);
 
-                    System.out.println(i + ". imageURL: " + imageURL);
-                    System.out.println(i + ". hotspot: " + hotspot);
-                    System.out.println(i + ". question: " + question);
+                if(Integer.parseInt(size) > IMAGEURLS.size()) {
 
-                    IMAGEURLS.add(imageURL);
-                    HOTSPOTS.add(hotspot);
-                    QUESTIONS.add(question);
+                    needsToBeUpdated = true;
+                    for (int i = 0; i < submissionJsonArr.length() - 1; i++) {
+                        JSONObject jsonObj = submissionJsonArr.getJSONObject(i);
+
+                        String imageURL = jsonObj.getString("SubmissionURL");
+                        String hotspot = jsonObj.getString("hotspot");
+                        String question = jsonObj.getString("question");
+
+                        System.out.println(i + ". imageURL: " + imageURL);
+                        System.out.println(i + ". hotspot: " + hotspot);
+                        System.out.println(i + ". question: " + question);
+
+                        IMAGEURLS.add(imageURL);
+                        HOTSPOTS.add(hotspot);
+                        QUESTIONS.add(question);
+
+                    }
+                }else{
+
+                    needsToBeUpdated = false;
 
                 }
 
@@ -169,8 +178,6 @@ public class SubmissionsFragment extends Fragment {
 
                 out.close();
                 is.close();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -220,17 +227,19 @@ public class SubmissionsFragment extends Fragment {
             view = getLayoutInflater().inflate(R.layout.custom_submission_layout, null);
 
             ImageView imageView = (ImageView)view.findViewById(R.id.imageView);
-            String imagePath = IMAGEPATHS.get(i);
+            final String imagePath = IMAGEPATHS.get(i);
 
             loadImageFromFile(imageView, imagePath);
 //            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
 //            Bitmap rotatedBitmap = checkImageIfNeedRotation(bitmap, imagePath);
 //
 //            imageView.setImageBitmap(rotatedBitmap);
+            final View finalView = view;
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v){
                     System.out.println("image clicked...");//check logcat
+                    onButtonShowPopupWindow(finalView, imagePath);
                 }
             });
             TextView textView_hotspot = (TextView)view.findViewById(R.id.textView_hotspot);
@@ -275,39 +284,49 @@ public class SubmissionsFragment extends Fragment {
             return rotatedImg;
         }
 
-        private void onButtonShowPopupWindow(View view) {
+        private void onButtonShowPopupWindow(View view, final String imagePath) {
 
 
-            // inflate the layout of the popup window
-            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(LAYOUT_INFLATER_SERVICE);
-            View popupView = inflater.inflate(R.layout.submission_popup_window, null);
+            // inflate the layout of the popup window, must require non null
+            LayoutInflater inflater = (LayoutInflater) Objects.requireNonNull(getActivity()).getSystemService(LAYOUT_INFLATER_SERVICE);
 
-            ImageView imageView = popupView.findViewById(R.id.imageView);
+            if(inflater != null) {
+                View popupView = inflater.inflate(R.layout.submission_popup_window, null);
 
-            Button downloadButton = popupView.findViewById(R.id.btnDownload);
+                ImageView imageView = popupView.findViewById(R.id.imageView);
+                loadImageFromFile(imageView, imagePath);
 
-            int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-            int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-            boolean focusable = true;
-            final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+                Button downloadButton = popupView.findViewById(R.id.btnDownload);
+                downloadButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        galleryAddPic(imagePath);
+                    }
+                });
 
-            // show the popup window
-            // which view you pass in doesn't matter, it is only used for the window token
-            popupWindow.showAtLocation(view, Gravity.CENTER,0,0);
+                int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+                int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+                boolean focusable = true;
+                final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
 
-            //dismiss the popup window when touched
-            popupView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
-                    popupWindow.dismiss();
-                    return false;
-                }
-            });
+                // show the popup window
+                // which view you pass in doesn't matter, it is only used for the window token
+                popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+                //dismiss the popup window when touched
+                popupView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                        popupWindow.dismiss();
+                        return false;
+                    }
+                });
+            }
 
         }
 
 
-        public void loadImageFromFile(ImageView imageView, String imagePath){
+        private void loadImageFromFile(ImageView imageView, String imagePath){
 
             imageView.setVisibility(View.VISIBLE);
 
@@ -339,7 +358,9 @@ public class SubmissionsFragment extends Fragment {
             Uri contentUri = Uri.fromFile(f);
             System.out.println("Uri in galleryAddPic: " + contentUri);
             mediaScanIntent.setData(contentUri);
-            getActivity().sendBroadcast(mediaScanIntent);
+
+            //send broadcast out must require non null
+            Objects.requireNonNull(getActivity()).sendBroadcast(mediaScanIntent);
         }
     }
 }
