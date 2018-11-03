@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-import com.smu.engagingu.StoryLine.StoryBoard3;
 import com.smu.engagingu.fyp.R;
 
 public class TutorialPage2 extends AppCompatActivity {

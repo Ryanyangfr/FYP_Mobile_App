@@ -1,12 +1,14 @@
 package com.smu.engagingu;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.internal.BottomNavigationItemView;
 import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -15,14 +17,14 @@ import com.smu.engagingu.fyp.R;
 import java.lang.reflect.Field;
 
 public class HomePage extends AppCompatActivity {
-
+    private BottomNavigationView bottomNav;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,new HomeFragment()).commit();
 
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav = findViewById(R.id.bottom_navigation);
         disableShiftMode((bottomNav));
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
@@ -56,6 +58,7 @@ public class HomePage extends AppCompatActivity {
     }
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @TargetApi(Build.VERSION_CODES.O)
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     android.support.v4.app.Fragment selectedFragment = null;

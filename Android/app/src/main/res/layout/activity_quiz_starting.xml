@@ -27,6 +27,8 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="145dp"
-        android:text="Start Quiz" />
+        android:background="@color/colorPrimary"
+        android:text="Start Quiz"
+        android:textColor="@color/common_google_signin_btn_text_dark_default" />
 
 </RelativeLayout>

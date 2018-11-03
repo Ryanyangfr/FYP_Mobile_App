@@ -6,10 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
+import com.smu.engagingu.Tutorial.TutorialPage1;
 import com.smu.engagingu.fyp.R;
 
-public class StoryBoard3 extends AppCompatActivity {
-
+public class StoryBoard4 extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,7 +23,7 @@ public class StoryBoard3 extends AppCompatActivity {
         });
     }
     private void goNext(){
-        Intent intent = new Intent(StoryBoard3.this,StoryBoard4.class);
+        Intent intent = new Intent(StoryBoard4.this,TutorialPage1.class);
         startActivity(intent);
     }
 }

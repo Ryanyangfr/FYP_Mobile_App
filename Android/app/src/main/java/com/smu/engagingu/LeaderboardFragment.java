@@ -38,7 +38,7 @@ public class LeaderboardFragment extends Fragment {
             ListView listView = (ListView)view.findViewById(R.id.listView1);
             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                     getContext(),
-                    android.R.layout.simple_list_item_1,
+                    R.layout.mytextview,
                     leaderboardList );
             listView.setAdapter(arrayAdapter);
 
@@ -71,7 +71,7 @@ public class LeaderboardFragment extends Fragment {
                     JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
                     String teamName = jsonChildNode.optString("team");
                     int hotspotsComplete = jsonChildNode.optInt("hotspots_completed");
-                    String leaderboardEntry = "no."+(i+1)+"  team: "+teamName+" hotspots completed: "+hotspotsComplete;
+                    String leaderboardEntry = "    No."+(i+1)+"      team: "+teamName+"      hotspots completed: "+hotspotsComplete;
 //
                     leaderboardList.add(leaderboardEntry);
                 }

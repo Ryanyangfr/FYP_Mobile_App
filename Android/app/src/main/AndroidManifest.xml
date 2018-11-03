@@ -81,14 +81,15 @@
         <activity android:name="com.smu.engagingu.TeamDisplay" />
         <activity android:name="com.smu.engagingu.StoryLine.StoryBoard1" />
         <activity android:name="com.smu.engagingu.StoryLine.StoryBoard2" />
-        <activity android:name="com.smu.engagingu.StoryLine.StoryBoard3" />
+        <activity android:name="com.smu.engagingu.StoryLine.StoryBoard4" />
         <activity android:name="com.smu.engagingu.Tutorial.TutorialPage1" />
         <activity android:name="com.smu.engagingu.Tutorial.TutorialPage2" />
         <activity android:name="com.smu.engagingu.Tutorial.TutorialPage3" />
         <activity android:name="com.smu.engagingu.Tutorial.TutorialPage4" />
         <activity android:name="com.smu.engagingu.Tutorial.TutorialPage5" />
         <activity android:name="com.smu.engagingu.Tutorial.TutorialPage6" />
-        <activity android:name="com.smu.engagingu.Tutorial.TutorialPage7"></activity>
+        <activity android:name="com.smu.engagingu.Tutorial.TutorialPage7" />
+        <activity android:name="com.smu.engagingu.StoryLine.StoryBoard3"></activity>
     </application>
 
 </manifest>

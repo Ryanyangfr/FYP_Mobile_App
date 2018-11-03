@@ -6,12 +6,18 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:fontFamily">@font/vt323</item>
+        <item name="android:fontFamily">@font/robotocondensedlight</item>
+        <item name="android:colorBackground">@color/common_google_signin_btn_text_dark_default
+        </item>
     </style>
 
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="TrialTheme" parent="AppTheme" >
+        <item name="colorPrimaryDark">@color/colorAccent</item>
+    </style>
 
 </resources>

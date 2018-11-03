@@ -22,7 +22,7 @@ public class StoryBoard2 extends AppCompatActivity {
         });
     }
     private void goNext(){
-        Intent intent = new Intent(StoryBoard2.this,StoryBoard3.class);
+        Intent intent = new Intent(StoryBoard2.this,StoryBoard4.class);
         startActivity(intent);
     }
 }

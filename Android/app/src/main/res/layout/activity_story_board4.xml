@@ -12,18 +12,18 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="170dp"
         android:layout_marginTop="53dp"
-        android:layout_marginEnd="167dp"
+        android:layout_marginEnd="170dp"
         android:layout_marginBottom="169dp"
-        android:text="@string/Story_2A"
+        android:text="@string/Story_3"
         android:textAlignment="center"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/storyButton3"
+        app:layout_constraintBottom_toTopOf="@+id/storyButton4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/storyButton3"
+        android:id="@+id/storyButton4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="44dp"
