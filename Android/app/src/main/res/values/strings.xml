@@ -15,4 +15,15 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_story_line">StoryLineActivity</string>
     <string name="action_settings">Settings</string>
+    <string name="Story_1">Welcome to SMU island! You’re about to embark on a treasure hunting adventure to uncover SMU hidden secrets and become the ambassador of the island, so get ready! There are 7 treasure boxes hidden in 7 hotspots on the island, and in the treasure boxes, lies the different special stories of the hotspot.</string>
+    <string name="Story_2">Only with the knowledge of the stories will you be able to participate in missions to prove your worth as the island’s ambassador! To uncover the keys to unlock the treasure boxes, as a team, you will have to play a game together. After reading the special story of the hotspot, you and your team will have to participate in missions to earn badges. The team who completed the trail with the most badges and fastest time will be awarded as the ambassadors of the island!</string>
+    <string name="next_button">NEXT</string>
+    <string name="Story_3">Do keep in mind that you will only be given an hour to complete the quest. Have fun and good luck!</string>
+    <string name="Tutorial_1">1.  Look for hotspots around the map and move collectively as a team to the hotspots</string>
+    <string name="Tutorial_2">2.  Upon arrival at each hotspot, click on the marker to unravel a game to unlock their stories</string>
+    <string name="Tutorial_3">3.  Using the knowledge gained from the stories, you will be given a task, which can be in the form of quizzes, games or wefies</string>
+    <string name="Tutorial_4">4.  Discuss as a group to complete the tasks! Only your leader will be able to submit the answer.</string>
+    <string name="Tutorial_5">5.  Earn points for your team with every task completed</string>
+    <string name="Tutorial_6">6.  Proceed to the other hotspots and complete as many tasks as possible :)</string>
+    <string name="Tutorial_7">7.  Remember to return to the start once the time limit is up.</string>
 </resources>
