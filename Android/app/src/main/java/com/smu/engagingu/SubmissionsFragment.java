@@ -1,23 +1,31 @@
 package com.smu.engagingu;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.utility.HttpConnectionUtility;
 
@@ -39,6 +47,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
+import static android.content.Context.LAYOUT_INFLATER_SERVICE;
+
 
 public class SubmissionsFragment extends Fragment {
 
@@ -50,8 +60,9 @@ public class SubmissionsFragment extends Fragment {
     private ArrayList<String> QUESTIONS = new ArrayList<>();
     private ArrayList<String> IMAGEURLS = new ArrayList<>();
     private ArrayList<String> IMAGEPATHS = new ArrayList<>();
-    private String teamId = "1";
-    private String trailInstanceId = "1";
+    private Boolean needsToBeUpdated = true;
+    private String teamId = InstanceDAO.teamID;
+    private String trailInstanceId = InstanceDAO.trailInstanceID;
     private String submissionEndPoint = "http://54.255.245.23:3000/upload/getAllSubmissionURL?team=" + teamId + "&trail_instance_id=" + trailInstanceId;
 
     @Nullable
@@ -70,7 +81,6 @@ public class SubmissionsFragment extends Fragment {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
 
         System.out.println("Hotspots: " + HOTSPOTS);
         System.out.println("Questions: " + QUESTIONS);
@@ -212,10 +222,11 @@ public class SubmissionsFragment extends Fragment {
             ImageView imageView = (ImageView)view.findViewById(R.id.imageView);
             String imagePath = IMAGEPATHS.get(i);
 
-            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-            Bitmap rotatedBitmap = checkImageIfNeedRotation(bitmap, imagePath);
-
-            imageView.setImageBitmap(rotatedBitmap);
+            loadImageFromFile(imageView, imagePath);
+//            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+//            Bitmap rotatedBitmap = checkImageIfNeedRotation(bitmap, imagePath);
+//
+//            imageView.setImageBitmap(rotatedBitmap);
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v){
@@ -264,29 +275,71 @@ public class SubmissionsFragment extends Fragment {
             return rotatedImg;
         }
 
-//        public void loadImageFromFile(ImageView imageView, String imagePath){
-//
-//            imageView.setVisibility(View.VISIBLE);
-//
-//            int targetW = imageView.getWidth();
-//            int targetH = imageView.getHeight();
-//
-//            // Get the dimensions of the bitmap
-//            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-//            bmOptions.inJustDecodeBounds = true;
-//            BitmapFactory.decodeFile(imagePath, bmOptions);
-//            int photoW = bmOptions.outWidth;
-//            int photoH = bmOptions.outHeight;
-//
-//            // Determine how much to scale down the image
-//            int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-//
-//            //Decode the image file into a Bitmap sized to fill the View
-//            bmOptions.inJustDecodeBounds = false;
-//            bmOptions.inSampleSize = scaleFactor;
-//
-//            Bitmap bitmap = BitmapFactory.decodeFile(imagePath, bmOptions);
-//            imageView.setImageBitmap(bitmap);
-//        }
+        private void onButtonShowPopupWindow(View view) {
+
+
+            // inflate the layout of the popup window
+            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(LAYOUT_INFLATER_SERVICE);
+            View popupView = inflater.inflate(R.layout.submission_popup_window, null);
+
+            ImageView imageView = popupView.findViewById(R.id.imageView);
+
+            Button downloadButton = popupView.findViewById(R.id.btnDownload);
+
+            int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+            int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+            boolean focusable = true;
+            final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+            // show the popup window
+            // which view you pass in doesn't matter, it is only used for the window token
+            popupWindow.showAtLocation(view, Gravity.CENTER,0,0);
+
+            //dismiss the popup window when touched
+            popupView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    popupWindow.dismiss();
+                    return false;
+                }
+            });
+
+        }
+
+
+        public void loadImageFromFile(ImageView imageView, String imagePath){
+
+            imageView.setVisibility(View.VISIBLE);
+
+            int targetW = imageView.getWidth();
+            int targetH = imageView.getHeight();
+
+            // Get the dimensions of the bitmap
+            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+            bmOptions.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(imagePath, bmOptions);
+            int photoW = bmOptions.outWidth;
+            int photoH = bmOptions.outHeight;
+
+            // Determine how much to scale down the image
+            int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+
+            //Decode the image file into a Bitmap sized to fill the View
+            bmOptions.inJustDecodeBounds = false;
+            bmOptions.inSampleSize = scaleFactor;
+
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath, bmOptions);
+            Bitmap rotatedBitmap = checkImageIfNeedRotation(bitmap, imagePath);
+            imageView.setImageBitmap(rotatedBitmap);
+        }
+
+        private void galleryAddPic(String photoPath) {
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            File f = new File(photoPath);
+            Uri contentUri = Uri.fromFile(f);
+            System.out.println("Uri in galleryAddPic: " + contentUri);
+            mediaScanIntent.setData(contentUri);
+            getActivity().sendBroadcast(mediaScanIntent);
+        }
     }
 }
