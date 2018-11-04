@@ -8,13 +8,13 @@
 
     <Button
         android:id="@+id/go_quiz"
-        android:layout_width="wrap_content"
+        android:layout_width="123dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="38dp"
         android:background="@color/colorPrimary"
-        android:text="Go"
+        android:text="Start Quiz"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textSize="18sp" />
 
