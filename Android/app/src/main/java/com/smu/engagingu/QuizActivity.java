@@ -91,10 +91,7 @@ public class QuizActivity extends AppCompatActivity {
         });
     }
     private void showNextQuestion(){
-        rb1.setChecked(false);
-        rb2.setChecked(false);
-        rb3.setChecked(false);
-        rb4.setChecked(false);
+        rbGroup.clearCheck();
         rb1.setTextColor(Color.BLACK);
         rb2.setTextColor(Color.BLACK);
         rb3.setTextColor(Color.BLACK);
