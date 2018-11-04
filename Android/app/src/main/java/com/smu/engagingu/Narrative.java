@@ -40,7 +40,7 @@ public class Narrative extends AppCompatActivity {
     private void goToQuiz(){
         Intent intent = null;
         if(selfieCheck.equals("1")) {
-            intent = new Intent(Narrative.this, QuizStartingPage.class);
+            intent = new Intent(Narrative.this, QuizActivity.class);
         }else{
             intent = new Intent(Narrative.this, CameraPage.class);
         }

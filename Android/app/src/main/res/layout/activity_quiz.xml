@@ -52,7 +52,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="87dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginBottom="19dp"
         android:background="@color/colorPrimary"
         android:text="Confirm"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
@@ -67,4 +68,15 @@
         android:layout_marginStart="148dp"
         android:layout_marginTop="33dp"
         android:text="Score: 0" />
+
+    <TextView
+        android:id="@+id/correctAnswerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/text_view_score"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="-148dp"
+        android:layout_marginBottom="110dp"
+        android:textAlignment="center"
+        android:textColor="@android:color/holo_green_dark" />
 </RelativeLayout>
