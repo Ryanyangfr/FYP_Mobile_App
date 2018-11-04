@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,7 +60,8 @@ public class SubmissionsFragment extends Fragment {
     private ArrayList<String> QUESTIONS = new ArrayList<>();
     private ArrayList<String> IMAGEURLS = new ArrayList<>();
     private ArrayList<String> IMAGEPATHS = new ArrayList<>();
-    private Boolean needsToBeUpdated = true;
+    private int oldImageSize = 0;
+    private boolean needsToBeUpdated = false;
     private String teamId = InstanceDAO.teamID;
     private String trailInstanceId = InstanceDAO.trailInstanceID;
     private String submissionEndPoint = "http://54.255.245.23:3000/upload/getAllSubmissionURL?team=" + teamId + "&trail_instance_id=" + trailInstanceId;
@@ -83,9 +85,12 @@ public class SubmissionsFragment extends Fragment {
         System.out.println("Questions: " + QUESTIONS);
         System.out.println("ImageURLS: " + IMAGEURLS);
 
+
+        //Check if it needs to be updated
         if(needsToBeUpdated) {
+
             //Retrieve Images and save to phone
-            for (int i = 0; i < IMAGEURLS.size(); i++) {
+            for (int i = oldImageSize; i < IMAGEURLS.size(); i++) {
 
                 try {
                     //Create Image File
@@ -100,6 +105,8 @@ public class SubmissionsFragment extends Fragment {
                 }
 
             }
+
+            needsToBeUpdated = false;
         }
 
         ListView listView = view.findViewById(R.id.listView);
@@ -120,32 +127,30 @@ public class SubmissionsFragment extends Fragment {
                 JSONArray submissionJsonArr= new JSONArray(submissionResponse);
                 int jsonArrLength = submissionJsonArr.length();
                 JSONObject jsonSizeObj = submissionJsonArr.getJSONObject(jsonArrLength-1);
-                String size = jsonSizeObj.getString("size");
 
+                int size = Integer.parseInt(jsonSizeObj.getString("size"));
                 System.out.println("Size: " + size);
 
-                if(Integer.parseInt(size) > IMAGEURLS.size()) {
-
+                //Keep old size of image url
+                if(size > IMAGEURLS.size()){
                     needsToBeUpdated = true;
-                    for (int i = 0; i < submissionJsonArr.length() - 1; i++) {
-                        JSONObject jsonObj = submissionJsonArr.getJSONObject(i);
+                    oldImageSize = IMAGEURLS.size();
+                }
 
-                        String imageURL = jsonObj.getString("SubmissionURL");
-                        String hotspot = jsonObj.getString("hotspot");
-                        String question = jsonObj.getString("question");
+                for (int i = 0; i < submissionJsonArr.length() - 1; i++) {
+                    JSONObject jsonObj = submissionJsonArr.getJSONObject(i);
 
-                        System.out.println(i + ". imageURL: " + imageURL);
-                        System.out.println(i + ". hotspot: " + hotspot);
-                        System.out.println(i + ". question: " + question);
+                    String imageURL = jsonObj.getString("SubmissionURL");
+                    String hotspot = jsonObj.getString("hotspot");
+                    String question = jsonObj.getString("question");
 
-                        IMAGEURLS.add(imageURL);
-                        HOTSPOTS.add(hotspot);
-                        QUESTIONS.add(question);
+                    System.out.println(i + ". imageURL: " + imageURL);
+                    System.out.println(i + ". hotspot: " + hotspot);
+                    System.out.println(i + ". question: " + question);
 
-                    }
-                }else{
-
-                    needsToBeUpdated = false;
+                    IMAGEURLS.add(imageURL);
+                    HOTSPOTS.add(hotspot);
+                    QUESTIONS.add(question);
 
                 }
 
@@ -155,6 +160,7 @@ public class SubmissionsFragment extends Fragment {
 
             return submissionResponse;
         }
+
 
     }
 
