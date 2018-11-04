@@ -25,6 +25,8 @@ import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.utility.HttpConnectionUtility;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -41,6 +43,7 @@ public class CameraPage extends AppCompatActivity {
     ImageView mImageView;
     Uri photoURI;
     String mCurrentPhotoPath;
+    File photoFile;
     private String targetQuestion;
     private String placeName;
 
@@ -97,7 +100,6 @@ public class CameraPage extends AppCompatActivity {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null){
 
-            File photoFile = null;
             try{
                 photoFile = createImageFile();
             } catch (IOException e){
@@ -120,6 +122,26 @@ public class CameraPage extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
+            Bitmap bmp = BitmapFactory.decodeFile(mCurrentPhotoPath);
+            Matrix matrix = new Matrix();
+            matrix.postRotate(270);
+            bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
+
+            FileOutputStream fOut;
+            try {
+                fOut = new FileOutputStream(photoFile);
+                bmp.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+                fOut.flush();
+                fOut.close();
+
+            } catch (FileNotFoundException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
             galleryAddPic();
             loadImageFromFile();
         }
@@ -142,39 +164,38 @@ public class CameraPage extends AppCompatActivity {
         return image;
     }
 
-    private Bitmap checkImageIfNeedRotation(Bitmap img){
+//    private Bitmap checkImageIfNeedRotation(Bitmap img){
+//
+//        try{
+//            ExifInterface ei = new ExifInterface(mCurrentPhotoPath);
+//            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+//
+//            switch(orientation) {
+//                case ExifInterface.ORIENTATION_ROTATE_90:
+//                    return rotateImage(img, 90);
+//                case ExifInterface.ORIENTATION_ROTATE_180:
+//                    return rotateImage(img, 180);
+//                case ExifInterface.ORIENTATION_ROTATE_270:
+//                    return rotateImage(img, 270);
+//                default:
+//                    return img;
+//            }
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return img;
+//    }
 
-        try{
-            ExifInterface ei = new ExifInterface(mCurrentPhotoPath);
-            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-
-            switch(orientation) {
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    return rotateImage(img, 90);
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    return rotateImage(img, 180);
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    return rotateImage(img, 270);
-                default:
-                    return img;
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return img;
-    }
-
-    private Bitmap rotateImage(Bitmap img, int degree) {
-
-        Matrix matrix = new Matrix();
-        matrix.postRotate(degree);
-        Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
-        img.recycle();
-        return rotatedImg;
-    }
-
+//    private Bitmap rotateImage(Bitmap img, int degree) {
+//
+//        Matrix matrix = new Matrix();
+//        matrix.postRotate(degree);
+//        Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
+//        img.recycle();
+//        return rotatedImg;
+//    }
 
     public void loadImageFromFile(){
 
@@ -199,8 +220,8 @@ public class CameraPage extends AppCompatActivity {
         bmOptions.inSampleSize = scaleFactor;
 
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        Bitmap rotatedBitmap = checkImageIfNeedRotation(bitmap);
-        mImageView.setImageBitmap(rotatedBitmap);
+//        Bitmap rotatedBitmap = checkImageIfNeedRotation(bitmap);
+        mImageView.setImageBitmap(bitmap);
     }
 
     private void galleryAddPic() {

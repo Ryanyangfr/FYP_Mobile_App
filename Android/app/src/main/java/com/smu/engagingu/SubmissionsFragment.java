@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.fyp.R;
@@ -38,7 +39,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -115,6 +115,7 @@ public class SubmissionsFragment extends Fragment {
         protected String doInBackground(String... params) {
 
             String submissionResponse = HttpConnectionUtility.get(params[0]);
+            System.out.println(submissionResponse);
             try {
                 JSONArray submissionJsonArr= new JSONArray(submissionResponse);
                 int jsonArrLength = submissionJsonArr.length();
@@ -206,6 +207,8 @@ public class SubmissionsFragment extends Fragment {
     private class CustomAdaptor extends BaseAdapter{
 
         private ImageView imageView;
+        private String imagePath;
+        private ImageView popupImageView;
 
         @Override
         public int getCount() {
@@ -223,27 +226,27 @@ public class SubmissionsFragment extends Fragment {
         }
 
         @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
+        public View getView(final int i, View view, ViewGroup viewGroup) {
             view = getLayoutInflater().inflate(R.layout.custom_submission_layout, null);
 
-            ImageView imageView = (ImageView)view.findViewById(R.id.imageView);
-            final String imagePath = IMAGEPATHS.get(i);
+            imageView = view.findViewById(R.id.imageView);
+            imagePath = IMAGEPATHS.get(i);
 
             loadImageFromFile(imageView, imagePath);
 //            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
 //            Bitmap rotatedBitmap = checkImageIfNeedRotation(bitmap, imagePath);
 //
 //            imageView.setImageBitmap(rotatedBitmap);
-            final View finalView = view;
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v){
                     System.out.println("image clicked...");//check logcat
-                    onButtonShowPopupWindow(finalView, imagePath);
+
+                    onButtonShowPopupWindow(v, i);
                 }
             });
-            TextView textView_hotspot = (TextView)view.findViewById(R.id.textView_hotspot);
-            TextView textView_mission = (TextView)view.findViewById(R.id.textView_question);
+            TextView textView_hotspot = view.findViewById(R.id.textView_hotspot);
+            TextView textView_mission = view.findViewById(R.id.textView_question);
 
             textView_hotspot.setText(HOTSPOTS.get(i));
             textView_mission.setText(QUESTIONS.get(i));
@@ -251,63 +254,38 @@ public class SubmissionsFragment extends Fragment {
             return view;
         }
 
-        private Bitmap checkImageIfNeedRotation(Bitmap img, String imagePath){
 
-            try{
-                ExifInterface ei = new ExifInterface(imagePath);
-                int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-
-                switch(orientation) {
-                    case ExifInterface.ORIENTATION_ROTATE_90:
-                        return rotateImage(img, 90);
-                    case ExifInterface.ORIENTATION_ROTATE_180:
-                        return rotateImage(img, 180);
-                    case ExifInterface.ORIENTATION_ROTATE_270:
-                        return rotateImage(img, 270);
-                    default:
-                        return img;
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return img;
-        }
-
-        private Bitmap rotateImage(Bitmap img, int degree) {
-
-            Matrix matrix = new Matrix();
-            matrix.postRotate(degree);
-            Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
-            img.recycle();
-            return rotatedImg;
-        }
-
-        private void onButtonShowPopupWindow(View view, final String imagePath) {
+        private void onButtonShowPopupWindow(View view, int index) {
 
 
             // inflate the layout of the popup window, must require non null
-            LayoutInflater inflater = (LayoutInflater) Objects.requireNonNull(getActivity()).getSystemService(LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(LAYOUT_INFLATER_SERVICE);
 
             if(inflater != null) {
                 View popupView = inflater.inflate(R.layout.submission_popup_window, null);
-
-                ImageView imageView = popupView.findViewById(R.id.imageView);
-                loadImageFromFile(imageView, imagePath);
-
-                Button downloadButton = popupView.findViewById(R.id.btnDownload);
-                downloadButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        galleryAddPic(imagePath);
-                    }
-                });
+                popupImageView = popupView.findViewById(R.id.popupImageView);
+                System.out.println("Popup Image View: " + popupImageView);
 
                 int width = LinearLayout.LayoutParams.WRAP_CONTENT;
                 int height = LinearLayout.LayoutParams.WRAP_CONTENT;
                 boolean focusable = true;
                 final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+                final String popupImagePath = IMAGEPATHS.get(index);
+                System.out.println("PopupImagePath: " + popupImagePath);
+
+                loadImageFromFile(popupImageView, popupImagePath);
+
+                Button downloadButton = popupView.findViewById(R.id.btnDownload);
+                downloadButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        galleryAddPic(popupImagePath);
+                        Toast toast = Toast.makeText(getActivity(),"Photo Successfully Downloaded!", Toast.LENGTH_SHORT);
+                        toast.show();
+                        popupWindow.dismiss();
+                    }
+                });
 
                 // show the popup window
                 // which view you pass in doesn't matter, it is only used for the window token
@@ -325,13 +303,13 @@ public class SubmissionsFragment extends Fragment {
 
         }
 
-
         private void loadImageFromFile(ImageView imageView, String imagePath){
 
             imageView.setVisibility(View.VISIBLE);
+            System.out.println("ImageView in loadImageFromFile: " + imageView);
 
-            int targetW = imageView.getWidth();
-            int targetH = imageView.getHeight();
+            int targetW = imageView.getDrawable().getIntrinsicWidth();
+            int targetH = imageView.getDrawable().getIntrinsicHeight();
 
             // Get the dimensions of the bitmap
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
@@ -348,8 +326,7 @@ public class SubmissionsFragment extends Fragment {
             bmOptions.inSampleSize = scaleFactor;
 
             Bitmap bitmap = BitmapFactory.decodeFile(imagePath, bmOptions);
-            Bitmap rotatedBitmap = checkImageIfNeedRotation(bitmap, imagePath);
-            imageView.setImageBitmap(rotatedBitmap);
+            imageView.setImageBitmap(bitmap);
         }
 
         private void galleryAddPic(String photoPath) {
@@ -360,7 +337,7 @@ public class SubmissionsFragment extends Fragment {
             mediaScanIntent.setData(contentUri);
 
             //send broadcast out must require non null
-            Objects.requireNonNull(getActivity()).sendBroadcast(mediaScanIntent);
+            getActivity().sendBroadcast(mediaScanIntent);
         }
     }
 }
