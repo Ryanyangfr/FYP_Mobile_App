@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.smu.engagingu.DAO.InstanceDAO;
+import com.smu.engagingu.DAO.SubmissionDAO;
 import com.smu.engagingu.Quiz.QuestionDatabase;
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.utility.HttpConnectionUtility;
@@ -81,6 +82,11 @@ public class CameraPage extends AppCompatActivity {
                 String question = targetQuestion;
                 try {
                     String responseCode = new PictureUploader().execute(team_id,trail_instance_id,question,placeName).get();
+
+                    SubmissionDAO.HOTSPOTS.add(placeName);
+                    SubmissionDAO.QUESTIONS.add(question);
+                    SubmissionDAO.IMAGEPATHS.add(mCurrentPhotoPath);
+
                     System.out.println("Response Code: " + responseCode);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -91,6 +97,7 @@ public class CameraPage extends AppCompatActivity {
                 toast.show();
                 Intent intent = new Intent(CameraPage.this,HomePage.class);
                 intent.putExtra(EXTRA_MESSAGE, placeName);
+
                 startActivity(intent);
             }
         });
@@ -227,10 +234,7 @@ public class CameraPage extends AppCompatActivity {
 
     private void galleryAddPic() {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File f = new File(mCurrentPhotoPath);
-        Uri contentUri = Uri.fromFile(f);
-        System.out.println("Uri in galleryAddPic: " + contentUri);
-        mediaScanIntent.setData(contentUri);
+        mediaScanIntent.setData(photoURI);
         this.sendBroadcast(mediaScanIntent);
     }
 
@@ -248,4 +252,5 @@ public class CameraPage extends AppCompatActivity {
             return responseCode;
         }
     }
+
 }
