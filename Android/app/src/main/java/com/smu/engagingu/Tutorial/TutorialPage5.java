@@ -22,7 +22,7 @@ public class TutorialPage5 extends AppCompatActivity {
         });
     }
     private void goNext(){
-        Intent intent = new Intent(TutorialPage5.this,TutorialPage6.class);
+        Intent intent = new Intent(TutorialPage5.this,TutorialPage7.class);
         startActivity(intent);
     }
 }

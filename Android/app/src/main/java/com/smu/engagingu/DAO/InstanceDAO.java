@@ -7,7 +7,7 @@ public class InstanceDAO {
     public static String trailInstanceID;
     public static ArrayList<String> completedList = new ArrayList<>();
     public static Boolean firstTime = true;
-
+    public static Boolean isLeader = false;
 
 
 }
