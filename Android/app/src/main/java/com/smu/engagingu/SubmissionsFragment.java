@@ -3,8 +3,6 @@ package com.smu.engagingu;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,7 +21,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,7 +41,6 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
@@ -240,9 +236,7 @@ public class SubmissionsFragment extends Fragment {
 
             loadImageFromFile(imageView, imagePath);
 //            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-//            Bitmap rotatedBitmap = checkImageIfNeedRotation(bitmap, imagePath);
-//
-//            imageView.setImageBitmap(rotatedBitmap);
+//            imageView.setImageBitmap(bitmap);
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v){
@@ -279,7 +273,8 @@ public class SubmissionsFragment extends Fragment {
 
                 final String popupImagePath = IMAGEPATHS.get(index);
                 System.out.println("PopupImagePath: " + popupImagePath);
-
+//                Bitmap bitmap = BitmapFactory.decodeFile(popupImagePath);
+//                popupImageView.setImageBitmap(bitmap);
                 loadImageFromFile(popupImageView, popupImagePath);
 
                 Button downloadButton = popupView.findViewById(R.id.btnDownload);

@@ -23,6 +23,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="320dp"
         android:background="@color/colorPrimary"
-        android:text="Download Picture" />
+        android:text="Download Picture"
+        android:textStyle="bold" />
 
 </RelativeLayout>
