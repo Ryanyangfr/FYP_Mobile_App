@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
     tools:context="com.smu.engagingu.Narrative">
 
@@ -12,31 +12,36 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="38dp"
+        android:layout_marginBottom="21dp"
         android:background="@color/colorPrimary"
-        android:text="Start Quiz"
+        android:text="Begin"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textSize="18sp" />
 
     <TextView
         android:id="@+id/narrativeView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="167dp"
+        android:layout_width="344dp"
+        android:layout_height="439dp"
+        android:layout_above="@+id/go_quiz"
+        android:layout_below="@+id/placeNameView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="21dp"
+        android:layout_marginBottom="10dp"
+        android:lineSpacingExtra="3sp"
         android:text="TextView"
         android:textAlignment="center"
         android:textSize="18sp" />
 
     <TextView
         android:id="@+id/placeNameView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="37dp"
+        android:layout_marginTop="23dp"
+        android:textAlignment="center"
+        android:textColor="@color/colorAccent"
         android:textSize="30sp"
         android:textStyle="bold" />
 </RelativeLayout>

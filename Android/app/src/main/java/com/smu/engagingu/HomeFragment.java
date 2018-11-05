@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -23,17 +22,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.smu.engagingu.DAO.InstanceDAO;
+import com.smu.engagingu.Hotspot.Hotspot;
 import com.smu.engagingu.Quiz.Question;
 import com.smu.engagingu.Quiz.QuestionDatabase;
 import com.smu.engagingu.fyp.R;
-import com.smu.engagingu.utility.HttpConnectionUtility;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback{
     public static final String EXTRA_MESSAGE = "com.smu.engagingu.MESSAGE1";
@@ -81,74 +75,33 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
         catch (SecurityException e){
             e.printStackTrace();
         }
-        if(!InstanceDAO.firstTime && InstanceDAO.completedList.size()>0) {
-            try {
-                String response = new HomeFragment.MyHttpRequestTask().execute("").get();
-                JSONArray jsonMainNode = new JSONArray(response);
-                for (int i = 0; i < jsonMainNode.length(); i++) {
-                    JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
-                    JSONArray latlng = jsonChildNode.getJSONArray("coordinates");
-                    String latString = latlng.getString(0);
-                    String lngString = latlng.getString(1);
-                    double lat = Double.parseDouble(latString);
-                    double lng = Double.parseDouble(lngString);
-                    System.out.println("LAT: " + lat);
-                    System.out.println("LNG: " + lng);
-                    String placeName = jsonChildNode.getString("name");
-                    String narrative = jsonChildNode.getString("narrative");
-                    if (!(InstanceDAO.completedList.contains(placeName))) {
-                        mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(placeName).snippet(narrative));
-                    } else {
-                        mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(placeName).snippet("Completed").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-
-                    }
+        if((!InstanceDAO.firstTime) && InstanceDAO.completedList.size()>0) {
+            System.out.println("hotspotList: "+InstanceDAO.hotspotList);
+            for(int i =0; i <InstanceDAO.hotspotList.size();i++){
+                Hotspot currentHotspot = InstanceDAO.hotspotList.get(i);
+                Double lat = currentHotspot.getLatitude();
+                Double lng = currentHotspot.getLongitude();
+                String placeName = currentHotspot.getLocationName();
+                String narrative = currentHotspot.getNarrative();
+                if(!(InstanceDAO.completedList.contains(placeName))) {
+                    mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(placeName).snippet(narrative));
+                }else{
+                    mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat,lng)).title(placeName).snippet("Completed").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
             }
         }else{
-
-            try {
-                String response = new HomeFragment.MyHttpRequestTask2().execute("").get();
-                JSONArray jsonMainNode = new JSONArray(response);
-                for (int i = 0; i < jsonMainNode.length(); i++) {
-                    JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
-                    String teamID = jsonChildNode.getString("team");
-                    if(teamID.equals(InstanceDAO.teamID)){
-                        String startingHotspot= jsonChildNode.getString("startingHotspot");
-                        JSONArray latlng = jsonChildNode.getJSONArray("coordinates");
-                        String latString = latlng.getString(0);
-                        String lngString = latlng.getString(1);
-                        String narrativeString = jsonChildNode.getString("narrative");
-                        mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(latString), Double.parseDouble(lngString))).title(startingHotspot).snippet(narrativeString));
-                        InstanceDAO.firstTime = false;
-                        break;
-                    }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }catch(InterruptedException e){
-                e.printStackTrace();
-            }catch(ExecutionException e){
-                e.printStackTrace();
-            }
+            Double lat = InstanceDAO.startingHotspot.getLatitude();
+            Double lng = InstanceDAO.startingHotspot.getLongitude();
+            String placeName = InstanceDAO.startingHotspot.getLocationName();
+            String narrative = InstanceDAO.startingHotspot.getNarrative();
+            mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(placeName).snippet(narrative));
+            InstanceDAO.firstTime = false;
         }
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(1.2974,103.8495), 15));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(1.2969,103.8507), 16));
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener()
             {
             @Override
             public boolean onMarkerClick(Marker arg0) {
-                /*String title = arg0.getTitle();
-                String snippet = arg0.getSnippet();
-                Intent intent = new Intent(getActivity(), Narrative.class);
-                intent.putExtra(EXTRA_MESSAGE, title);
-                intent.putExtra(NARRATIVE_MESSAGE,snippet);
-                startActivity(intent);
-                return true;*/
                 snippetText = arg0.getSnippet();
                 if(!(snippetText.equals("Completed"))) {
                     arg0.setSnippet("Click me to start mission");
@@ -238,25 +191,5 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
     public void onLowMemory() {
         super.onLowMemory();
         mMapView.onLowMemory();
-    }
-    private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
-        @Override
-        protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/hotspot/getAllHotspots?trail_instance_id="+InstanceDAO.trailInstanceID);
-            if (response == null){
-                return null;
-            }
-            return response;
-        }
-    }
-    private class MyHttpRequestTask2 extends AsyncTask<String,Integer,String> {
-        @Override
-        protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/team/startingHotspot?trail_instance_id="+InstanceDAO.trailInstanceID);
-            if (response == null){
-                return null;
-            }
-            return response;
-        }
     }
 }

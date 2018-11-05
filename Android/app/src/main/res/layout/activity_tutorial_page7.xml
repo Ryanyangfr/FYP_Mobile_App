@@ -34,4 +34,18 @@
         app:layout_constraintTop_toBottomOf="@+id/TutorialView7"
         tools:layout_editor_absoluteX="148dp" />
 
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="149dp"
+        android:layout_height="167dp"
+        android:layout_marginStart="98dp"
+        android:layout_marginTop="46dp"
+        android:layout_marginEnd="98dp"
+        android:layout_marginBottom="61dp"
+        app:layout_constraintBottom_toTopOf="@+id/TutorialButton7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/TutorialView7"
+        app:srcCompat="@drawable/circularclock" />
+
 </android.support.constraint.ConstraintLayout>
