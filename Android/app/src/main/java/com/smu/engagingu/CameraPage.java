@@ -123,14 +123,15 @@ public class CameraPage extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
             Bitmap bmp = BitmapFactory.decodeFile(mCurrentPhotoPath);
-            Matrix matrix = new Matrix();
-            matrix.postRotate(270);
-            bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
+            Bitmap rotatedBmp = checkImageIfNeedRotation(bmp);
+//            Matrix matrix = new Matrix();
+//            matrix.postRotate(270);
+//            bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
 
             FileOutputStream fOut;
             try {
                 fOut = new FileOutputStream(photoFile);
-                bmp.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+                rotatedBmp.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
                 fOut.flush();
                 fOut.close();
 
@@ -164,38 +165,38 @@ public class CameraPage extends AppCompatActivity {
         return image;
     }
 
-//    private Bitmap checkImageIfNeedRotation(Bitmap img){
-//
-//        try{
-//            ExifInterface ei = new ExifInterface(mCurrentPhotoPath);
-//            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-//
-//            switch(orientation) {
-//                case ExifInterface.ORIENTATION_ROTATE_90:
-//                    return rotateImage(img, 90);
-//                case ExifInterface.ORIENTATION_ROTATE_180:
-//                    return rotateImage(img, 180);
-//                case ExifInterface.ORIENTATION_ROTATE_270:
-//                    return rotateImage(img, 270);
-//                default:
-//                    return img;
-//            }
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return img;
-//    }
+    private Bitmap checkImageIfNeedRotation(Bitmap img){
 
-//    private Bitmap rotateImage(Bitmap img, int degree) {
-//
-//        Matrix matrix = new Matrix();
-//        matrix.postRotate(degree);
-//        Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
-//        img.recycle();
-//        return rotatedImg;
-//    }
+        try{
+            ExifInterface ei = new ExifInterface(mCurrentPhotoPath);
+            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+            switch(orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    return rotateImage(img, 90);
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    return rotateImage(img, 180);
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    return rotateImage(img, 270);
+                default:
+                    return img;
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return img;
+    }
+
+    private Bitmap rotateImage(Bitmap img, int degree) {
+
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+        Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
+        img.recycle();
+        return rotatedImg;
+    }
 
     public void loadImageFromFile(){
 
