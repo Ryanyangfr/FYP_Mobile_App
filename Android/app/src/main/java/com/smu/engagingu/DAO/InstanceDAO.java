@@ -12,6 +12,8 @@ public class InstanceDAO {
     public static Boolean isLeader = false;
     public static ArrayList<Hotspot> hotspotList = new ArrayList<>();
     public static Hotspot startingHotspot;
+    public static Boolean hasPulled = false;
+    public static final String LOGGED_IN_PREF = "logged_in_status";
 
 
 

@@ -29,9 +29,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.smu.engagingu.MainActivity"
+        <activity
+            android:name="com.smu.engagingu.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -49,8 +49,9 @@
             </intent-filter>
         </activity>
         <activity android:name="com.smu.engagingu.HomePage" />
-        <activity android:name="com.smu.engagingu.UserName"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name="com.smu.engagingu.UserName"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name="com.smu.engagingu.CameraPage" />
         <activity android:name="com.smu.engagingu.Narrative" />
 
@@ -92,7 +93,8 @@
         <activity android:name="com.smu.engagingu.Tutorial.TutorialPage5" />
         <activity android:name="com.smu.engagingu.Tutorial.TutorialPage6" />
         <activity android:name="com.smu.engagingu.Tutorial.TutorialPage7" />
-        <activity android:name="com.smu.engagingu.StoryLine.StoryBoard3"></activity>
+        <activity android:name="com.smu.engagingu.StoryLine.StoryBoard3" />
+        <activity android:name="com.smu.engagingu.Settings"></activity>
     </application>
 
 </manifest>

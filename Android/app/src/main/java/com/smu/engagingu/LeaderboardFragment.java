@@ -71,7 +71,7 @@ public class LeaderboardFragment extends Fragment {
                     JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
                     String teamName = jsonChildNode.optString("team");
                     int hotspotsComplete = jsonChildNode.optInt("hotspots_completed");
-                    String leaderboardEntry = "    No."+(i+1)+"      team: "+teamName+"      hotspots completed: "+hotspotsComplete;
+                    String leaderboardEntry = "      "+(i+1)+"      Team: "+teamName+"      Hotspots completed: "+hotspotsComplete;
 //
                     leaderboardList.add(leaderboardEntry);
                 }

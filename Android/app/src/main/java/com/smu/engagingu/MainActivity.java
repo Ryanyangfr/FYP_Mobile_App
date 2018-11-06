@@ -11,11 +11,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.smu.engagingu.DAO.InstanceDAO;
+import com.smu.engagingu.DAO.Session;
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.utility.HttpConnectionUtility;
 
@@ -34,6 +37,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         showPhoneStatePermission();
+        //Session.setLoggedIn(getApplicationContext(),false);
+        if(Session.getLoggedStatus(getApplicationContext())) {
+            populateInstanceDAO();
+            Intent intent = new Intent(getApplicationContext(), HomePage.class);
+            startActivity(intent);
+        } else {
+
+        }
     }
 
     public void sendMessage(View view) {
@@ -68,29 +79,6 @@ public class MainActivity extends AppCompatActivity {
             toast.show();
         }
     }
-    /*
-    private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
-
-        @Override
-        protected String doInBackground(String... params) {
-//            System.out.println("activated");
-            String filepath = "/storage/emulated/0/Pictures/ASCII.PNG";
-            Map<String, String> req = new HashMap<>();
-//            String state = Environment.getExternalStorageState();
-            showPhoneStatePermission();
-//            if (Environment.MEDIA_MOUNTED.equals(state) ||
-//                    Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)){
-//                System.out.println("environment: " + Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES));
-//            }
-//            req.put("username", "THINN");
-//            req.put("user_id", "10");
-//            req.put("team_id", "1");
-            String response = HttpConnectionUtility.multipartPost(params[0], new HashMap<String,String>(), filepath, "image", "image/png");
-            System.out.print("response: " + response);
-            return response;
-        }
-    }
-*/
     private void showPhoneStatePermission() {
         int permissionCheck = ContextCompat.checkSelfPermission(
                 this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -139,6 +127,35 @@ public class MainActivity extends AppCompatActivity {
     private void requestPermission(String permissionName, int permissionRequestCode) {
         ActivityCompat.requestPermissions(this,
                 new String[]{permissionName}, permissionRequestCode);
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_logout:
+                // User chose the "Settings" item, show the app settings UI...
+                Intent intent = new Intent(this, Settings.class);
+                startActivity(intent);
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    private void populateInstanceDAO(){
+        InstanceDAO.teamID = Session.getTeamID(getApplicationContext());
+        System.out.println("teamID: "+InstanceDAO.teamID);
+        InstanceDAO.trailInstanceID = Session.getTrailInstanceID(getApplicationContext());
+        System.out.println("trailInstanceID: "+InstanceDAO.trailInstanceID);
+        InstanceDAO.firstTime = Session.getFirstTime(getApplicationContext());
+
+
     }
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
 

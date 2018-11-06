@@ -7,11 +7,13 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -22,12 +24,19 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.smu.engagingu.DAO.InstanceDAO;
+import com.smu.engagingu.DAO.Session;
 import com.smu.engagingu.Hotspot.Hotspot;
 import com.smu.engagingu.Quiz.Question;
 import com.smu.engagingu.Quiz.QuestionDatabase;
 import com.smu.engagingu.fyp.R;
+import com.smu.engagingu.utility.HttpConnectionUtility;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback{
     public static final String EXTRA_MESSAGE = "com.smu.engagingu.MESSAGE1";
@@ -49,6 +58,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        System.out.println("trailInstanceID2: "+InstanceDAO.trailInstanceID);
+        saveSession();
+        if(!InstanceDAO.hasPulled){
+            populateData();
+        }
+
         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PackageManager.PERMISSION_GRANTED);
         requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
         View v = inflater.inflate(R.layout.fragment_home, container, false);
@@ -115,19 +130,27 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
             public void onInfoWindowClick(Marker marker) {
                 String title = marker.getTitle();
                     QuestionDatabase qnsDB = new QuestionDatabase();
-                    ArrayList<Question> questionsList = qnsDB.getQuestionsMap().get(title);
+                    if(qnsDB.getQuestionsMap().size()==0){
+                        Context context = getActivity().getApplicationContext();
+                        CharSequence text = "Bad Connection, Please Try Later";
+                        int duration = Toast.LENGTH_SHORT;
 
-                    Intent intent = new Intent(getActivity(), Narrative.class);
-                    if (questionsList != null) {
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                    }else {
+                        ArrayList<Question> questionsList = qnsDB.getQuestionsMap().get(title);
+                        Intent intent = new Intent(getActivity(), Narrative.class);
+                        if (questionsList != null) {
 
-                        intent.putExtra(SELFIE_CHECK, "1");
-                    } else {
+                            intent.putExtra(SELFIE_CHECK, "1");
+                        } else {
 
-                        intent.putExtra(SELFIE_CHECK, "0");
+                            intent.putExtra(SELFIE_CHECK, "0");
+                        }
+                        intent.putExtra(EXTRA_MESSAGE, title);
+                        intent.putExtra(NARRATIVE_MESSAGE, snippetText);
+                        startActivity(intent);
                     }
-                    intent.putExtra(EXTRA_MESSAGE, title);
-                    intent.putExtra(NARRATIVE_MESSAGE, snippetText);
-                    startActivity(intent);
             }
         });
 
@@ -191,5 +214,92 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
     public void onLowMemory() {
         super.onLowMemory();
         mMapView.onLowMemory();
+    }
+    private void populateData(){
+        try {
+            String response = new getAllHotspot().execute("").get();
+            JSONArray jsonMainNode = new JSONArray(response);
+            for (int i = 0; i < jsonMainNode.length(); i++) {
+                JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
+                JSONArray latlng = jsonChildNode.getJSONArray("coordinates");
+                String latString = latlng.getString(0);
+                String lngString = latlng.getString(1);
+                double lat = Double.parseDouble(latString);
+                double lng = Double.parseDouble(lngString);
+                System.out.println("LAT: " + lat);
+                System.out.println("LNG: " + lng);
+                String placeName = jsonChildNode.getString("name");
+                String narrative = jsonChildNode.getString("narrative");
+                Hotspot currentHotspot = new Hotspot(placeName,lat,lng,narrative);
+                InstanceDAO.hotspotList.add(currentHotspot);
+            }
+            String response2 = new getStartingHotspot().execute("").get();
+            JSONArray jsonMainNode2 = new JSONArray(response2);
+            for (int i = 0; i < jsonMainNode2.length(); i++) {
+                JSONObject jsonChildNode2 = jsonMainNode2.getJSONObject(i);
+                String teamID = jsonChildNode2.getString("team");
+                if (teamID.equals(InstanceDAO.teamID)) {
+                    String startingHotspot2 = jsonChildNode2.getString("startingHotspot");
+                    JSONArray latlng2 = jsonChildNode2.getJSONArray("coordinates");
+                    String latString2 = latlng2.getString(0);
+                    Double lat2 = Double.parseDouble(latString2);
+                    String lngString2 = latlng2.getString(1);
+                    Double lng2 = Double.parseDouble(lngString2);
+                    String narrativeString2 = jsonChildNode2.getString("narrative");
+                    InstanceDAO.startingHotspot = new Hotspot(startingHotspot2,lat2,lng2,narrativeString2);
+                }
+            }
+            String response3 = new getCompletedList().execute("").get();
+            JSONArray jsonMainMode3 = new JSONArray(response3);
+            for(int i =0; i < jsonMainMode3.length();i++){
+                JSONObject jsonChildNode3 = jsonMainMode3.getJSONObject(i);
+                if (jsonChildNode3.getInt("iscompleted")==1){
+                    InstanceDAO.completedList.add(jsonChildNode3.getString("hotspot"));
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }finally{
+            InstanceDAO.hasPulled=true;
+        }
+    }
+    private class getCompletedList extends AsyncTask<String, Integer, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/completedHotspots?trail_instance_id="+InstanceDAO.trailInstanceID+"&team="+InstanceDAO.teamID);
+            if (response == null) {
+                return null;
+            }
+            return response;
+        }
+    }
+    private class getAllHotspot extends AsyncTask<String, Integer, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/hotspot/getAllHotspots?trail_instance_id=" + InstanceDAO.trailInstanceID);
+            if (response == null) {
+                return null;
+            }
+            return response;
+        }
+    }
+    private class getStartingHotspot extends AsyncTask<String, Integer, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/team/startingHotspot?trail_instance_id=" + InstanceDAO.trailInstanceID);
+            if (response == null) {
+                return null;
+            }
+            return response;
+        }
+    }
+    private void saveSession(){
+        Session.setLoggedIn(getActivity().getApplicationContext(),true);
+        Session.setTeamID(getActivity().getApplicationContext(),InstanceDAO.teamID);
+        Session.setTrailInstanceID(getActivity().getApplicationContext(),InstanceDAO.trailInstanceID);
     }
 }

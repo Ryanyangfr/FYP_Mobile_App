@@ -90,7 +90,8 @@
         android:layout_alignStart="@+id/text_view_score"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="-148dp"
-        android:layout_marginBottom="110dp"
+        android:layout_marginBottom="118dp"
         android:textAlignment="center"
-        android:textColor="@android:color/holo_green_dark" />
+        android:textColor="@android:color/holo_green_dark"
+        android:textSize="22sp" />
 </RelativeLayout>
