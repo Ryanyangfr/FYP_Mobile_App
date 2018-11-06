@@ -5,8 +5,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -19,12 +23,23 @@ import android.widget.Toast;
 
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.DAO.Session;
+import com.smu.engagingu.DAO.SubmissionDAO;
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.utility.HttpConnectionUtility;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -37,12 +52,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         showPhoneStatePermission();
+
         //Session.setLoggedIn(getApplicationContext(),false);
         if(Session.getLoggedStatus(getApplicationContext())) {
+
             populateInstanceDAO();
+
+            SubmissionRetriever submissionRetriever = new SubmissionRetriever();
+            try {
+                submissionRetriever.execute(SubmissionDAO.submissionEndPoint).get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+
             Intent intent = new Intent(getApplicationContext(), HomePage.class);
             startActivity(intent);
-        } else {
+        }else{
 
         }
     }
@@ -53,11 +78,7 @@ public class MainActivity extends AppCompatActivity {
             jsonString= new MyHttpRequestTask().execute("http://54.255.245.23:3000/getInstance").get();
             JSONObject jsonObject = new JSONObject(jsonString);
             InstanceDAO.trailInstanceID = jsonObject.getString("trail_instance_id");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
+        } catch (InterruptedException | ExecutionException | JSONException e) {
             e.printStackTrace();
         }
 
@@ -97,8 +118,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(
             int requestCode,
-            String permissions[],
-            int[] grantResults) {
+            @NonNull String permissions[],
+            @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE:
                 if (grantResults.length > 0
@@ -157,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-    private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
+    private static class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
 
         @Override
         protected String doInBackground(String... params) {
@@ -168,5 +189,87 @@ public class MainActivity extends AppCompatActivity {
             }
             return response;
         }
+    }
+
+    private static class SubmissionRetriever extends AsyncTask<String,Integer,String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            String endpointURL = params[0];
+            String submissionResponse = HttpConnectionUtility.get(endpointURL);
+            System.out.println(submissionResponse);
+            try {
+                JSONArray submissionJsonArr= new JSONArray(submissionResponse);
+                int jsonArrLength = submissionJsonArr.length();
+                JSONObject jsonSizeObj = submissionJsonArr.getJSONObject(jsonArrLength-1);
+
+                int size = Integer.parseInt(jsonSizeObj.getString("size"));
+                System.out.println("Size: " + size);
+
+                for (int i = 0; i < submissionJsonArr.length() - 1; i++) {
+                    JSONObject jsonObj = submissionJsonArr.getJSONObject(i);
+
+                    String imageURL = jsonObj.getString("SubmissionURL");
+                    String hotspot = jsonObj.getString("hotspot");
+                    String question = jsonObj.getString("question");
+
+                    System.out.println(i + ". imageURL: " + imageURL);
+                    System.out.println(i + ". hotspot: " + hotspot);
+                    System.out.println(i + ". question: " + question);
+
+                    SubmissionDAO.IMAGEURLS.add(imageURL);
+                    SubmissionDAO.HOTSPOTS.add(hotspot);
+                    SubmissionDAO.QUESTIONS.add(question);
+
+                }
+
+                for (int i=0; i<SubmissionDAO.IMAGEURLS.size(); i++) {
+
+                    String imageUrl = SubmissionDAO.IMAGEURLS.get(1);
+
+                    //Create Image File
+                    String imagePath = createImageFile();
+                    System.out.println(i + " imagePath: " + imagePath);
+                    SubmissionDAO.IMAGEPATHS.add(imagePath);
+
+                    //Download Image
+                    URL url = new URL(SubmissionDAO.imageEndPoint + imageUrl);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setDoInput(true);
+                    connection.connect();
+                    InputStream is = connection.getInputStream();
+                    Bitmap myBitmap = BitmapFactory.decodeStream(is);
+
+                    FileOutputStream out = new FileOutputStream(imagePath);
+                    myBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+
+                    out.close();
+                    is.close();
+                }
+
+            } catch (JSONException | IOException e) {
+                e.printStackTrace();
+            }
+
+            return submissionResponse;
+        }
+
+    }
+
+    private static String createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStorageDirectory();
+        System.out.println("Storage DIR" + storageDir.getAbsolutePath());
+        File image = File.createTempFile(
+                imageFileName,    /*prefix */
+                ".jpg",    /*suffix */
+                storageDir    /*directory*/
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        return image.getAbsolutePath();
     }
 }

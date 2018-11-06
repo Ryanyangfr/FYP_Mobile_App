@@ -111,6 +111,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
             String narrative = InstanceDAO.startingHotspot.getNarrative();
             mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(placeName).snippet(narrative));
             InstanceDAO.firstTime = false;
+            Session.setFirstTime(getActivity().getApplicationContext(), false);
         }
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(1.2969,103.8507), 16));
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener()
