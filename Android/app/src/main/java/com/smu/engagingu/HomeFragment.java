@@ -9,6 +9,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -90,7 +91,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
         catch (SecurityException e){
             e.printStackTrace();
         }
-        if((!InstanceDAO.firstTime) && InstanceDAO.completedList.size()>0) {
+        if(InstanceDAO.completedList.size()>0) {
             System.out.println("hotspotList: "+InstanceDAO.hotspotList);
             for(int i =0; i <InstanceDAO.hotspotList.size();i++){
                 Hotspot currentHotspot = InstanceDAO.hotspotList.get(i);
@@ -104,14 +105,28 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
                     mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat,lng)).title(placeName).snippet("Completed").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
                 }
             }
-        }else{
+        }else if (InstanceDAO.startingHotspot!=null){
             Double lat = InstanceDAO.startingHotspot.getLatitude();
             Double lng = InstanceDAO.startingHotspot.getLongitude();
             String placeName = InstanceDAO.startingHotspot.getLocationName();
             String narrative = InstanceDAO.startingHotspot.getNarrative();
             mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(placeName).snippet(narrative));
-            InstanceDAO.firstTime = false;
             Session.setFirstTime(getActivity().getApplicationContext(), false);
+        }else{
+            Context context = getActivity().getApplicationContext();
+            CharSequence text = "Oops, There is something wrong with the connection. Please logout and restart the app.";
+            int duration = Toast.LENGTH_SHORT;
+
+            final Toast toast2 = Toast.makeText(context, text, duration);
+            toast2.show();
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    toast2.cancel();
+                }
+            }, 7000);
         }
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(1.2969,103.8507), 16));
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener()

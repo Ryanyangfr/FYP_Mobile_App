@@ -32,21 +32,6 @@
         <activity
             android:name="com.smu.engagingu.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="engagingu"
-                    android:scheme="https" />
-            </intent-filter>
         </activity>
         <activity android:name="com.smu.engagingu.HomePage" />
         <activity
@@ -94,7 +79,25 @@
         <activity android:name="com.smu.engagingu.Tutorial.TutorialPage6" />
         <activity android:name="com.smu.engagingu.Tutorial.TutorialPage7" />
         <activity android:name="com.smu.engagingu.StoryLine.StoryBoard3" />
-        <activity android:name="com.smu.engagingu.Settings"></activity>
+        <activity android:name="com.smu.engagingu.Settings" />
+        <activity android:name="com.smu.engagingu.SplashActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="engagingu"
+                    android:scheme="https" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
