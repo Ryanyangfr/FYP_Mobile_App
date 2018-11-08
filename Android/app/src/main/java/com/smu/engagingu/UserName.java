@@ -38,6 +38,7 @@ public class UserName extends AppCompatActivity {
             toast.show();
         }else {
             Intent intent = new Intent(this, TeamDisplay.class);
+            InstanceDAO.userName=message;
             startActivity(intent);
         }
     }

@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.DAO.Session;
 import com.smu.engagingu.DAO.SubmissionDAO;
+import com.smu.engagingu.Hotspot.Hotspot;
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.utility.HttpConnectionUtility;
 
@@ -35,17 +36,40 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 public class SplashActivity extends AppCompatActivity {
     private static final int REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 10;
+    private ArrayList<String>userList = new ArrayList<>();
+    private String response2 = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        InstanceDAO.userName=Session.getUsername(getApplicationContext());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         showPhoneStatePermission();
 
-        if(Session.getLoggedStatus(getApplicationContext())) {
+        try {
+            String response = new getAllUsers().execute("").get();
+            response2 = new getStartingHotspot().execute("").get();
+            if(response!=null) {
+                JSONObject mainObject = new JSONObject(response);
+                JSONArray mainChildNode = mainObject.getJSONArray("username");
+                for(int i =0 ; i < mainChildNode.length();i++){
+                    userList.add(mainChildNode.getString(i));
+                }
+                InstanceDAO.userList = userList;
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if(getLoginStatus(Session.getUsername(getApplicationContext()))) {
             startHeavyProcessing();
         }else{
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -91,7 +115,7 @@ public class SplashActivity extends AppCompatActivity {
 
                     for (int i=0; i<SubmissionDAO.IMAGEURLS.size(); i++) {
 
-                        String imageUrl = SubmissionDAO.IMAGEURLS.get(1);
+                        String imageUrl = SubmissionDAO.IMAGEURLS.get(i);
 
                         //Create Image File
                         String imagePath = createImageFile();
@@ -111,6 +135,21 @@ public class SplashActivity extends AppCompatActivity {
 
                         out.close();
                         is.close();
+                    }
+                    JSONArray jsonMainNode2 = new JSONArray(response2);
+                    for (int i = 0; i < jsonMainNode2.length(); i++) {
+                        JSONObject jsonChildNode2 = jsonMainNode2.getJSONObject(i);
+                        String teamID = jsonChildNode2.getString("team");
+                        if (teamID.equals(InstanceDAO.teamID)) {
+                            String startingHotspot2 = jsonChildNode2.getString("startingHotspot");
+                            JSONArray latlng2 = jsonChildNode2.getJSONArray("coordinates");
+                            String latString2 = latlng2.getString(0);
+                            Double lat2 = Double.parseDouble(latString2);
+                            String lngString2 = latlng2.getString(1);
+                            Double lng2 = Double.parseDouble(lngString2);
+                            String narrativeString2 = jsonChildNode2.getString("narrative");
+                            InstanceDAO.startingHotspot = new Hotspot(startingHotspot2,lat2,lng2,narrativeString2);
+                        }
                     }
                 } catch (JSONException | IOException e) {
                     e.printStackTrace();
@@ -200,7 +239,23 @@ public class SplashActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
+    private static Boolean getLoginStatus(String userName){
+        if(InstanceDAO.userList.contains(userName)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    private class getAllUsers extends AsyncTask<String, Integer, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/user/retrieveAllUsers");
+            if (response == null) {
+                return null;
+            }
+            return response;
+        }
+    }
     private static String createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -215,6 +270,16 @@ public class SplashActivity extends AppCompatActivity {
 
         // Save a file: path for use with ACTION_VIEW intents
         return image.getAbsolutePath();
+    }
+    private class getStartingHotspot extends AsyncTask<String, Integer, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/team/startingHotspot?trail_instance_id=" + InstanceDAO.trailInstanceID);
+            if (response == null) {
+                return null;
+            }
+            return response;
+        }
     }
 }
 

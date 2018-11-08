@@ -14,6 +14,8 @@ public class InstanceDAO {
     public static Hotspot startingHotspot;
     public static Boolean hasPulled = false;
     public static final String LOGGED_IN_PREF = "logged_in_status";
+    public static String userName= "";
+    public static ArrayList<String> userList = new ArrayList<>();
 
 
 

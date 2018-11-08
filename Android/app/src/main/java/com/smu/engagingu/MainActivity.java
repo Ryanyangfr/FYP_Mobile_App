@@ -36,7 +36,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -53,23 +52,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         showPhoneStatePermission();
 
-        //Session.setLoggedIn(getApplicationContext(),false);
-        if(Session.getLoggedStatus(getApplicationContext())) {
-
-            populateInstanceDAO();
-
-            SubmissionRetriever submissionRetriever = new SubmissionRetriever();
-            try {
-                submissionRetriever.execute(SubmissionDAO.submissionEndPoint).get();
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-
-            Intent intent = new Intent(getApplicationContext(), HomePage.class);
-            startActivity(intent);
-        }else{
-
-        }
     }
 
     public void sendMessage(View view) {
@@ -226,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
 
                 for (int i=0; i<SubmissionDAO.IMAGEURLS.size(); i++) {
 
-                    String imageUrl = SubmissionDAO.IMAGEURLS.get(1);
+                    String imageUrl = SubmissionDAO.IMAGEURLS.get(i);
 
                     //Create Image File
                     String imagePath = createImageFile();

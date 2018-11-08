@@ -52,5 +52,15 @@ public class Session {
     public static Boolean getFirstTime(Context context) {
         return getPreferences(context).getBoolean("firstTime",true);
     }
+    public static void setUserName(Context context,String userName) {
+        SharedPreferences.Editor editor = getPreferences(context).edit();
+        editor.putString("userName",userName).commit();
+        editor.apply();
+    }
+
+    public static String getUsername(Context context) {
+        return getPreferences(context).getString("userName","");
+    }
+
 }
 

@@ -314,8 +314,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
         }
     }
     private void saveSession(){
-        Session.setLoggedIn(getActivity().getApplicationContext(),true);
+       // Session.setLoggedIn(getActivity().getApplicationContext(),true);
         Session.setTeamID(getActivity().getApplicationContext(),InstanceDAO.teamID);
         Session.setTrailInstanceID(getActivity().getApplicationContext(),InstanceDAO.trailInstanceID);
+        Session.setUserName(getActivity().getApplicationContext(),InstanceDAO.userName);
     }
 }
