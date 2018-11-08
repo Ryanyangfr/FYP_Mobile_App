@@ -6,19 +6,15 @@
     android:layout_height="match_parent"
     tools:context="com.smu.engagingu.Settings">
 
-    <Button
-        android:id="@+id/logoutButton"
-        android:layout_width="244dp"
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="70dp"
-        android:layout_marginTop="231dp"
-        android:layout_marginEnd="70dp"
-        android:layout_marginBottom="232dp"
-        android:background="@color/colorPrimary"
-        android:text="Logout"
-        android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:layout_marginStart="167dp"
+        android:layout_marginTop="246dp"
+        android:layout_marginEnd="167dp"
+        android:layout_marginBottom="246dp"
+        android:text="Settings Page"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

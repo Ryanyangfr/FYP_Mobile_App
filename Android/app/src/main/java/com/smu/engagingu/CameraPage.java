@@ -1,5 +1,6 @@
 package com.smu.engagingu;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -78,29 +79,38 @@ public class CameraPage extends AppCompatActivity {
         uploadButton = findViewById(R.id.btnUpload);
         uploadButton.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View v){
-                String team_id = InstanceDAO.teamID;
-                String trail_instance_id = InstanceDAO.trailInstanceID;
-                String question = targetQuestion;
-                try {
-                    String responseCode = new PictureUploader().execute(team_id,trail_instance_id,question,placeName).get();
+            public void onClick(View v) {
+                if (mCurrentPhotoPath == null) {
+                    Context context = getApplicationContext();
+                    CharSequence text = "You have to take a photo first!";
+                    int duration = Toast.LENGTH_SHORT;
 
-                    SubmissionDAO.HOTSPOTS.add(placeName);
-                    SubmissionDAO.QUESTIONS.add(question);
-                    SubmissionDAO.IMAGEPATHS.add(mCurrentPhotoPath);
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                } else {
+                    String team_id = InstanceDAO.teamID;
+                    String trail_instance_id = InstanceDAO.trailInstanceID;
+                    String question = targetQuestion;
+                    try {
+                        String responseCode = new PictureUploader().execute(team_id, trail_instance_id, question, placeName).get();
 
-                    System.out.println("Response Code: " + responseCode);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
+                        SubmissionDAO.HOTSPOTS.add(placeName);
+                        SubmissionDAO.QUESTIONS.add(question);
+                        SubmissionDAO.IMAGEPATHS.add(mCurrentPhotoPath);
+
+                        System.out.println("Response Code: " + responseCode);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                    Toast toast = Toast.makeText(CameraPage.this, "Photo Successfully Uploaded!", Toast.LENGTH_SHORT);
+                    toast.show();
+                    Intent intent = new Intent(CameraPage.this, HomePage.class);
+                    intent.putExtra(EXTRA_MESSAGE, placeName);
+
+                    startActivity(intent);
                 }
-                Toast toast = Toast.makeText(CameraPage.this,"Photo Successfully Uploaded!", Toast.LENGTH_SHORT);
-                toast.show();
-                Intent intent = new Intent(CameraPage.this,HomePage.class);
-                intent.putExtra(EXTRA_MESSAGE, placeName);
-
-                startActivity(intent);
             }
         });
     }
