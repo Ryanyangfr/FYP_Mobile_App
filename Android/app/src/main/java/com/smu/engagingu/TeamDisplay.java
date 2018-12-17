@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.smu.engagingu.DAO.InstanceDAO;
+import com.smu.engagingu.StoryLine.StoryBoard1;
 import com.smu.engagingu.fyp.R;
 
 public class TeamDisplay extends AppCompatActivity {
@@ -16,9 +18,7 @@ public class TeamDisplay extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_display);
         TextView groupNumberView = findViewById(R.id.GroupNumberView);
-        Intent intent = getIntent();
-        String groupNumber = intent.getStringExtra(UserName.UserName_EXTRA_MESSAGE);
-        groupNumberView.setText(groupNumber);
+        groupNumberView.setText(InstanceDAO.teamID);
 
         Button confirmationButton = findViewById(R.id.groupNumberButton);
         confirmationButton.setOnClickListener(new View.OnClickListener(){
@@ -35,7 +35,8 @@ public class TeamDisplay extends AppCompatActivity {
         });
     }
     private void goToStoryPage(){
-        Intent intent = new Intent(this,StoryContainer.class);
+        Intent intent = new Intent(this,StoryBoard1.class);
         startActivity(intent);
     }
+
 }

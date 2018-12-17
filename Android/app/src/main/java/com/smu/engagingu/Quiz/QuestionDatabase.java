@@ -2,7 +2,7 @@ package com.smu.engagingu.Quiz;
 
 import android.os.AsyncTask;
 
-import com.smu.engagingu.MainActivity;
+import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.utility.HttpConnectionUtility;
 
 import org.json.JSONArray;
@@ -44,11 +44,19 @@ public class QuestionDatabase {
                     String answerString = quizChildNode.getString("quiz_answer");
                     int answer = Integer.parseInt(answerString);
                     JSONArray optionsArray = quizChildNode.getJSONArray("quiz_options");
-                    String op1 = optionsArray.getString(0);
-                    String op2 = optionsArray.getString(1);
-                    String op3 = optionsArray.getString(2);
-                    String op4 = optionsArray.getString(3);
-                    questionsList.add(new Question(question,op1,op2,op3,op4,answer));
+                    if(optionsArray.length()==4) {
+                        String op1 = optionsArray.getString(0);
+                        String op2 = optionsArray.getString(1);
+                        String op3 = optionsArray.getString(2);
+                        String op4 = optionsArray.getString(3);
+                        questionsList.add(new Question(question,op1,op2,op3,op4,answer));
+                    }else if(optionsArray.length()==3) {
+                        String op1 = optionsArray.getString(0);
+                        String op2 = optionsArray.getString(1);
+                        String op3 = optionsArray.getString(2);
+                        String op4 = "None of the above";
+                        questionsList.add(new Question(question, op1, op2, op3, op4, answer));
+                    }
                 }
                 QuestionsMap.put(placeName,questionsList);
             }
@@ -87,7 +95,7 @@ public class QuestionDatabase {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/quiz/getQuizzes?trail_instance_id="+MainActivity.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/quiz/getQuizzes?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
@@ -98,7 +106,7 @@ private class MyHttpRequestTask2 extends AsyncTask<String,Integer,String> {
     @Override
     protected String doInBackground(String... params) {
         Map<String, String> req = new HashMap<>();
-        String response = HttpConnectionUtility.get("http://54.255.245.23:3000/upload/getSubmissionQuestion?trail_instance_id="+MainActivity.trailInstanceID);
+        String response = HttpConnectionUtility.get("http://54.255.245.23:3000/upload/getSubmissionQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
         if (response == null){
             return null;
         }

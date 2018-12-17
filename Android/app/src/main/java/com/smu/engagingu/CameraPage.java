@@ -1,5 +1,6 @@
 package com.smu.engagingu;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,17 +14,23 @@ import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.smu.engagingu.DAO.InstanceDAO;
+import com.smu.engagingu.DAO.SubmissionDAO;
 import com.smu.engagingu.Quiz.QuestionDatabase;
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.utility.HttpConnectionUtility;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -40,6 +47,7 @@ public class CameraPage extends AppCompatActivity {
     ImageView mImageView;
     Uri photoURI;
     String mCurrentPhotoPath;
+    File photoFile;
     private String targetQuestion;
     private String placeName;
 
@@ -71,23 +79,38 @@ public class CameraPage extends AppCompatActivity {
         uploadButton = findViewById(R.id.btnUpload);
         uploadButton.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View v){
-                String team_id = UserName.userID;
-                String trail_instance_id = "1";
-                String question = targetQuestion;
-                try {
-                    String responseCode = new PictureUploader().execute(team_id,trail_instance_id,question).get();
-                    System.out.println("Response Code: " + responseCode);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
+            public void onClick(View v) {
+                if (mCurrentPhotoPath == null) {
+                    Context context = getApplicationContext();
+                    CharSequence text = "You have to take a photo first!";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                } else {
+                    String team_id = InstanceDAO.teamID;
+                    String trail_instance_id = InstanceDAO.trailInstanceID;
+                    String question = targetQuestion;
+                    try {
+                        String responseCode = new PictureUploader().execute(team_id, trail_instance_id, question, placeName).get();
+
+                        SubmissionDAO.HOTSPOTS.add(placeName);
+                        SubmissionDAO.QUESTIONS.add(question);
+                        SubmissionDAO.IMAGEPATHS.add(mCurrentPhotoPath);
+
+                        System.out.println("Response Code: " + responseCode);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                    Toast toast = Toast.makeText(CameraPage.this, "Photo Successfully Uploaded!", Toast.LENGTH_SHORT);
+                    toast.show();
+                    Intent intent = new Intent(CameraPage.this, HomePage.class);
+                    intent.putExtra(EXTRA_MESSAGE, placeName);
+
+                    startActivity(intent);
                 }
-                Toast toast = Toast.makeText(CameraPage.this,"Photo Successfully Uploaded!", Toast.LENGTH_SHORT);
-                toast.show();
-                Intent intent = new Intent(CameraPage.this,HomePage.class);
-                intent.putExtra(EXTRA_MESSAGE, placeName);
-                startActivity(intent);
             }
         });
     }
@@ -96,7 +119,6 @@ public class CameraPage extends AppCompatActivity {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null){
 
-            File photoFile = null;
             try{
                 photoFile = createImageFile();
             } catch (IOException e){
@@ -119,6 +141,27 @@ public class CameraPage extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
+            Bitmap bmp = BitmapFactory.decodeFile(mCurrentPhotoPath);
+            Bitmap rotatedBmp = checkImageIfNeedRotation(bmp);
+//            Matrix matrix = new Matrix();
+//            matrix.postRotate(270);
+//            bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
+
+            FileOutputStream fOut;
+            try {
+                fOut = new FileOutputStream(photoFile);
+                rotatedBmp.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+                fOut.flush();
+                fOut.close();
+
+            } catch (FileNotFoundException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
             galleryAddPic();
             loadImageFromFile();
         }
@@ -174,7 +217,6 @@ public class CameraPage extends AppCompatActivity {
         return rotatedImg;
     }
 
-
     public void loadImageFromFile(){
 
         mImageView = this.findViewById(R.id.imageView);
@@ -198,16 +240,13 @@ public class CameraPage extends AppCompatActivity {
         bmOptions.inSampleSize = scaleFactor;
 
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        Bitmap rotatedBitmap = checkImageIfNeedRotation(bitmap);
-        mImageView.setImageBitmap(rotatedBitmap);
+//        Bitmap rotatedBitmap = checkImageIfNeedRotation(bitmap);
+        mImageView.setImageBitmap(bitmap);
     }
 
     private void galleryAddPic() {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File f = new File(mCurrentPhotoPath);
-        Uri contentUri = Uri.fromFile(f);
-        System.out.println("Uri in galleryAddPic: " + contentUri);
-        mediaScanIntent.setData(contentUri);
+        mediaScanIntent.setData(photoURI);
         this.sendBroadcast(mediaScanIntent);
     }
 
@@ -220,8 +259,31 @@ public class CameraPage extends AppCompatActivity {
             jsonMap.put("team_id", params[0]);
             jsonMap.put("trail_instance_id", params[1]);
             jsonMap.put("question", params[2]);
+            jsonMap.put("hotspot",params[3]);
             String responseCode = HttpConnectionUtility.multipartPost("http://54.255.245.23:3000/upload/uploadSubmission", jsonMap, mCurrentPhotoPath, "image", "image/png");
             return responseCode;
         }
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        System.out.println(item.getItemId());
+        switch (item.getItemId()) {
+            case R.id.action_logout:
+                // User chose the "Settings" item, show the app settings UI...
+                Intent intent = new Intent(this, Settings.class);
+                startActivity(intent);
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 }

@@ -13,15 +13,17 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="2dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:textColor="@android:color/darker_gray"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.701" />
+        app:layout_constraintVertical_bias="0.701"
+        android:hint="Enter Trail Pin"/>
 
     <Button
         android:id="@+id/button3"
@@ -46,21 +48,16 @@
         app:layout_constraintTop_toBottomOf="@+id/editText3"
         app:layout_constraintVertical_bias="0.295" />
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="130dp"
-        android:layout_marginTop="172dp"
-        android:layout_marginEnd="134dp"
-        android:layout_marginBottom="34dp"
-        android:text="@string/Connect_Trail"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/editText3"
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="360dp"
+        android:layout_height="383dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:srcCompat="@drawable/engagingulogo" />
 
 </android.support.constraint.ConstraintLayout>

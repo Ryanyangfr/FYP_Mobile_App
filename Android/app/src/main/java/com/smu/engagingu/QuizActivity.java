@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -13,6 +15,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.Quiz.Question;
 import com.smu.engagingu.Quiz.QuestionDatabase;
 import com.smu.engagingu.fyp.R;
@@ -25,6 +28,7 @@ import java.util.concurrent.ExecutionException;
 public class QuizActivity extends AppCompatActivity {
     private TextView textViewQuestion;
     private TextView textViewScore;
+    private TextView answerView;
     private RadioGroup rbGroup;
     private RadioButton rb1;
     private RadioButton rb2;
@@ -45,13 +49,14 @@ public class QuizActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         score = 0;
         Intent intent = getIntent();
-        placeName = intent.getStringExtra(QuizStartingPage.EXTRA_MESSAGE3);
+        placeName = intent.getStringExtra(Narrative.EXTRA_MESSAGE2);
         System.out.println("QuizActivity: "+placeName);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
         QuestionDatabase qnsDB = new QuestionDatabase();
         questionsList = qnsDB.getQuestionsMap().get(placeName);
         textViewQuestion = findViewById(R.id.text_view_question);
+        answerView = findViewById(R.id.correctAnswerView);
         textViewScore = findViewById(R.id.text_view_score);
         rbGroup = findViewById(R.id.radio_group);
         rb1 = findViewById(R.id.radio_button1);
@@ -88,6 +93,7 @@ public class QuizActivity extends AppCompatActivity {
         });
     }
     private void showNextQuestion(){
+        rbGroup.clearCheck();
         rb1.setTextColor(Color.BLACK);
         rb2.setTextColor(Color.BLACK);
         rb3.setTextColor(Color.BLACK);
@@ -100,7 +106,7 @@ public class QuizActivity extends AppCompatActivity {
             rb2.setText(currentQuestion.getOption2());
             rb3.setText(currentQuestion.getOption3());
             rb4.setText(currentQuestion.getOption4());
-
+            answerView.setText("");
             questionCounter++;
             answered = false;
             buttonConfirmNext.setText("Confirm");
@@ -118,8 +124,13 @@ public class QuizActivity extends AppCompatActivity {
         if(answerNum == currentQuestion.getAnswerNr()){
             score++;
             textViewScore.setText("Score: "+ score);
+            answerView.setTextColor(Color.GREEN);
+            answerView.setText("Correct!");
+        }else {
+            textViewScore.setText("Score: " + score);
+            answerView.setTextColor(Color.RED);
+            answerView.setText("Wrong!");
         }
-        textViewScore.setText("Score: "+ score);
         showSolution();
     }
     private void showSolution(){
@@ -131,19 +142,19 @@ public class QuizActivity extends AppCompatActivity {
         switch(currentQuestion.getAnswerNr()){
             case 1:
                 rb1.setTextColor(Color.GREEN);
-                textViewQuestion.setText("Option 1 was the correct answer");
+                //answerView.setText("Option 1 was the correct answer");
                 break;
             case 2:
                 rb2.setTextColor(Color.GREEN);
-                textViewQuestion.setText("Option 2 was the correct answer");
+                //answerView.setText("Option 2 was the correct answer");
                 break;
             case 3:
                 rb3.setTextColor(Color.GREEN);
-                textViewQuestion.setText("Option 3 was the correct answer");
+                //answerView.setText("Option 3 was the correct answer");
                 break;
             case 4:
                 rb4.setTextColor(Color.GREEN);
-                textViewQuestion.setText("Option 4 was the correct answer");
+                //answerView.setText("Option 4 was the correct answer");
                 break;
         }
 
@@ -171,16 +182,38 @@ public class QuizActivity extends AppCompatActivity {
         protected String doInBackground(String... params) {
             String message = Integer.toString(score);
             HashMap<String,String> userHash = new HashMap<>();
-            userHash.put("team_id",UserName.userID);
-            System.out.println("tid: "+UserName.userID);
-            userHash.put("trail_instance_id",MainActivity.trailInstanceID);
+            userHash.put("team_id",InstanceDAO.teamID);
+            System.out.println("tid: "+InstanceDAO.teamID);
+            userHash.put("trail_instance_id",InstanceDAO.trailInstanceID);
             userHash.put("score",message);
+            userHash.put("hotspot",placeName);
             System.out.println("message: "+message);
             String response = HttpConnectionUtility.post("http://54.255.245.23:3000/team/updateScore",userHash);
             if (response == null){
                 return null;
             }
             return response;
+        }
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        System.out.println(item.getItemId());
+        switch (item.getItemId()) {
+            case R.id.action_logout:
+                // User chose the "Settings" item, show the app settings UI...
+                Intent intent = new Intent(this, Settings.class);
+                startActivity(intent);
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
         }
     }
 }

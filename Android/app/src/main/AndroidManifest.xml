@@ -29,29 +29,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.smu.engagingu.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="engagingu"
-                    android:scheme="https" />
-            </intent-filter>
+        <activity
+            android:name="com.smu.engagingu.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity android:name="com.smu.engagingu.HomePage" />
-        <activity android:name="com.smu.engagingu.UserName" />
+        <activity
+            android:name="com.smu.engagingu.UserName"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name="com.smu.engagingu.CameraPage" />
         <activity android:name="com.smu.engagingu.Narrative" />
-        <activity android:name="com.smu.engagingu.StoryContainer" />
-        <activity android:name="com.smu.engagingu.TutorialContainer" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -80,7 +67,37 @@
 
         <activity android:name="com.smu.engagingu.QuizActivity" />
         <activity android:name="com.smu.engagingu.QuizStartingPage" />
-        <activity android:name="com.smu.engagingu.TeamDisplay"></activity>
+        <activity android:name="com.smu.engagingu.TeamDisplay" />
+        <activity android:name="com.smu.engagingu.StoryLine.StoryBoard1" />
+        <activity android:name="com.smu.engagingu.StoryLine.StoryBoard2" />
+        <activity android:name="com.smu.engagingu.StoryLine.StoryBoard4" />
+        <activity android:name="com.smu.engagingu.Tutorial.TutorialPage1" />
+        <activity android:name="com.smu.engagingu.Tutorial.TutorialPage2" />
+        <activity android:name="com.smu.engagingu.Tutorial.TutorialPage3" />
+        <activity android:name="com.smu.engagingu.Tutorial.TutorialPage4" />
+        <activity android:name="com.smu.engagingu.Tutorial.TutorialPage5" />
+        <activity android:name="com.smu.engagingu.Tutorial.TutorialPage6" />
+        <activity android:name="com.smu.engagingu.Tutorial.TutorialPage7" />
+        <activity android:name="com.smu.engagingu.StoryLine.StoryBoard3" />
+        <activity android:name="com.smu.engagingu.Settings" />
+        <activity android:name="com.smu.engagingu.SplashActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="engagingu"
+                    android:scheme="https" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
