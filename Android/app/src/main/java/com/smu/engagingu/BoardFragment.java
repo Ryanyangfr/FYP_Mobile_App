@@ -32,7 +32,7 @@ public class BoardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         //System.out.println("hello"+jsonString);
-        View view = inflater.inflate(R.layout.fragment_leaderboard_activities, container, false);
+        View view = inflater.inflate(R.layout.fragment_board, container, false);
         initList();
 
         ListView listView = (ListView)view.findViewById(R.id.listView1);

@@ -14,10 +14,17 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.pusher.client.Pusher;
+import com.pusher.client.PusherOptions;
+import com.pusher.client.channel.Channel;
+import com.pusher.client.channel.SubscriptionEventListener;
+import com.pusher.client.connection.ConnectionEventListener;
+import com.pusher.client.connection.ConnectionStateChange;
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.DAO.Session;
 import com.smu.engagingu.DAO.SubmissionDAO;
@@ -38,17 +45,71 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class SplashActivity extends AppCompatActivity {
     private static final int REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 10;
     private ArrayList<String>userList = new ArrayList<>();
+    private RecyclerView.LayoutManager lManager;
+    private PusherOptions options = new PusherOptions().setCluster("ap1");
+    private Pusher pusher = new Pusher("1721c662be60b9cbd43c", options);
+    private static final String CHANNEL_NAME = "events_to_be_shown";
     private String response2 = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         InstanceDAO.userName=Session.getUsername(getApplicationContext());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        // Use LinearLayout as the layout manager
+
+        List<Event> eventList = new ArrayList<>();
+        InstanceDAO.adapter = new EventAdapter(eventList);
+        options.setCluster("ap1");
+        Pusher pusher = new Pusher("1721c662be60b9cbd43c", options);
+        Channel channel = pusher.subscribe(CHANNEL_NAME);
+        SubscriptionEventListener eventListener = new SubscriptionEventListener() {
+            @Override
+            public void onEvent(String channel, final String event, final String data) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("Received event with data: " + data);
+                        //Gson gson = new Gson();
+                        JSONObject mainChildNode = null;
+                        try {
+                            mainChildNode = new JSONObject(data);
+                            String feedTeamID = mainChildNode.getString("team_id");
+                            String eventID = mainChildNode.getString("id");
+                            String feedTeamName = "Team "+feedTeamID+" has just connected.";
+                            Event evt = new Event(feedTeamName,eventID,data);
+                            //evt.setName(event + ":");
+                            InstanceDAO.adapter.addEvent(evt);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        };
+        channel.bind("created", eventListener);
+        channel.bind("updated", eventListener);
+        channel.bind("deleted", eventListener);
+        pusher.connect(new ConnectionEventListener() {
+            @Override
+            public void onConnectionStateChange(ConnectionStateChange change) {
+                System.out.println("State changed to " + change.getCurrentState() +
+                        " from " + change.getPreviousState());
+            }
+
+            @Override
+            public void onError(String message, String code, Exception e) {
+                System.out.println("There was a problem connecting!");
+                e.printStackTrace();
+            }
+        });
+
         showPhoneStatePermission();
 
         try {
@@ -75,6 +136,11 @@ public class SplashActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
         }
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        pusher.disconnect();
     }
     private void startHeavyProcessing(){
         new LongOperation().execute("");

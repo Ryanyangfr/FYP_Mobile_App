@@ -1,0 +1,47 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.smu.engagingu.Anagram" >
+
+    <TextView
+        android:id="@+id/wordTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:text="Word To Find"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/wordEnteredTv"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/wordTv"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp" />
+
+    <Button
+        android:id="@+id/validate"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/wordEnteredTv"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"
+        android:text="Validate" />
+
+    <Button
+        android:id="@+id/newGame"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/validate"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:text="New Game" />
+
+</RelativeLayout>

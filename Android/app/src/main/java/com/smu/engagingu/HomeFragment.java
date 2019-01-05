@@ -61,6 +61,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
                              Bundle savedInstanceState) {
         System.out.println("trailInstanceID2: "+InstanceDAO.trailInstanceID);
         saveSession();
+        //InstanceDAO.adapter = Session.getEventAdapter(getActivity().getApplicationContext());
+        //System.out.println(Session.getEventAdapter(getActivity().getApplicationContext()));
         if(!InstanceDAO.hasPulled){
             populateData();
         }
@@ -318,5 +320,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
         Session.setTeamID(getActivity().getApplicationContext(),InstanceDAO.teamID);
         Session.setTrailInstanceID(getActivity().getApplicationContext(),InstanceDAO.trailInstanceID);
         Session.setUserName(getActivity().getApplicationContext(),InstanceDAO.userName);
+        Session.setEventAdapter(getActivity().getApplicationContext(),InstanceDAO.adapter);
     }
 }

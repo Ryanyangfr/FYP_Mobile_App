@@ -31,8 +31,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name="com.smu.engagingu.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name="com.smu.engagingu.HomePage" />
         <activity
             android:name="com.smu.engagingu.UserName"
@@ -80,7 +79,8 @@
         <activity android:name="com.smu.engagingu.Tutorial.TutorialPage7" />
         <activity android:name="com.smu.engagingu.StoryLine.StoryBoard3" />
         <activity android:name="com.smu.engagingu.Settings" />
-        <activity android:name="com.smu.engagingu.SplashActivity"
+        <activity
+            android:name="com.smu.engagingu.SplashActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -98,6 +98,14 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.smu.engagingu.DragDrop"
+            android:exported="true" />
+        <activity
+            android:name="com.smu.engagingu.Anagram"
+            android:exported="true" />
+        <activity android:name="com.smu.engagingu.Drawing"
+            android:exported="true" />
     </application>
 
 </manifest>

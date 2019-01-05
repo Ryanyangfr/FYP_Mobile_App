@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.google.gson.Gson;
+import com.smu.engagingu.EventAdapter;
+
 import static com.smu.engagingu.DAO.InstanceDAO.LOGGED_IN_PREF;
 
 public class Session {
@@ -31,6 +34,20 @@ public class Session {
 
     public static String getTeamID(Context context) {
         return getPreferences(context).getString("teamID","");
+    }
+
+    public static void setEventAdapter(Context context, EventAdapter eventAdapter) {
+        SharedPreferences.Editor editor = getPreferences(context).edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(eventAdapter);
+        editor.putString("eventAdapter", json).commit();
+        editor.apply();
+    }
+
+    public static EventAdapter getEventAdapter(Context context) {
+        Gson gson = new Gson();
+        String json = getPreferences(context).getString("eventAdapter","");
+        return gson.fromJson(json, EventAdapter.class);
     }
 
     public static void setTrailInstanceID(Context context,String trailInstanceID) {
