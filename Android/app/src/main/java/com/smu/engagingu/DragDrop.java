@@ -2,8 +2,11 @@ package com.smu.engagingu;
 
 import android.content.ClipData;
 import android.content.ClipDescription;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,47 +15,112 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.fyp.R;
+import com.smu.engagingu.utility.HttpConnectionUtility;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class DragDrop extends AppCompatActivity implements View.OnDragListener, View.OnLongClickListener {
 
     private static final String TAG = DragDrop.class.getSimpleName();
+    private int score;
     private Button textView1;
     private Button textView2;
     private Button textView3;
     private Button textView4;
     private Button textView5;
+    private Button submit;
+    private TextView textView6;
+    private TextView textView7;
+    private TextView textView8;
+    private TextView textView9;
+    private TextView textView10;
+    private HashMap<String,String> optionsMap = new HashMap<>();
+    private HashMap<String,Boolean> answersMap = new HashMap<>();
+    private String placeName;
+    private String[] dragOption = new String[5];
+    private String[] dragArea = new String[5];
 
-
-    //private Button button;
-    //private ImageView imageView;
-    //private static final String IMAGE_VIEW_TAG = "LAUNCHER LOGO";
     private static final String TEXT_VIEW_TAG = "DRAG TEXT";
-    //private static final String BUTTON_VIEW_TAG = "DRAG BUTTON";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drag_drop);
+        Intent intent = getIntent();
+        placeName = intent.getStringExtra(Narrative.EXTRA_MESSAGE2);
+        getOptions();
         findViews();
         implementEvents();
     }
 
     //Find all views and set Tag to all draggable views
+    private void getOptions(){
+        String word;
+        try {
+            word = new MyHttpRequestTask().execute("").get();
+            JSONArray mainChildNode = new JSONArray(word);
+            for(int i =0; i < mainChildNode.length();i++){
+                JSONObject firstChildNode = mainChildNode.getJSONObject(i);
+                if(firstChildNode.getString("hotspot").equals(placeName)){
+                    JSONArray secondChildNode = firstChildNode.getJSONArray("drag_and_drop");
+                    for(int j = 0 ; j<secondChildNode.length();j++){
+                        JSONObject option = secondChildNode.getJSONObject(j);
+                        dragOption[j]=option.getString("drag_and_drop_answer");
+                        dragArea[j]=option.getString("drag_and_drop_question");
+                        optionsMap.put(option.getString("drag_and_drop_question"),option.getString("drag_and_drop_answer"));
+                    }
+                }
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
     private void findViews() {
         textView1 = (Button) findViewById(R.id.label1);
-        textView1.setTag(TEXT_VIEW_TAG);
+        textView1.setTag(dragOption[0]);
+        textView1.setText(dragOption[0]);
         textView2 = (Button) findViewById(R.id.label2);
-        textView2.setTag(TEXT_VIEW_TAG);
+        textView2.setTag(dragOption[1]);
+        textView2.setText(dragOption[1]);
         textView3 = (Button) findViewById(R.id.label3);
-        textView3.setTag(TEXT_VIEW_TAG);
+        textView3.setTag(dragOption[2]);
+        textView3.setText(dragOption[2]);
         textView4 = (Button) findViewById(R.id.label4);
-        textView4.setTag(TEXT_VIEW_TAG);
+        textView4.setTag(dragOption[3]);
+        textView4.setText(dragOption[3]);
         textView5 = (Button) findViewById(R.id.label5);
-        textView5.setTag(TEXT_VIEW_TAG);
+        textView5.setTag(dragOption[4]);
+        textView5.setText(dragOption[4]);
+
+        textView6 = (TextView)findViewById(R.id.textView8);
+        textView6.setText(dragArea[0]);
+        textView7 = (TextView)findViewById(R.id.textView9);
+        textView7.setText(dragArea[1]);
+        textView8 = (TextView)findViewById(R.id.textView10);
+        textView8.setText(dragArea[2]);
+        textView9 = (TextView)findViewById(R.id.textView11);
+        textView9.setText(dragArea[3]);
+        textView10 = (TextView)findViewById(R.id.textView12);
+        textView10.setText(dragArea[4]);
+
+        submit = (Button) findViewById(R.id.button5);
         /*imageView = (ImageView) findViewById(R.id.image_view);
         imageView.setTag(IMAGE_VIEW_TAG);
         button = (Button) findViewById(R.id.button);
@@ -73,12 +141,28 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
 
         //add or remove any layout view that you don't want to accept dragged view
         findViewById(R.id.top_layout).setOnDragListener(this);
-        //findViewById(R.id.left_layout).setOnDragListener(this);
+
         findViewById(R.id.right_layout1).setOnDragListener(this);
+        findViewById(R.id.right_layout1).setTag(dragArea[0]);
+
         findViewById(R.id.right_layout2).setOnDragListener(this);
+        findViewById(R.id.right_layout2).setTag(dragArea[1]);
+
         findViewById(R.id.right_layout3).setOnDragListener(this);
+        findViewById(R.id.right_layout3).setTag(dragArea[2]);
+
         findViewById(R.id.right_layout4).setOnDragListener(this);
+        findViewById(R.id.right_layout4).setTag(dragArea[3]);
+
         findViewById(R.id.right_layout5).setOnDragListener(this);
+        findViewById(R.id.right_layout5).setTag(dragArea[4]);
+
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                submitScore();
+            }
+        });
 
     }
 
@@ -172,7 +256,17 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
 
                 // Gets the text data from the item.
                 String dragData = item.getText().toString();
-
+                System.out.println(dragData);
+                String dragAreaName="";
+                if(view.getTag()!=null) {
+                    dragAreaName = view.getTag().toString();
+                    System.out.println(dragAreaName);
+                    if(optionsMap.get(dragAreaName).equals(dragData)){
+                        answersMap.put(dragAreaName,true);
+                    }else{
+                        answersMap.put(dragAreaName,false);
+                    }
+                }
                 // Displays a message containing the dragged data.
                 //Toast.makeText(this, "Dragged data is " + dragData, Toast.LENGTH_SHORT).show();
 
@@ -216,6 +310,62 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
                 break;
         }
         return false;
+    }
+    private void submitScore(){
+        for (String key : answersMap.keySet()) {
+            if (answersMap.get(key)==true){
+                score++;
+            }
+        }
+            try {
+                String response = new MyHttpRequestTask2().execute("http://54.255.245.23:3000/team/updateScore").get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            if(answersMap.size()==5) {
+                Intent intent = new Intent(this, HomePage.class);
+                InstanceDAO.completedList.add(placeName);
+                startActivity(intent);
+            }else{
+                Context context = getApplicationContext();
+                CharSequence text = "You have not completed the challenge!";
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+            }
+    }
+    private class MyHttpRequestTask2 extends AsyncTask<String,Integer,String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String message = Integer.toString(score);
+            System.out.println("Score:"+score);
+            HashMap<String,String> userHash = new HashMap<>();
+            userHash.put("team_id",InstanceDAO.teamID);
+            System.out.println("tid: "+InstanceDAO.teamID);
+            userHash.put("trail_instance_id",InstanceDAO.trailInstanceID);
+            userHash.put("score",message);
+            userHash.put("hotspot",placeName);
+            System.out.println("message: "+message);
+            String response = HttpConnectionUtility.post("http://54.255.245.23:3000/team/updateScore",userHash);
+            if (response == null){
+                return null;
+            }
+            return response;
+        }
+    }
+    private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
+        @Override
+        protected String doInBackground(String... params) {
+            Map<String, String> req = new HashMap<>();
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/draganddrop/getDragAndDrop?trail_instance_id="+InstanceDAO.trailInstanceID);
+            if (response == null){
+                return null;
+            }
+            return response;
+        }
     }
 
 

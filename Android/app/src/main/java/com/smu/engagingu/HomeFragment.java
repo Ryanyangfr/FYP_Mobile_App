@@ -27,8 +27,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.DAO.Session;
 import com.smu.engagingu.Hotspot.Hotspot;
-import com.smu.engagingu.Quiz.Question;
-import com.smu.engagingu.Quiz.QuestionDatabase;
+import com.smu.engagingu.Quiz.QuestionType;
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.utility.HttpConnectionUtility;
 
@@ -36,13 +35,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback{
     public static final String EXTRA_MESSAGE = "com.smu.engagingu.MESSAGE1";
     public static final String NARRATIVE_MESSAGE = "com.smu.engagingu.MESSAGE2";
-    public static final String SELFIE_CHECK="com.smu.engagingu.MESSAGE3";
+    public static final String GAMEMODE_CHECK="com.smu.engagingu.MESSAGE3";
     MapView mMapView;
     GoogleMap mGoogleMap;
 
@@ -53,6 +52,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
     private final long MIN_TIME = 1000; //1 second
     private final long MIN_DIST = 5; //metres?
     private String snippetText;
+    private HashMap<String,String> questionTypeMap;
 
 
     private LatLng latLng;
@@ -60,6 +60,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         System.out.println("trailInstanceID2: "+InstanceDAO.trailInstanceID);
+        QuestionType questionType = new QuestionType();
+        questionTypeMap = questionType.getQuestionTypeMap();
         saveSession();
         //InstanceDAO.adapter = Session.getEventAdapter(getActivity().getApplicationContext());
         //System.out.println(Session.getEventAdapter(getActivity().getApplicationContext()));
@@ -82,11 +84,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
         mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
-        Intent intent = getActivity().getIntent();
-        String completedPlace = intent.getStringExtra(QuizActivity.EXTRA_MESSAGE);
-        if(completedPlace!=null) {
-            InstanceDAO.completedList.add(completedPlace);
-        }
+        //Intent intent = getActivity().getIntent();
+        //String completedPlace = intent.getStringExtra(QuizActivity.EXTRA_MESSAGE);
+        //if(completedPlace!=null) {
+        //    InstanceDAO.completedList.add(completedPlace);
+        //}
         try{
             mGoogleMap.setMyLocationEnabled(true);
         }
@@ -147,7 +149,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
             @Override
             public void onInfoWindowClick(Marker marker) {
                 String title = marker.getTitle();
-                    QuestionDatabase qnsDB = new QuestionDatabase();
+                 /*   QuestionDatabase qnsDB = new QuestionDatabase();
                     if(qnsDB.getQuestionsMap().size()==0){
                         Context context = getActivity().getApplicationContext();
                         CharSequence text = "Bad Connection, Please Try Later";
@@ -155,21 +157,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
 
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
-                    }else {
-                        ArrayList<Question> questionsList = qnsDB.getQuestionsMap().get(title);
-                        Intent intent = new Intent(getActivity(), Narrative.class);
-                        if (questionsList != null) {
-
-                            intent.putExtra(SELFIE_CHECK, "1");
-                        } else {
-
-                            intent.putExtra(SELFIE_CHECK, "0");
-                        }
-                        intent.putExtra(EXTRA_MESSAGE, title);
-                        intent.putExtra(NARRATIVE_MESSAGE, snippetText);
-                        startActivity(intent);
-                    }
-            }
+                    }else {*/
+                        //ArrayList<Question> questionsList = qnsDB.getQuestionsMap().get(title);
+                    Intent intent = new Intent(getActivity(), Narrative.class);
+                    intent.putExtra(GAMEMODE_CHECK,questionTypeMap.get(title));
+                    intent.putExtra(EXTRA_MESSAGE, title);
+                    intent.putExtra(NARRATIVE_MESSAGE, snippetText);
+                    startActivity(intent);
+                }
+            //}
         });
 
         locationListener = new LocationListener() {

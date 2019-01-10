@@ -160,8 +160,8 @@ public class SplashActivity extends AppCompatActivity {
                     int jsonArrLength = submissionJsonArr.length();
                     JSONObject jsonSizeObj = submissionJsonArr.getJSONObject(jsonArrLength-1);
 
-                    int size = Integer.parseInt(jsonSizeObj.getString("size"));
-                    System.out.println("Size: " + size);
+//                    int size = Integer.parseInt(jsonSizeObj.getString("size"));
+//                    System.out.println("Size: " + size);
 
                     for (int i = 0; i < submissionJsonArr.length() - 1; i++) {
                         JSONObject jsonObj = submissionJsonArr.getJSONObject(i);
@@ -202,6 +202,7 @@ public class SplashActivity extends AppCompatActivity {
                         out.close();
                         is.close();
                     }
+
                     JSONArray jsonMainNode2 = new JSONArray(response2);
                     for (int i = 0; i < jsonMainNode2.length(); i++) {
                         JSONObject jsonChildNode2 = jsonMainNode2.getJSONObject(i);

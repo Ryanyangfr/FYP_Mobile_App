@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -24,25 +22,10 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.DAO.SubmissionDAO;
 import com.smu.engagingu.fyp.R;
-import com.smu.engagingu.utility.HttpConnectionUtility;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.concurrent.ExecutionException;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
@@ -170,7 +153,7 @@ public class SubmissionsFragment extends Fragment {
 //            String destinationFile = params[1];
 //
 //            try {
-//                URL url = new URL("http://54.255.245.23:3000/upload/getSubmission?url=" + imageUrl);
+//                URL url = new URL(" );
 //                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 //                connection.setDoInput(true);
 //                connection.connect();

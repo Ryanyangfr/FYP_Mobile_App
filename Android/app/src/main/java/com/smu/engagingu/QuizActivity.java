@@ -174,7 +174,7 @@ public class QuizActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         Intent intent = new Intent(QuizActivity.this,HomePage.class);
-        intent.putExtra(EXTRA_MESSAGE, placeName);
+        InstanceDAO.completedList.add(placeName);
         startActivity(intent);
     }
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {

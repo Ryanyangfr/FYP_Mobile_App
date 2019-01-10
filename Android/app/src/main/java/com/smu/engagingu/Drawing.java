@@ -18,10 +18,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.DAO.SubmissionDAO;
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.utility.HttpConnectionUtility;
 import com.smu.engagingu.utility.PaintView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -39,9 +44,10 @@ public class Drawing extends AppCompatActivity {
     String mCurrentPhotoPath;
     File photoFile;
     Uri photoURI;
-    private String targetQuestion = "drawingTest";
+    private String targetQuestion;
     private String placeName;
     private PaintView paintView;
+    private TextView questionView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,14 +55,15 @@ public class Drawing extends AppCompatActivity {
         /*PaintView paintView = new PaintView(this);
         setContentView(paintView);*/
         setContentView(R.layout.activity_drawing);
-
-
+        Intent intent = getIntent();
+        placeName = intent.getStringExtra(Narrative.EXTRA_MESSAGE2);
         paintView = (PaintView) findViewById(R.id.paintView);
+        questionView = findViewById(R.id.textView13);
+        getQuestion();
+        questionView.setText(targetQuestion);
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         paintView.init(metrics);
-        //RelativeLayout parent = (RelativeLayout)findViewById(R.id.signImageParent);
-        //parent.addView(paintView);
 
 
         Button btn = (Button) findViewById(R.id.submitButton);
@@ -93,15 +100,11 @@ public class Drawing extends AppCompatActivity {
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
-                                    String team_id = "3";
-                                    String trail_instance_id = "175239";
-                                    String question = "Locate the Kwa Geok Choo Library and take a wefie next to the scenic elevator!";
-                                    placeName = "School of Law";
                                     try {
-                                        String responseCode = new PictureUploader().execute(team_id, trail_instance_id, question, placeName).get();
+                                        String responseCode = new PictureUploader().execute(InstanceDAO.teamID, InstanceDAO.trailInstanceID, targetQuestion, placeName).get();
 
                                         SubmissionDAO.HOTSPOTS.add(placeName);
-                                        SubmissionDAO.QUESTIONS.add(question);
+                                        SubmissionDAO.QUESTIONS.add(targetQuestion);
                                         SubmissionDAO.IMAGEPATHS.add(mCurrentPhotoPath);
 
                                         System.out.println("Response Code: " + responseCode);
@@ -113,10 +116,9 @@ public class Drawing extends AppCompatActivity {
                                     Toast toast = Toast.makeText(Drawing.this, "Photo Successfully Uploaded!", Toast.LENGTH_SHORT);
                                     toast.show();
                                     Intent intent = new Intent(Drawing.this, HomePage.class);
-                                    paintView.clear();
-                                    //intent.putExtra(EXTRA_MESSAGE, placeName);
-
-                                    //*** startActivity(intent);
+                                    //paintView.clear();
+                                    InstanceDAO.completedList.add(placeName);
+                                    startActivity(intent);
                                 }
                             }
                         });
@@ -131,6 +133,25 @@ public class Drawing extends AppCompatActivity {
                 dialog.show();
             }
         });
+    }
+    private void getQuestion(){
+        String word;
+        try {
+            word = new MyHttpRequestTask().execute("").get();
+            JSONArray jsonMainNode = new JSONArray(word);
+            for (int i = 0 ; i < jsonMainNode.length();i++) {
+                JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
+                if (jsonChildNode.getString("hotspot").equals(placeName)) {
+                    targetQuestion = jsonChildNode.getString("question");
+                }
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
     private File createImageFile() throws IOException {
         // Create an image file name
@@ -187,5 +208,16 @@ public class Drawing extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
+        @Override
+        protected String doInBackground(String... params) {
+            Map<String, String> req = new HashMap<>();
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/upload/getDrawingQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
+            if (response == null){
+                return null;
+            }
+            return response;
+        }
     }
 }

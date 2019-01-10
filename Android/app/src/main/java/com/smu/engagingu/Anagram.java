@@ -1,5 +1,6 @@
 package com.smu.engagingu;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.utility.HttpConnectionUtility;
 
@@ -27,12 +29,15 @@ public class Anagram extends AppCompatActivity implements View.OnClickListener{
         private EditText wordEnteredTv;
         private Button validate, newGame;
         private String wordToFind;
+        private String placeName;
         private final Random RANDOM = new Random();
 
         @Override
         protected void onCreate (Bundle savedInstanceState){
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_anagram);
+            Intent intent = getIntent();
+            placeName = intent.getStringExtra(Narrative.EXTRA_MESSAGE2);
             wordTv = (TextView) findViewById(R.id.wordTv);
             wordEnteredTv = (EditText) findViewById(R.id.wordEnteredTv);
             validate = (Button) findViewById(R.id.validate);
@@ -57,7 +62,16 @@ public class Anagram extends AppCompatActivity implements View.OnClickListener{
 
             if (wordToFind.equals(w)) {
                 Toast.makeText(this, "Congratulations ! You found the word " + wordToFind, Toast.LENGTH_SHORT).show();
-                newGame();
+                try {
+                    String response = new MyHttpRequestTask().execute("http://54.255.245.23:3000/team/updateScore").get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                Intent intent = new Intent(this, HomePage.class);
+                InstanceDAO.completedList.add(placeName);
+                startActivity(intent);
             } else {
                 Toast.makeText(this, "Retry !", Toast.LENGTH_SHORT).show();
             }
@@ -70,7 +84,9 @@ public class Anagram extends AppCompatActivity implements View.OnClickListener{
                 JSONArray jsonMainNode = new JSONArray(word);
                 for (int i = 0 ; i < jsonMainNode.length();i++){
                     JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
-                    wordToFind = jsonChildNode.getString("anagram");
+                    if(jsonChildNode.getString("hotspot").equals(placeName)) {
+                        wordToFind = jsonChildNode.getString("anagram");
+                    }
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
