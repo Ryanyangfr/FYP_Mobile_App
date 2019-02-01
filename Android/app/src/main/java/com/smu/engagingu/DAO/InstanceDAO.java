@@ -1,13 +1,13 @@
 package com.smu.engagingu.DAO;
 
-import com.smu.engagingu.EventAdapter;
+import com.smu.engagingu.Adapters.EventAdapter;
 import com.smu.engagingu.Hotspot.Hotspot;
 
 import java.util.ArrayList;
 
 public class InstanceDAO {
     public static String teamID;
-    public static String trailInstanceID = "175239";
+    public static String trailInstanceID;
     public static ArrayList<String> completedList = new ArrayList<>();
     public static Boolean firstTime = true;
     public static Boolean isLeader = false;

@@ -23,10 +23,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/common_google_signin_btn_text_dark_default"
-                app:tabIndicatorColor="@color/colorAccent"
+                app:tabIndicatorColor="@color/smuGold"
                 app:tabMode="scrollable"
                 app:tabSelectedTextColor="@color/colorAccent"
-                app:tabTextColor="@color/colorPrimary" />
+                app:tabTextColor="@color/colorAccent" />
         </android.support.design.widget.AppBarLayout>
 
         <android.support.v4.view.ViewPager

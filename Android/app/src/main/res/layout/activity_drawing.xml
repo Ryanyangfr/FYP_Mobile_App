@@ -6,9 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.smu.engagingu.Drawing">
+
     <com.smu.engagingu.utility.PaintView
         android:id="@+id/paintView"
         android:layout_width="match_parent"
+        android:layout_below="@id/textView13"
         android:layout_height="match_parent" />
 
     <Button
@@ -19,14 +21,23 @@
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="24dp"
-        android:text="Submit" />
+        android:background="@color/colorAccent"
+        android:text="Submit"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/textView13"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:text="Draw Smoo-Smoo" />
+        android:background="@color/colorAccent"
+        android:paddingTop="30dp"
+        android:paddingBottom="30dp"
+        android:text="Draw Smoo-Smoo"
+        android:textAlignment="center"
+        android:textColor="@color/cardview_light_background"
+        android:textSize="25sp"
+        android:textStyle="bold" />
 </RelativeLayout>

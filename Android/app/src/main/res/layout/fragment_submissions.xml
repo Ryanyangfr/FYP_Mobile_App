@@ -7,19 +7,32 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/textView26"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark" />
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="48dp"
+        android:background="@color/colorPrimaryDark"
         android:gravity="center"
         android:text="@string/submission_fragment"
-        android:textColor="@color/colorAccent"
-        android:textSize="30sp" />
+        android:textColor="@color/cardview_light_background"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView27"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark" />
 
     <ListView
+        android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/listView"
-        android:layout_marginTop="13dp">
-    </ListView>
+        android:layout_marginTop="5dp"></ListView>
 
 
 </LinearLayout>

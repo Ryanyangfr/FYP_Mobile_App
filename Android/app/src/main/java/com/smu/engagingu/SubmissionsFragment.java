@@ -3,6 +3,8 @@ package com.smu.engagingu;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -233,6 +235,8 @@ public class SubmissionsFragment extends Fragment {
             TextView textView_mission = view.findViewById(R.id.textView_question);
 
             textView_hotspot.setText(SubmissionDAO.HOTSPOTS.get(i));
+            textView_hotspot.setTextColor(Color.parseColor("#151C55"));
+            textView_hotspot.setTypeface(null, Typeface.BOLD);
             textView_mission.setText(SubmissionDAO.QUESTIONS.get(i));
 
             return view;

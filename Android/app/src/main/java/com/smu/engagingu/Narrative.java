@@ -33,7 +33,7 @@ public class Narrative extends AppCompatActivity {
         TextView narrativeView = findViewById(R.id.narrativeView);
         narrativeView.setText(narrative);
         TextView placeNameView = findViewById(R.id.placeNameView);
-        placeNameView.setText(placeName);
+        placeNameView.setText(placeName.toUpperCase());
         Button buttonStartQuiz = findViewById(R.id.go_quiz);
         buttonStartQuiz.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,6 +60,9 @@ public class Narrative extends AppCompatActivity {
                 break;
             case "5":
                 intent = new Intent(Narrative.this, DragDrop .class);
+                break;
+            case "6":
+                intent = new Intent(Narrative.this, WordsSearch .class);
                 break;
             default:
                 System.out.println("no match");

@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.google.gson.Gson;
-import com.smu.engagingu.EventAdapter;
+import com.smu.engagingu.Adapters.EventAdapter;
 
 import static com.smu.engagingu.DAO.InstanceDAO.LOGGED_IN_PREF;
 

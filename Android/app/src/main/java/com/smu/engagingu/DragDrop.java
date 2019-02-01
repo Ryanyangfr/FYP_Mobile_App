@@ -34,12 +34,13 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
 
     private static final String TAG = DragDrop.class.getSimpleName();
     private int score;
+    private String questionName;
     private Button textView1;
     private Button textView2;
     private Button textView3;
     private Button textView4;
-    private Button textView5;
     private Button submit;
+    private TextView question;
     private TextView textView6;
     private TextView textView7;
     private TextView textView8;
@@ -47,6 +48,7 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
     private TextView textView10;
     private HashMap<String,String> optionsMap = new HashMap<>();
     private HashMap<String,Boolean> answersMap = new HashMap<>();
+    private HashMap<String,Boolean> areaMap = new HashMap<>();
     private String placeName;
     private String[] dragOption = new String[5];
     private String[] dragArea = new String[5];
@@ -74,6 +76,7 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
             for(int i =0; i < mainChildNode.length();i++){
                 JSONObject firstChildNode = mainChildNode.getJSONObject(i);
                 if(firstChildNode.getString("hotspot").equals(placeName)){
+                    questionName = firstChildNode.getString("question");
                     JSONArray secondChildNode = firstChildNode.getJSONArray("drag_and_drop");
                     for(int j = 0 ; j<secondChildNode.length();j++){
                         JSONObject option = secondChildNode.getJSONObject(j);
@@ -105,9 +108,7 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
         textView4 = (Button) findViewById(R.id.label4);
         textView4.setTag(dragOption[3]);
         textView4.setText(dragOption[3]);
-        textView5 = (Button) findViewById(R.id.label5);
-        textView5.setTag(dragOption[4]);
-        textView5.setText(dragOption[4]);
+
 
         textView6 = (TextView)findViewById(R.id.textView8);
         textView6.setText(dragArea[0]);
@@ -117,8 +118,9 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
         textView8.setText(dragArea[2]);
         textView9 = (TextView)findViewById(R.id.textView11);
         textView9.setText(dragArea[3]);
-        textView10 = (TextView)findViewById(R.id.textView12);
-        textView10.setText(dragArea[4]);
+
+        question = (TextView) findViewById(R.id.dragAndDropQuestion);
+        question.setText(questionName);
 
         submit = (Button) findViewById(R.id.button5);
         /*imageView = (ImageView) findViewById(R.id.image_view);
@@ -135,7 +137,6 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
         textView2.setOnLongClickListener(this);
         textView3.setOnLongClickListener(this);
         textView4.setOnLongClickListener(this);
-        textView5.setOnLongClickListener(this);
         /*imageView.setOnLongClickListener(this);
         button.setOnLongClickListener(this);*/
 
@@ -154,8 +155,6 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
         findViewById(R.id.right_layout4).setOnDragListener(this);
         findViewById(R.id.right_layout4).setTag(dragArea[3]);
 
-        findViewById(R.id.right_layout5).setOnDragListener(this);
-        findViewById(R.id.right_layout5).setTag(dragArea[4]);
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -193,7 +192,7 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
         );
 
         //Set view visibility to INVISIBLE as we are going to drag the view
-        view.setVisibility(View.INVISIBLE);
+        //view.setVisibility(View.INVISIBLE);
         return true;
     }
 
@@ -212,10 +211,9 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
                     // to give any color tint to the View to indicate that it can accept
                     // data.
 
-                    //  view.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN);//set background color to your view
+                    //view.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN);//set background color to your view
 
-                    // Invalidate the view to force a redraw in the new tint
-                    //  view.invalidate();
+                    view.invalidate();
 
                     // returns true to indicate that the View can accept the dragged data.
                     return true;
@@ -231,6 +229,7 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
                 // Return true; the return value is ignored.
 
                 view.getBackground().setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_IN);
+                // Invalidate the view to force a redraw in the new tint
 
                 // Invalidate the view to force a redraw in the new tint
                 view.invalidate();
@@ -245,6 +244,12 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
                 //  view.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN);
 
                 //If u had not provided any color in ACTION_DRAG_STARTED then clear color filter.
+                String dragAreaName;
+                if(view.getTag()!=null) {
+                    dragAreaName = view.getTag().toString();
+                    System.out.println("here: "+dragAreaName);
+                    areaMap.put(dragAreaName, false);
+                }
                 view.getBackground().clearColorFilter();
                 // Invalidate the view to force a redraw in the new tint
                 view.invalidate();
@@ -253,14 +258,23 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
             case DragEvent.ACTION_DROP:
                 // Gets the item containing the dragged data
                 ClipData.Item item = event.getClipData().getItemAt(0);
-
+                if(view.getTag()!=null){
+                    String temp = view.getTag().toString();
+                    System.out.println(temp);
+                    if(areaMap.get(temp)!=null) {
+                        if (areaMap.get(temp) == true) {
+                            return false;
+                        }
+                    }
+                }
                 // Gets the text data from the item.
                 String dragData = item.getText().toString();
                 System.out.println(dragData);
-                String dragAreaName="";
+                //String dragAreaName="";
                 if(view.getTag()!=null) {
                     dragAreaName = view.getTag().toString();
-                    System.out.println(dragAreaName);
+                    System.out.println("There: "+dragAreaName);
+                    areaMap.put(dragAreaName,true);
                     if(optionsMap.get(dragAreaName).equals(dragData)){
                         answersMap.put(dragAreaName,true);
                     }else{
@@ -324,7 +338,7 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
-            if(answersMap.size()==5) {
+            if(answersMap.size()==4) {
                 Intent intent = new Intent(this, HomePage.class);
                 InstanceDAO.completedList.add(placeName);
                 startActivity(intent);

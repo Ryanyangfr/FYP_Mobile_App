@@ -7,15 +7,28 @@
     tools:context="com.smu.engagingu.DragDrop"
     tools:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/dragAndDropQuestion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@color/colorAccent"
+        android:paddingTop="30dp"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textColor="@color/cardview_light_background"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="525dp"
+        android:layout_height="480dp"
         android:orientation="horizontal">
 
         <LinearLayout
             android:id="@+id/top_layout"
             android:layout_width="406dp"
-            android:layout_height="521dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/ic_launcher_background"
             android:gravity="center"
@@ -26,50 +39,48 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
+                android:background="@color/smuGold"
                 android:gravity="center"
                 android:text="Test-1"
-                android:textColor="@android:color/black"
-                android:textSize="14sp" />
+                android:textColor="@color/common_google_signin_btn_text_dark_pressed"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/label2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
+                android:background="@color/smuGold"
                 android:gravity="center"
                 android:text="Test-2"
-                android:textColor="@android:color/black"
-                android:textSize="14sp" />
+                android:textColor="@color/common_google_signin_btn_text_dark_pressed"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/label3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
+                android:background="@color/smuGold"
                 android:gravity="center"
                 android:text="Test-3"
-                android:textColor="@android:color/black"
-                android:textSize="14sp" />
+                android:textColor="@color/ic_launcher_background"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/label4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
+                android:background="@color/smuGold"
                 android:gravity="center"
                 android:text="Test-4"
-                android:textColor="@android:color/black"
-                android:textSize="14sp" />
-
-            <Button
-                android:id="@+id/label5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:gravity="center"
-                android:text="Test-5"
-                android:textColor="@android:color/black"
-                android:textSize="14sp" />
+                android:textColor="@color/common_google_signin_btn_text_dark_pressed"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
 
         </LinearLayout>
@@ -87,7 +98,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@color/colorPrimary"
+                android:background="@color/colorGray"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -98,9 +109,11 @@
                     android:layout_alignParentTop="true"
                     android:layout_alignParentBottom="true"
                     android:layout_marginTop="0dp"
-                    android:gravity="center"
                     android:layout_marginBottom="15dp"
-                    android:text="TextView" />
+                    android:gravity="center"
+                    android:text="TextView"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
@@ -118,10 +131,12 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentBottom="true"
-                    android:gravity="center"
                     android:layout_marginTop="0dp"
                     android:layout_marginBottom="15dp"
-                    android:text="TextView" />
+                    android:gravity="center"
+                    android:text="TextView"
+                    android:textColor="@color/cardview_light_background"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
@@ -129,7 +144,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@color/colorPrimary"
+                android:background="@color/colorGray"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -139,10 +154,12 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentBottom="true"
-                    android:gravity="center"
                     android:layout_marginTop="0dp"
                     android:layout_marginBottom="15dp"
-                    android:text="TextView" />
+                    android:gravity="center"
+                    android:text="TextView"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
@@ -160,38 +177,20 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentBottom="true"
-                    android:gravity="center"
                     android:layout_marginTop="0dp"
                     android:layout_marginBottom="15dp"
-                    android:text="TextView" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/right_layout5"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/colorPrimary"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/textView12"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentBottom="true"
                     android:gravity="center"
-                    android:layout_marginTop="0dp"
-                    android:layout_marginBottom="15dp"
-                    android:text="TextView" />
+                    android:text="TextView"
+                    android:textColor="@color/cardview_light_background"
+                    android:textStyle="bold" />
             </LinearLayout>
+
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -199,7 +198,10 @@
             android:id="@+id/button5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Submit" />
+            android:background="@color/colorAccent"
+            android:text="Submit"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold" />
     </LinearLayout>
 
 

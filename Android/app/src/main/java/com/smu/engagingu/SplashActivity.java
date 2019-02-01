@@ -19,18 +19,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.Socket;
 import com.pusher.client.Pusher;
 import com.pusher.client.PusherOptions;
 import com.pusher.client.channel.Channel;
 import com.pusher.client.channel.SubscriptionEventListener;
 import com.pusher.client.connection.ConnectionEventListener;
 import com.pusher.client.connection.ConnectionStateChange;
+import com.smu.engagingu.Adapters.EventAdapter;
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.DAO.Session;
 import com.smu.engagingu.DAO.SubmissionDAO;
 import com.smu.engagingu.Hotspot.Hotspot;
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.utility.HttpConnectionUtility;
+import com.smu.engagingu.utility.SocketHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,11 +60,17 @@ public class SplashActivity extends AppCompatActivity {
     private Pusher pusher = new Pusher("1721c662be60b9cbd43c", options);
     private static final String CHANNEL_NAME = "events_to_be_shown";
     private String response2 = "";
+    private Socket mSocket;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        System.out.println("HELLO!!");
         InstanceDAO.userName=Session.getUsername(getApplicationContext());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        SocketHandler socketHandler = new SocketHandler();
+        mSocket = socketHandler.getSocket();
+        mSocket.on("activityFeed",onNewFeedMessage);
+        mSocket.connect();
 
         // Use LinearLayout as the layout manager
 
@@ -74,7 +84,7 @@ public class SplashActivity extends AppCompatActivity {
             public void onEvent(String channel, final String event, final String data) {
                 runOnUiThread(new Runnable() {
                     @Override
-                    public void run() {
+                    public void run()  {
                         System.out.println("Received event with data: " + data);
                         //Gson gson = new Gson();
                         JSONObject mainChildNode = null;
@@ -146,6 +156,34 @@ public class SplashActivity extends AppCompatActivity {
         new LongOperation().execute("");
     }
 
+    private Emitter.Listener onNewFeedMessage = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println(args.toString());
+                    JSONObject data = (JSONObject) args[0];
+                    String team;
+                    String hotspot;
+                    String message;
+                    try{
+                        team = data.getString("team");
+                        hotspot = data.getString("hotspot");
+                        message = "Team "+team+" has just completed "+hotspot;
+                    }catch(JSONException e){
+                        return;
+                    }
+                    //System.out.println(args[0]);
+                    //String s = (String)args[0];
+                    Event evt = new Event(message,team,hotspot);
+                    //evt.setName(event + ":");
+                    System.out.println("Activity Feed Update");
+                    InstanceDAO.adapter.addEvent(evt);
+                }
+            });
+        }
+    };
     private class LongOperation extends AsyncTask<String, Void, String> {
 
         @Override
@@ -155,18 +193,22 @@ public class SplashActivity extends AppCompatActivity {
             InstanceDAO.firstTime = Session.getFirstTime(getApplicationContext());
                 try {
                     String endpointURL = SubmissionDAO.submissionEndPoint;
+                    System.out.println("AAA"+endpointURL);
                     String submissionResponse = HttpConnectionUtility.get(endpointURL);
+                    System.out.println("response: "+submissionResponse);
                     JSONArray submissionJsonArr= new JSONArray(submissionResponse);
-                    int jsonArrLength = submissionJsonArr.length();
-                    JSONObject jsonSizeObj = submissionJsonArr.getJSONObject(jsonArrLength-1);
+                    System.out.println(submissionJsonArr.length());
+                    //int jsonArrLength = submissionJsonArr.length();
+                   // JSONObject jsonSizeObj = submissionJsonArr.getJSONObject(jsonArrLength-1);
 
 //                    int size = Integer.parseInt(jsonSizeObj.getString("size"));
 //                    System.out.println("Size: " + size);
 
-                    for (int i = 0; i < submissionJsonArr.length() - 1; i++) {
+                    for (int i = 0; i < submissionJsonArr.length(); i++) {
                         JSONObject jsonObj = submissionJsonArr.getJSONObject(i);
 
-                        String imageURL = jsonObj.getString("SubmissionURL");
+                        String imageURL = jsonObj.getString("submissionURL");
+                        System.out.println("imageURL: "+imageURL);
                         String hotspot = jsonObj.getString("hotspot");
                         String question = jsonObj.getString("question");
 

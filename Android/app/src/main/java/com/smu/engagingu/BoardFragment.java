@@ -8,9 +8,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.smu.engagingu.Adapters.LeaderboardAdapter;
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.utility.HttpConnectionUtility;
 
@@ -27,6 +27,7 @@ public class BoardFragment extends Fragment {
     //json string
 //    private String jsonString = "";
     private boolean hasGottenInput = false;
+    ArrayList<String>leaderboardList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -36,11 +37,10 @@ public class BoardFragment extends Fragment {
         initList();
 
         ListView listView = (ListView)view.findViewById(R.id.listView1);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                getContext(),
-                R.layout.mytextview,
-                leaderboardList );
-        listView.setAdapter(arrayAdapter);
+        //listView.getItemAtPosition(0);
+        LeaderboardAdapter leaderboardAdapter = new LeaderboardAdapter(getContext(),leaderboardList);
+        listView.setAdapter(leaderboardAdapter);
+
 
         return view;
     }
@@ -51,7 +51,7 @@ public class BoardFragment extends Fragment {
         menuInflater.inflate(R.menu.menu, menu);
     }
 
-    ArrayList<String>leaderboardList = new ArrayList<>();
+
     private void initList(){
         String jsonString = null;
         try {
@@ -71,7 +71,7 @@ public class BoardFragment extends Fragment {
                     JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
                     String teamName = jsonChildNode.optString("team");
                     int hotspotsComplete = jsonChildNode.optInt("hotspots_completed");
-                    String leaderboardEntry = "      "+(i+1)+"      Team: "+teamName+"      Hotspots completed: "+hotspotsComplete;
+                    String leaderboardEntry ="      Team: "+teamName+"      completed: "+hotspotsComplete;
 //
                     leaderboardList.add(leaderboardEntry);
                 }
@@ -92,3 +92,4 @@ public class BoardFragment extends Fragment {
         }
     }
 }
+

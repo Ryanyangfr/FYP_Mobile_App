@@ -10,12 +10,15 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -24,10 +27,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.DAO.Session;
+import com.smu.engagingu.Game.QuestionType;
 import com.smu.engagingu.Hotspot.Hotspot;
-import com.smu.engagingu.Quiz.QuestionType;
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.utility.HttpConnectionUtility;
 
@@ -36,14 +40,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
-public class HomeFragment extends Fragment implements OnMapReadyCallback{
+public class HomeFragment extends Fragment implements OnMapReadyCallback {
     public static final String EXTRA_MESSAGE = "com.smu.engagingu.MESSAGE1";
     public static final String NARRATIVE_MESSAGE = "com.smu.engagingu.MESSAGE2";
-    public static final String GAMEMODE_CHECK="com.smu.engagingu.MESSAGE3";
+    public static final String GAMEMODE_CHECK = "com.smu.engagingu.MESSAGE3";
     MapView mMapView;
     GoogleMap mGoogleMap;
+    private FusedLocationProviderClient mFusedLocationClient;
 
     private LocationListener locationListener;
     private LocationManager locationManager;
@@ -52,20 +59,21 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
     private final long MIN_TIME = 1000; //1 second
     private final long MIN_DIST = 5; //metres?
     private String snippetText;
-    private HashMap<String,String> questionTypeMap;
+    private HashMap<String, String> questionTypeMap;
 
 
     private LatLng latLng;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        System.out.println("trailInstanceID2: "+InstanceDAO.trailInstanceID);
+        System.out.println("trailInstanceID2: " + InstanceDAO.trailInstanceID);
         QuestionType questionType = new QuestionType();
         questionTypeMap = questionType.getQuestionTypeMap();
         saveSession();
         //InstanceDAO.adapter = Session.getEventAdapter(getActivity().getApplicationContext());
         //System.out.println(Session.getEventAdapter(getActivity().getApplicationContext()));
-        if(!InstanceDAO.hasPulled){
+        if (!InstanceDAO.hasPulled) {
             populateData();
         }
 
@@ -73,13 +81,41 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
         requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
         View v = inflater.inflate(R.layout.fragment_home, container, false);
 
+        Timer t = new Timer();
+        t.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                getLocation();
+            }
+        }, 0, 5000);
+        // getLocation(); // getting and printing current location
+
+
         mMapView = (MapView) v.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync((OnMapReadyCallback) this); //this is important
-
         return v;
     }
-
+    /*
+    private void getDeviceLocation(){
+        //Log.d(TAG,"getDeviceLocation: gettinng the current devices location");
+        System.out.println("enteredgetLocation");
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        try{
+            Task location = mFusedLocationProviderClient.getLastLocation();
+            location.addOnCompleteListener(new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    if(task.isSuccessful()){
+                        Location currentLocation = (Location) task.getResult();
+                        System.out.println(currentLocation.getLongitude()+"jibai: "+currentLocation.getLatitude());
+                    }
+                }
+            });
+        }catch(SecurityException e){
+            System.out.println("SecurityException");
+        }
+    }*/
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
@@ -172,6 +208,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
             @Override
             public void onLocationChanged(Location location) {
                 latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                System.out.println(latLng.latitude+"   jibai "+latLng.longitude);
             }
 
             @Override
@@ -228,6 +265,30 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
     public void onLowMemory() {
         super.onLowMemory();
         mMapView.onLowMemory();
+    }
+    private void getLocation(){
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+
+        }
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            // Logic to handle location object
+                            System.out.println("KNN Latitude: " + location.getLatitude()+"KNN Longitude: "+location.getLongitude());
+                        }
+                    }
+                });
     }
     private void populateData(){
         try {

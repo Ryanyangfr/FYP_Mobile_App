@@ -5,17 +5,34 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="toolbarStyle">@style/CustomToolBarStyle</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:fontFamily">@font/robotocondensedlight</item>
-        <item name="android:actionOverflowButtonStyle">@style/MyActionButtonOverflow</item>
         <item name="android:colorBackground">@color/common_google_signin_btn_text_dark_default
         </item>
         <item name="android:navigationBarColor">@color/colorAccent</item>
     </style>
+
+    <style name="CustomToolBarStyle" parent="@style/Widget.AppCompat.Toolbar">
+        <item name="titleTextColor">@color/colorAccent</item>
+        <item name="android:fontFamily">@font/robotocondensedlight</item>
+    </style>
+
+
     <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:fontFamily">@font/robotocondensedlight</item>
+        <item name="android:colorBackground">@color/common_google_signin_btn_text_dark_default
+        </item>
+        <item name="android:navigationBarColor">@color/colorAccent</item>
+    </style>
+    <style name="AppTheme.Drawing" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>

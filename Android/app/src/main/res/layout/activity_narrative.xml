@@ -1,47 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.smu.engagingu.Narrative">
 
-    <Button
-        android:id="@+id/go_quiz"
-        android:layout_width="123dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="21dp"
-        android:background="@color/colorPrimary"
-        android:text="Begin"
-        android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:textSize="18sp" />
+    <ImageView
+        android:id="@+id/imageView13"
+        android:layout_width="419dp"
+        android:layout_height="130dp"
+        android:background="@color/colorPrimaryDark"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/smoosmoo" />
 
-    <TextView
-        android:id="@+id/narrativeView"
-        android:layout_width="344dp"
-        android:layout_height="439dp"
-        android:layout_above="@+id/go_quiz"
-        android:layout_below="@+id/placeNameView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="21dp"
-        android:layout_marginBottom="10dp"
-        android:lineSpacingExtra="3sp"
-        android:text="TextView"
-        android:textAlignment="center"
-        android:textSize="18sp" />
+    <ScrollView
+        android:id="@+id/scrollViewNarrative"
+        android:layout_width="395dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView13">
 
-    <TextView
-        android:id="@+id/placeNameView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="23dp"
-        android:textAlignment="center"
-        android:textColor="@color/colorAccent"
-        android:textSize="30sp"
-        android:textStyle="bold" />
-</RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/placeNameView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:text="placeName"
+                android:textAlignment="center"
+                android:textColor="@color/colorAccent"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                tools:layout_editor_absoluteX="115dp"
+                tools:layout_editor_absoluteY="195dp" />
+
+            <TextView
+                android:id="@+id/narrativeView"
+                android:layout_width="match_parent"
+                android:layout_height="439dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:lineSpacingExtra="3sp"
+                android:text="TextView"
+                android:textAlignment="center"
+                android:textSize="21sp"
+                android:textStyle="bold"
+                tools:layout_editor_absoluteX="29dp"
+                tools:layout_editor_absoluteY="276dp" />
+
+            <Button
+                android:id="@+id/go_quiz"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:background="@color/colorAccent"
+                android:text="START MISSION"
+                android:textColor="@color/cardview_light_background"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:layout_editor_absoluteX="164dp"
+                tools:layout_editor_absoluteY="641dp" />
+
+            <TextView
+                android:id="@+id/textView29"
+                android:layout_width="50dp"
+                android:layout_height="10dp" />
+        </LinearLayout>
+    </ScrollView>
+
+</android.support.constraint.ConstraintLayout>

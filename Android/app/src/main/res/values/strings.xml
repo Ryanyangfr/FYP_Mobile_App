@@ -15,7 +15,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_story_line">StoryLineActivity</string>
     <string name="action_settings">Settings</string>
-    <string name="Story_1">Welcome to SMU island! You’re about to embark on a treasure hunting adventure to uncover SMU hidden secrets and become the ambassador of the island, so get ready! There are 7 treasure boxes hidden in 7 hotspots on the island, and in the treasure boxes, lies the different special stories of the hotspot.</string>
     <string name="next_button">NEXT</string>
     <string name="Story_3">Do keep in mind that you will only be given an hour to complete the quest. Have fun and good luck!</string>
     <string name="Tutorial_1">1.  Look for hotspots around the map and move collectively as a team to the hotspots</string>

@@ -1,14 +1,17 @@
 package com.smu.engagingu;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.github.nkzawa.socketio.client.Socket;
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.utility.HttpConnectionUtility;
@@ -19,14 +22,19 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
-
 public class UserName extends AppCompatActivity {
+    private Socket mSocket;
     private String message;
+    private EditText mInputMessageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_name);
+
+        attemptSend();
     }
+
     public void sendUserName(View view) throws ExecutionException, InterruptedException {
         InstanceDAO.teamID = new MyHttpRequestTask().execute("http://54.255.245.23:3000/user/register").get();
         if(message.equals("")){
@@ -42,8 +50,17 @@ public class UserName extends AppCompatActivity {
             startActivity(intent);
         }
     }
+    private void attemptSend() {
+       // String message = mInputMessageView.getText().toString().trim();
+        if (TextUtils.isEmpty(message)) {
+            return;
+        }
 
+        //mInputMessageView.setText("Hello World");
+        mSocket.emit("new message", "Hello World - from Ryder");
+    }
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
+        @SuppressLint("WrongThread")
         @Override
         protected String doInBackground(String... params) {
             EditText editText = (EditText) findViewById(R.id.editUsername);

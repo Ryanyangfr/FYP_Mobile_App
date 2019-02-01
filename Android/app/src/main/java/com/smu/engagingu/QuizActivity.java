@@ -3,6 +3,7 @@ package com.smu.engagingu;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,14 +11,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.nkzawa.socketio.client.Socket;
 import com.smu.engagingu.DAO.InstanceDAO;
-import com.smu.engagingu.Quiz.Question;
-import com.smu.engagingu.Quiz.QuestionDatabase;
+import com.smu.engagingu.Game.Question;
+import com.smu.engagingu.Game.QuestionDatabase;
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.utility.HttpConnectionUtility;
 
@@ -29,12 +29,16 @@ public class QuizActivity extends AppCompatActivity {
     private TextView textViewQuestion;
     private TextView textViewScore;
     private TextView answerView;
-    private RadioGroup rbGroup;
-    private RadioButton rb1;
-    private RadioButton rb2;
-    private RadioButton rb3;
-    private RadioButton rb4;
+    //private RadioGroup rbGroup;
+    private Button b1;
+    private Button b2;
+    private Button b3;
+    private Button b4;
     private Button buttonConfirmNext;
+    private Boolean b1Check = false;
+    private Boolean b2Check = false;
+    private Boolean b3Check = false;
+    private Boolean b4Check = false;
 
     private List<Question> questionsList;
     private int questionCounter;
@@ -44,6 +48,7 @@ public class QuizActivity extends AppCompatActivity {
     private int score;
     private boolean answered;
     private String placeName;
+    private Socket mSocket;
     public static final String EXTRA_MESSAGE = "com.smu.engagingu.MESSAGE";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,15 +60,72 @@ public class QuizActivity extends AppCompatActivity {
         setContentView(R.layout.activity_quiz);
         QuestionDatabase qnsDB = new QuestionDatabase();
         questionsList = qnsDB.getQuestionsMap().get(placeName);
+        System.out.println("Questions List: "+questionsList);
         textViewQuestion = findViewById(R.id.text_view_question);
         answerView = findViewById(R.id.correctAnswerView);
         textViewScore = findViewById(R.id.text_view_score);
-        rbGroup = findViewById(R.id.radio_group);
-        rb1 = findViewById(R.id.radio_button1);
-        rb2 = findViewById(R.id.radio_button2);
-        rb3 = findViewById(R.id.radio_button3);
-        rb4 = findViewById(R.id.radio_button4);
+        b1 = findViewById(R.id.Option1);
+        b1.setTypeface(null, Typeface.BOLD);
+        b2 = findViewById(R.id.Option2);
+        b2.setTypeface(null, Typeface.BOLD);
+        b3 = findViewById(R.id.Option3);
+        b3.setTypeface(null, Typeface.BOLD);
+        b4 = findViewById(R.id.Option4);
+        b4.setTypeface(null, Typeface.BOLD);
+
         buttonConfirmNext = findViewById(R.id.button_confirm_next);
+        b1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                b1Check = true;
+                b2Check = false;
+                b3Check = false;
+                b4Check = false;
+                b1.setBackgroundColor(Color.parseColor("#151C55"));
+                b2.setBackgroundColor(Color.parseColor("#A9A9A9"));
+                b3.setBackgroundColor(Color.parseColor("#A9A9A9"));
+                b4.setBackgroundColor(Color.parseColor("#A9A9A9"));
+            }
+        });
+        b2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                b1Check = false;
+                b2Check = true;
+                b3Check = false;
+                b4Check = false;
+                b1.setBackgroundColor(Color.parseColor("#A9A9A9"));
+                b2.setBackgroundColor(Color.parseColor("#151C55"));
+                b3.setBackgroundColor(Color.parseColor("#A9A9A9"));
+                b4.setBackgroundColor(Color.parseColor("#A9A9A9"));
+            }
+        });
+        b3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                b1Check = false;
+                b2Check = false;
+                b3Check = true;
+                b4Check = false;
+                b1.setBackgroundColor(Color.parseColor("#A9A9A9"));
+                b2.setBackgroundColor(Color.parseColor("#A9A9A9"));
+                b3.setBackgroundColor(Color.parseColor("#151C55"));
+                b4.setBackgroundColor(Color.parseColor("#A9A9A9"));
+            }
+        });
+        b4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                b1Check = false;
+                b2Check = false;
+                b3Check = false;
+                b4Check = true;
+                b1.setBackgroundColor(Color.parseColor("#A9A9A9"));
+                b2.setBackgroundColor(Color.parseColor("#A9A9A9"));
+                b3.setBackgroundColor(Color.parseColor("#A9A9A9"));
+                b4.setBackgroundColor(Color.parseColor("#151C55"));
+            }
+        });
         if(questionsList!=null) {
             questionCountTotal = questionsList.size();
         }else{
@@ -81,7 +143,7 @@ public class QuizActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(!answered){
-                    if(rb1.isChecked()|| rb2.isChecked() || rb3.isChecked()|| rb4.isChecked()){
+                    if(b1Check|| b2Check || b3Check|| b4Check){
                         checkAnswer();
                     }else{
                         Toast.makeText(QuizActivity.this,"Please choose something",Toast.LENGTH_SHORT).show();
@@ -92,20 +154,47 @@ public class QuizActivity extends AppCompatActivity {
             }
         });
     }
+    @Override
+    public void onBackPressed() {
+
+    }
+    /*private Emitter.Listener onNewMessage = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("Reached listener");
+                    System.out.println(args.toString());
+                    JSONObject data = (JSONObject) args[0];
+                    String message;
+                    try{
+                        message = data.getString("test");
+                    }catch(JSONException e){
+                        return;
+                    }
+                    //System.out.println(args[0]);
+                    //String s = (String)args[0];
+                    System.out.println("Ryan's Message: "+message);
+                }
+            });
+        }
+    };*/
     private void showNextQuestion(){
-        rbGroup.clearCheck();
-        rb1.setTextColor(Color.BLACK);
-        rb2.setTextColor(Color.BLACK);
-        rb3.setTextColor(Color.BLACK);
-        rb4.setTextColor(Color.BLACK);
+        //rbGroup.clearCheck();
+        b1.setBackgroundColor(Color.parseColor("#A9A9A9"));
+        b2.setBackgroundColor(Color.parseColor("#A9A9A9"));
+        b3.setBackgroundColor(Color.parseColor("#A9A9A9"));
+        b4.setBackgroundColor(Color.parseColor("#A9A9A9"));
+
         if(questionCounter<questionCountTotal) {
             currentQuestion = questionsList.get(questionCounter);
 
             textViewQuestion.setText(currentQuestion.getQuestion());
-            rb1.setText(currentQuestion.getOption1());
-            rb2.setText(currentQuestion.getOption2());
-            rb3.setText(currentQuestion.getOption3());
-            rb4.setText(currentQuestion.getOption4());
+            b1.setText(currentQuestion.getOption1());
+            b2.setText(currentQuestion.getOption2());
+            b3.setText(currentQuestion.getOption3());
+            b4.setText(currentQuestion.getOption4());
             answerView.setText("");
             questionCounter++;
             answered = false;
@@ -118,43 +207,47 @@ public class QuizActivity extends AppCompatActivity {
     private void checkAnswer(){
         answered=true;
 
-        RadioButton rbSelected = findViewById(rbGroup.getCheckedRadioButtonId());
-        int answerNum = rbGroup.indexOfChild(rbSelected) + 1;
+        int answerNum=0;
+        if(b1Check){
+            answerNum=1;
+        }else if(b2Check){
+            answerNum=2;
+        }else if(b3Check){
+            answerNum=3;
+        }else if(b4Check){
+            answerNum=4;
+        }
 
         if(answerNum == currentQuestion.getAnswerNr()){
             score++;
             textViewScore.setText("Score: "+ score);
-            answerView.setTextColor(Color.GREEN);
+            answerView.setTextColor(Color.parseColor("#92d050"));
             answerView.setText("Correct!");
         }else {
             textViewScore.setText("Score: " + score);
-            answerView.setTextColor(Color.RED);
+            answerView.setTextColor(Color.parseColor("#E85858"));
             answerView.setText("Wrong!");
         }
         showSolution();
     }
     private void showSolution(){
-        rb1.setTextColor(Color.RED);
-        rb2.setTextColor(Color.RED);
-        rb3.setTextColor(Color.RED);
-        rb4.setTextColor(Color.RED);
+        b1.setBackgroundColor(Color.parseColor("#E85858"));//Color RED
+        b2.setBackgroundColor(Color.parseColor("#E85858"));
+        b3.setBackgroundColor(Color.parseColor("#E85858"));
+        b4.setBackgroundColor(Color.parseColor("#E85858"));
 
         switch(currentQuestion.getAnswerNr()){
             case 1:
-                rb1.setTextColor(Color.GREEN);
-                //answerView.setText("Option 1 was the correct answer");
+                b1.setBackgroundColor(Color.parseColor("#92d050"));// Color GREEN
                 break;
             case 2:
-                rb2.setTextColor(Color.GREEN);
-                //answerView.setText("Option 2 was the correct answer");
+                b2.setBackgroundColor(Color.parseColor("#92d050"));
                 break;
             case 3:
-                rb3.setTextColor(Color.GREEN);
-                //answerView.setText("Option 3 was the correct answer");
+                b3.setBackgroundColor(Color.parseColor("#92d050"));
                 break;
             case 4:
-                rb4.setTextColor(Color.GREEN);
-                //answerView.setText("Option 4 was the correct answer");
+                b4.setBackgroundColor(Color.parseColor("#92d050"));
                 break;
         }
 

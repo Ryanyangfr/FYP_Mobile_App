@@ -15,7 +15,7 @@ import com.smu.engagingu.fyp.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LeaderboardFragment extends Fragment {
+public class  LeaderboardFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

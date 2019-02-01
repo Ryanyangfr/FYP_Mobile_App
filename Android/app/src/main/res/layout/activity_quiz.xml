@@ -13,52 +13,16 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="0dp"
-        android:layout_marginTop="82dp"
+        android:layout_marginTop="0dp"
+        android:background="@color/colorPrimaryDark"
+        android:paddingTop="20dp"
+        android:paddingBottom="30dp"
+        android:text="question"
         android:textAlignment="center"
-        android:textSize="24sp" />
+        android:textColor="@color/cardview_light_background"
+        android:textSize="25sp"
+        android:textStyle="bold" />
 
-    <RadioGroup
-        android:id="@+id/radio_group"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="20dp">
-
-        <RadioButton
-            android:id="@+id/radio_button1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/radio_group"
-            android:layout_alignBottom="@+id/radio_group"
-            android:text="Option 1"
-            android:textColor="@color/colorPrimary"
-            android:textSize="21sp" />
-
-        <RadioButton
-            android:id="@+id/radio_button2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Option 2"
-            android:textColor="@color/colorPrimary"
-            android:textSize="21sp" />
-
-        <RadioButton
-            android:id="@+id/radio_button3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Option 3"
-            android:textColor="@color/colorPrimary"
-            android:textSize="21sp" />
-
-        <RadioButton
-            android:id="@+id/radio_button4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/radio_group"
-            android:text="Option 4"
-            android:textColor="@color/colorPrimary"
-            android:textSize="21sp" />
-    </RadioGroup>
 
     <Button
         android:id="@+id/button_confirm_next"
@@ -68,20 +32,21 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="0dp"
         android:layout_marginBottom="19dp"
-        android:background="@color/colorPrimary"
+        android:background="@color/colorAccent"
         android:text="Confirm"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textSize="18sp" />
 
     <TextView
         android:id="@+id/text_view_score"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="148dp"
-        android:layout_marginTop="33dp"
-        android:text="Score: 0" />
+        android:layout_below="@id/text_view_question"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="110dp"
+        android:text="Score: 0"
+        android:textAlignment="center" />
 
     <TextView
         android:id="@+id/correctAnswerView"
@@ -89,9 +54,79 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/text_view_score"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="-148dp"
-        android:layout_marginBottom="118dp"
+        android:layout_marginBottom="150dp"
         android:textAlignment="center"
         android:textColor="@android:color/holo_green_dark"
         android:textSize="22sp" />
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="259dp"
+        android:layout_below="@+id/text_view_question"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="72dp">
+
+        <Button
+            android:id="@+id/Option1"
+            android:layout_width="280dp"
+            android:layout_height="51dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="Button"
+            android:textColor="@color/cardview_light_background"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.495"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/Option2"
+            android:layout_width="280dp"
+            android:layout_height="51dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="8dp"
+            android:text="Button"
+            android:textColor="@color/cardview_light_background"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.495"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/Option1" />
+
+        <Button
+            android:id="@+id/Option3"
+            android:layout_width="280dp"
+            android:layout_height="51dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="8dp"
+            android:text="Button"
+            android:textColor="@color/cardview_light_background"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.504"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/Option2" />
+
+        <Button
+            android:id="@+id/Option4"
+            android:layout_width="280dp"
+            android:layout_height="51dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="8dp"
+            android:text="Button"
+            android:textColor="@color/cardview_light_background"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.504"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/Option3" />
+
+    </android.support.constraint.ConstraintLayout>
+
 </RelativeLayout>
