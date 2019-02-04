@@ -1,6 +1,7 @@
 package com.smu.engagingu;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -80,14 +81,21 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PackageManager.PERMISSION_GRANTED);
         requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
         View v = inflater.inflate(R.layout.fragment_home, container, false);
-
-        Timer t = new Timer();
-        t.schedule(new TimerTask() {
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        final Activity activity = getActivity();
+        AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                getLocation();
+                Timer t = new Timer();
+                t.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        getLocation(activity);
+                    }
+                }, 0, 5000);
             }
-        }, 0, 5000);
+        });
+
         // getLocation(); // getting and printing current location
 
 
@@ -266,9 +274,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         super.onLowMemory();
         mMapView.onLowMemory();
     }
-    private void getLocation(){
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+    private void getLocation(Activity activity){
+        if (ActivityCompat.checkSelfPermission(activity.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -279,13 +286,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         }
         mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             // Logic to handle location object
-                            System.out.println("KNN Latitude: " + location.getLatitude()+"KNN Longitude: "+location.getLongitude());
+                            System.out.println("Fucking Latitude: " + location.getLatitude()+"jibai Longitude: "+location.getLongitude());
                         }
                     }
                 });
