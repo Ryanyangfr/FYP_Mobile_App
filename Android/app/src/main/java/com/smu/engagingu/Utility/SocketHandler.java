@@ -1,4 +1,4 @@
-package com.smu.engagingu.utility;
+package com.smu.engagingu.Utility;
 
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;

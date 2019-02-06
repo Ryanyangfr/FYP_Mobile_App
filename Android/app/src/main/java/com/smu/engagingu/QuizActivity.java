@@ -18,14 +18,18 @@ import com.github.nkzawa.socketio.client.Socket;
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.Game.Question;
 import com.smu.engagingu.Game.QuestionDatabase;
+import com.smu.engagingu.Results.QuizResults;
+import com.smu.engagingu.Utility.HttpConnectionUtility;
 import com.smu.engagingu.fyp.R;
-import com.smu.engagingu.utility.HttpConnectionUtility;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class QuizActivity extends AppCompatActivity {
+    public static final String CORRECT_ANSWERS = "com.smu.engagingu.CORRECTQUIZANSWERS";
+    public static final String QUESTION_COUNT = "com.smu.engagingu.QUIZQUESTIONCOUNT";
     private TextView textViewQuestion;
     private TextView textViewScore;
     private TextView answerView;
@@ -41,6 +45,7 @@ public class QuizActivity extends AppCompatActivity {
     private Boolean b4Check = false;
 
     private List<Question> questionsList;
+    private ArrayList<GameResultEntry> resultsList;
     private int questionCounter;
     private int questionCountTotal;
     private Question currentQuestion;
@@ -49,7 +54,6 @@ public class QuizActivity extends AppCompatActivity {
     private boolean answered;
     private String placeName;
     private Socket mSocket;
-    public static final String EXTRA_MESSAGE = "com.smu.engagingu.MESSAGE";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         score = 0;
@@ -136,7 +140,7 @@ public class QuizActivity extends AppCompatActivity {
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
         }
-
+        resultsList = new ArrayList<>();
         showNextQuestion();
 
         buttonConfirmNext.setOnClickListener(new View.OnClickListener() {
@@ -205,17 +209,39 @@ public class QuizActivity extends AppCompatActivity {
         }
     }
     private void checkAnswer(){
+        String usersAnswer = "";
+        String answer = "";
+
         answered=true;
 
         int answerNum=0;
         if(b1Check){
             answerNum=1;
+            usersAnswer = currentQuestion.getOption1();
         }else if(b2Check){
             answerNum=2;
+            usersAnswer = currentQuestion.getOption2();
         }else if(b3Check){
             answerNum=3;
+            usersAnswer = currentQuestion.getOption3();
         }else if(b4Check){
             answerNum=4;
+            usersAnswer = currentQuestion.getOption4();
+        }
+
+        switch (currentQuestion.getAnswerNr()){
+            case 1:
+                answer = currentQuestion.getOption1();
+                break;
+            case 2:
+                answer = currentQuestion.getOption2();
+                break;
+            case 3:
+                answer = currentQuestion.getOption3();
+                break;
+            case 4:
+                answer = currentQuestion.getOption4();
+                break;
         }
 
         if(answerNum == currentQuestion.getAnswerNr()){
@@ -228,6 +254,7 @@ public class QuizActivity extends AppCompatActivity {
             answerView.setTextColor(Color.parseColor("#E85858"));
             answerView.setText("Wrong!");
         }
+        resultsList.add(new GameResultEntry("1",currentQuestion.getQuestion(),answer,usersAnswer));
         showSolution();
     }
     private void showSolution(){
@@ -266,7 +293,10 @@ public class QuizActivity extends AppCompatActivity {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        Intent intent = new Intent(QuizActivity.this,HomePage.class);
+        Intent intent = new Intent(QuizActivity.this, QuizResults.class);
+        intent.putExtra("resultsList",resultsList);
+        intent.putExtra(QUESTION_COUNT, Integer.toString(questionsList.size()));
+        intent.putExtra(CORRECT_ANSWERS, Integer.toString(score));
         InstanceDAO.completedList.add(placeName);
         startActivity(intent);
     }

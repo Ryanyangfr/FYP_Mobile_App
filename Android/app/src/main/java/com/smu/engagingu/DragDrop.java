@@ -19,18 +19,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.smu.engagingu.DAO.InstanceDAO;
+import com.smu.engagingu.Results.DragDropResults;
+import com.smu.engagingu.Utility.HttpConnectionUtility;
 import com.smu.engagingu.fyp.R;
-import com.smu.engagingu.utility.HttpConnectionUtility;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class DragDrop extends AppCompatActivity implements View.OnDragListener, View.OnLongClickListener {
+    public static final String CORRECT_ANSWERS_DRAGDROP = "com.smu.engagingu.CORRECTDRAGDROPANSWERS";
+    public static final String QUESTION_COUNT_DRAGDROP = "com.smu.engagingu.DRAGDROPQUESTIONCOUNT";
+    public static final String QUESTION_DRAGDROP = "com.smu.engagingu.DRAGDROPQUESTION";
+
 
     private static final String TAG = DragDrop.class.getSimpleName();
     private int score;
@@ -49,6 +55,7 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
     private HashMap<String,String> optionsMap = new HashMap<>();
     private HashMap<String,Boolean> answersMap = new HashMap<>();
     private HashMap<String,Boolean> areaMap = new HashMap<>();
+    private HashMap<String,String> resultsMap = new HashMap<>();
     private String placeName;
     private String[] dragOption = new String[5];
     private String[] dragArea = new String[5];
@@ -277,8 +284,10 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
                     areaMap.put(dragAreaName,true);
                     if(optionsMap.get(dragAreaName).equals(dragData)){
                         answersMap.put(dragAreaName,true);
+                        resultsMap.put(dragAreaName,dragData);
                     }else{
                         answersMap.put(dragAreaName,false);
+                        resultsMap.put(dragAreaName,dragData);
                     }
                 }
                 // Displays a message containing the dragged data.
@@ -326,10 +335,18 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
         return false;
     }
     private void submitScore(){
+        ArrayList<GameResultEntry> resultsList = new ArrayList<>();
+
         for (String key : answersMap.keySet()) {
             if (answersMap.get(key)==true){
                 score++;
             }
+        }
+
+        for(String key: resultsMap.keySet()){
+            String option = resultsMap.get(key);
+            String answer = optionsMap.get(key);
+            resultsList.add(new GameResultEntry("1",key,answer,option));
         }
             try {
                 String response = new MyHttpRequestTask2().execute("http://54.255.245.23:3000/team/updateScore").get();
@@ -339,7 +356,11 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
                 e.printStackTrace();
             }
             if(answersMap.size()==4) {
-                Intent intent = new Intent(this, HomePage.class);
+                Intent intent = new Intent(DragDrop.this, DragDropResults.class);
+                intent.putExtra("resultsList",resultsList);
+                intent.putExtra(QUESTION_COUNT_DRAGDROP, Integer.toString(optionsMap.size()));
+                intent.putExtra(CORRECT_ANSWERS_DRAGDROP, Integer.toString(score));
+                intent.putExtra(QUESTION_DRAGDROP,questionName);
                 InstanceDAO.completedList.add(placeName);
                 startActivity(intent);
             }else{

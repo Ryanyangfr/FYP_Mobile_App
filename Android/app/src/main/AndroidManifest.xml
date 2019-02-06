@@ -27,14 +27,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.smu.engagingu.WordsSearch"
-            android:exported="true"/>
+        <activity android:name="com.smu.engagingu.Results.DragDropResults"></activity>
+        <activity android:name="com.smu.engagingu.Results.QuizResults" />
+        <activity
+            android:name="com.smu.engagingu.WordsSearch"
+            android:exported="true" />
         <activity
             android:name="com.smu.engagingu.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="com.smu.engagingu.HomePage"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="com.smu.engagingu.UserName"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -69,10 +72,12 @@
         <activity android:name="com.smu.engagingu.QuizActivity" />
         <activity android:name="com.smu.engagingu.QuizStartingPage" />
         <activity android:name="com.smu.engagingu.TeamDisplay" />
-        <activity android:name="com.smu.engagingu.StoryLine.Welcome"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name="com.smu.engagingu.Tutorial.Tutorial"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name="com.smu.engagingu.StoryLine.Welcome"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="com.smu.engagingu.Tutorial.Tutorial"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name="com.smu.engagingu.Settings" />
         <activity
             android:name="com.smu.engagingu.SplashActivity"

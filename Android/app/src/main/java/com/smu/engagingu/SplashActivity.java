@@ -33,8 +33,8 @@ import com.smu.engagingu.DAO.Session;
 import com.smu.engagingu.DAO.SubmissionDAO;
 import com.smu.engagingu.Hotspot.Hotspot;
 import com.smu.engagingu.fyp.R;
-import com.smu.engagingu.utility.HttpConnectionUtility;
-import com.smu.engagingu.utility.SocketHandler;
+import com.smu.engagingu.Utility.HttpConnectionUtility;
+import com.smu.engagingu.Utility.SocketHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -34,7 +34,7 @@ import com.smu.engagingu.DAO.Session;
 import com.smu.engagingu.Game.QuestionType;
 import com.smu.engagingu.Hotspot.Hotspot;
 import com.smu.engagingu.fyp.R;
-import com.smu.engagingu.utility.HttpConnectionUtility;
+import com.smu.engagingu.Utility.HttpConnectionUtility;
 
 import org.json.JSONArray;
 import org.json.JSONException;

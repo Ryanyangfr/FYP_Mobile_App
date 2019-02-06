@@ -14,7 +14,7 @@ import android.widget.Toast;
 import com.github.nkzawa.socketio.client.Socket;
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.fyp.R;
-import com.smu.engagingu.utility.HttpConnectionUtility;
+import com.smu.engagingu.Utility.HttpConnectionUtility;
 
 import org.json.JSONException;
 import org.json.JSONObject;

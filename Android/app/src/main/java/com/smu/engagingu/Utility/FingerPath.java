@@ -1,4 +1,4 @@
-package com.smu.engagingu.utility;
+package com.smu.engagingu.Utility;
 
 import android.graphics.Path;
 

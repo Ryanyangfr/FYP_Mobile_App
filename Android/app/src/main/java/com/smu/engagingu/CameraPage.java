@@ -26,7 +26,7 @@ import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.DAO.SubmissionDAO;
 import com.smu.engagingu.Game.QuestionDatabase;
 import com.smu.engagingu.fyp.R;
-import com.smu.engagingu.utility.HttpConnectionUtility;
+import com.smu.engagingu.Utility.HttpConnectionUtility;
 
 import java.io.File;
 import java.io.FileNotFoundException;
