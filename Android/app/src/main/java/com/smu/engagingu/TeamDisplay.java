@@ -18,7 +18,8 @@ public class TeamDisplay extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_display);
         TextView groupNumberView = findViewById(R.id.GroupNumberView);
-        groupNumberView.setText(InstanceDAO.teamID);
+        String toDisplay = "TEAM "+InstanceDAO.teamID;
+        groupNumberView.setText(toDisplay);
 
         Button confirmationButton = findViewById(R.id.groupNumberButton);
         confirmationButton.setOnClickListener(new View.OnClickListener(){

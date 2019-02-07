@@ -1,6 +1,8 @@
 package com.smu.engagingu;
 
-public class PuzzlePoint {
+import java.io.Serializable;
+
+public class PuzzlePoint implements Serializable {
     private int row;
     private int column;
 

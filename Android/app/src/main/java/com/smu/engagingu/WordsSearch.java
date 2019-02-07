@@ -2,7 +2,6 @@ package com.smu.engagingu;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -17,8 +16,9 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.smu.engagingu.DAO.InstanceDAO;
-import com.smu.engagingu.fyp.R;
+import com.smu.engagingu.Results.WordSearchResults;
 import com.smu.engagingu.Utility.HttpConnectionUtility;
+import com.smu.engagingu.fyp.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,7 +32,7 @@ import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 public class WordsSearch extends Activity {
-
+    public static final String CORRECT_ANSWERS = "com.smu.engagingu.CORRECTQUIZANSWERS2";
     private int SIZE = 10;
     private final static int HORIZONTAL = 0;
     private final static int VERTICAL = 1;
@@ -50,9 +50,8 @@ public class WordsSearch extends Activity {
     private Button b;
 
     private ArrayList<String> answerList = new ArrayList<>();
-    private int score;
+    private int score = 0;
     private String placeName;
-    private int clickCheck = 0;
 
     private char[][] puzzle;
     String[] wordList = new String[5];
@@ -83,22 +82,28 @@ public class WordsSearch extends Activity {
                 answerList.add(answer3);
                 answerList.add(answer4);
                 answerList.add(answer5);
-                if (clickCheck==0){
-                    createFinishedGrid(puzzle);
-                    b.setText("Go to Homepage");
-                    clickCheck++;
-                }else if (clickCheck==1) {
-                    try {
-                        String response = new MyHttpRequestTask2().execute("http://54.255.245.23:3000/team/updateScore").get();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
+
+                for(String a : answerList){
+                    for(int i =0; i <5 ; i++){
+                        if(a.equals(wordList[i].toUpperCase())){
+                            score++;
+                        }
                     }
-                    Intent intent = new Intent(WordsSearch.this, HomePage.class);
-                    InstanceDAO.completedList.add(placeName);
-                    startActivity(intent);
                 }
+                try {
+                    String response = new MyHttpRequestTask2().execute("http://54.255.245.23:3000/team/updateScore").get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                Intent intent = new Intent(WordsSearch.this, WordSearchResults.class);
+                intent.putExtra("resultsList",answerList);
+                intent.putExtra("puzzle", puzzle);
+                intent.putExtra("wordPointMap",wordPointMap);
+                intent.putExtra(CORRECT_ANSWERS, Integer.toString(score));
+                InstanceDAO.completedList.add(placeName);
+                startActivity(intent);
             }
         });
 
@@ -223,57 +228,6 @@ public class WordsSearch extends Activity {
             table.addView(row);
         }
     }
-    public void createFinishedGrid(char[][] input){
-        TableLayout table = (TableLayout) findViewById(R.id.mainLayout);
-        int count = table.getChildCount();
-        for (int i = 0; i < count; i++) {
-            View child = table.getChildAt(i);
-            if (child instanceof TableRow) ((ViewGroup) child).removeAllViews();
-        }
-
-        for(int i = 0; i < input.length; i++){
-            //LinearLayout rowLayout = new LinearLayout(this);
-            //rowLayout.setOrientation(LinearLayout.HORIZONTAL);
-            //rowLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            TableRow row = new TableRow(this);
-            row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-            row.setGravity(Gravity.CENTER);
-
-            for(int j = 0; j < input.length; j++){
-                TextView text = new TextView(this);
-                Character temp = input[i][j];
-                text.setText(temp.toString());
-                Boolean b = false;
-                Boolean b2 = false;
-                for(String s: wordPointMap.keySet()){
-                    ArrayList<PuzzlePoint> tempList = wordPointMap.get(s);
-                    for(PuzzlePoint p : tempList) {
-                        if (p.getRow() == i && p.getColumn() == j) {
-                            b = true;
-                            for(String s2: answerList){
-                                if (s2.equals(s)){
-                                    b2=true;
-                                }
-                            }
-                        }
-                    }
-                }
-                if(b){
-                    text.setBackgroundColor(Color.parseColor("#E85858"));
-                }
-                if(b2){
-                    text.setBackgroundColor(Color.parseColor("#92d050"));
-                    score++;//SCORE FOR CHALLENGE
-                }
-                text.setPadding(10, 5, 10, 5);
-                text.setTextSize(25);
-                text.setGravity(Gravity.CENTER);
-                row.addView(text);
-            }
-            table.addView(row);
-        }
-    }
-
     public void addWord(String word, char puzzle[][]){
         word = word.toUpperCase(Locale.US);
         String originalWord = word;
