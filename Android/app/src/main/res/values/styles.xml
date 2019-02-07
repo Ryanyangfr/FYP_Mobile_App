@@ -37,6 +37,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:fontFamily">@font/robotocondensedlight</item>
+        <item name="toolbarStyle">@style/CustomToolBarStyle</item>
         <item name="android:actionOverflowButtonStyle">@style/MyActionButtonOverflow</item>
         <item name="android:colorBackground">@color/common_google_signin_btn_text_dark_default
         </item>

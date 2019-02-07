@@ -97,7 +97,7 @@ public class HomePage extends AppCompatActivity {
                             selectedFragment = new LeaderboardFragment();
                             break;
                         case R.id.nav_badges:
-                            selectedFragment = new BadgesFragment();
+                            selectedFragment = new HelpPageFragment();
                     }
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                             selectedFragment).commit();
