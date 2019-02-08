@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.smu.engagingu.Adapters.LeaderboardAdapter;
+import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.Utilities.HttpConnectionUtility;
 
@@ -84,7 +85,7 @@ public class BoardFragment extends Fragment {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/team/hotspotStatus?trail_instance_id=175239");
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/team/hotspotStatus?trail_instance_id="+ InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }

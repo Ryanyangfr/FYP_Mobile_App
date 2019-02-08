@@ -191,7 +191,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 System.out.println("distance is: "+ distance);
                 snippetText = arg0.getSnippet();
                 if(!(snippetText.equals("Completed"))) {
-                    if(distance<10.0) {
+                    if(distance<20.0) {
                         arg0.setSnippet("Click me to start mission");
                         arg0.showInfoWindow();
                     }else{
