@@ -4,11 +4,13 @@ public class Event  {
     private String name;
     private String id;
     private String data;
+    private String time;
 
-    public Event(String name, String eventId, String data) {
+    public Event(String name, String eventId, String data, String time) {
         this.name = name;
         this.id = eventId;
         this.data = data;
+        this.time = time;
     }
 
     // Getters and setters
@@ -27,4 +29,6 @@ public class Event  {
     public String getData() {
         return data;
     }
+
+    public String getTime(){return time;}
 }

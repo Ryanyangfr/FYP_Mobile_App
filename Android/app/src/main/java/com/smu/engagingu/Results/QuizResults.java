@@ -12,8 +12,8 @@ import android.widget.TextView;
 
 import com.smu.engagingu.Adapters.QuizResultAdapter;
 import com.smu.engagingu.HomePage;
-import com.smu.engagingu.QuizActivity;
 import com.smu.engagingu.Objects.GameResultEntry;
+import com.smu.engagingu.QuizActivity;
 import com.smu.engagingu.fyp.R;
 
 import java.util.ArrayList;
@@ -22,7 +22,8 @@ public class QuizResults extends AppCompatActivity {
     private ArrayList<GameResultEntry> resultsList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        resultsList = (ArrayList<GameResultEntry>)getIntent().getSerializableExtra("resultsList");
+        resultsList = (ArrayList<GameResultEntry>) getIntent().getSerializableExtra("resultsList");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz_results);
         String correctAnswers = getIntent().getStringExtra(QuizActivity.CORRECT_ANSWERS);

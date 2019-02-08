@@ -1,4 +1,4 @@
-package com.smu.engagingu.Game;
+package com.smu.engagingu.Objects;
 
 public class Question {
     private String question;

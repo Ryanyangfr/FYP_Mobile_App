@@ -14,7 +14,7 @@ import android.widget.Toast;
 import com.github.nkzawa.socketio.client.Socket;
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.fyp.R;
-import com.smu.engagingu.Utility.HttpConnectionUtility;
+import com.smu.engagingu.Utilities.HttpConnectionUtility;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,7 +37,6 @@ public class UserName extends AppCompatActivity {
 
     public void sendUserName(View view) throws ExecutionException, InterruptedException {
         InstanceDAO.teamID = new MyHttpRequestTask().execute("http://54.255.245.23:3000/user/register").get();
-        System.out.println("Gorilla: "+InstanceDAO.teamID);
         if(message.equals("")){
             Context context = getApplicationContext();
             CharSequence text = "Please enter a valid username!";

@@ -12,7 +12,7 @@ import android.widget.ListView;
 
 import com.smu.engagingu.Adapters.LeaderboardAdapter;
 import com.smu.engagingu.fyp.R;
-import com.smu.engagingu.Utility.HttpConnectionUtility;
+import com.smu.engagingu.Utilities.HttpConnectionUtility;
 
 import org.json.JSONArray;
 import org.json.JSONException;

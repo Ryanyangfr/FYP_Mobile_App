@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.fyp.R;
-import com.smu.engagingu.Utility.HttpConnectionUtility;
+import com.smu.engagingu.Utilities.HttpConnectionUtility;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,6 +72,9 @@ public class Anagram extends AppCompatActivity implements View.OnClickListener{
                 }
             });
             validate = (Button) findViewById(R.id.validate);
+            if(!InstanceDAO.isLeader){
+                validate.setText("EXIT");
+            }
             validate.setOnClickListener(this);
             newGame = (Button) findViewById(R.id.newGame);
             newGame.setOnClickListener(this);
@@ -82,7 +85,13 @@ public class Anagram extends AppCompatActivity implements View.OnClickListener{
         @Override
         public void onClick (View view){
             if (view == validate) {
-                validate();
+                if(InstanceDAO.isLeader) {
+                    validate();
+                }else{
+                    Intent intent = new Intent(this, HomePage.class);
+                    InstanceDAO.completedList.add(placeName);
+                    startActivity(intent);
+                }
             } else if (view == newGame) {
                 newGame();
             }

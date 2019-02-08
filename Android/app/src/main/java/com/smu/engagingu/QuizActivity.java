@@ -16,11 +16,11 @@ import android.widget.Toast;
 
 import com.github.nkzawa.socketio.client.Socket;
 import com.smu.engagingu.DAO.InstanceDAO;
-import com.smu.engagingu.Game.Question;
 import com.smu.engagingu.Game.QuestionDatabase;
 import com.smu.engagingu.Objects.GameResultEntry;
+import com.smu.engagingu.Objects.Question;
 import com.smu.engagingu.Results.QuizResults;
-import com.smu.engagingu.Utility.HttpConnectionUtility;
+import com.smu.engagingu.Utilities.HttpConnectionUtility;
 import com.smu.engagingu.fyp.R;
 
 import java.util.ArrayList;
@@ -77,60 +77,106 @@ public class QuizActivity extends AppCompatActivity {
         b3.setTypeface(null, Typeface.BOLD);
         b4 = findViewById(R.id.Option4);
         b4.setTypeface(null, Typeface.BOLD);
-
         buttonConfirmNext = findViewById(R.id.button_confirm_next);
-        b1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                b1Check = true;
-                b2Check = false;
-                b3Check = false;
-                b4Check = false;
-                b1.setBackgroundColor(Color.parseColor("#151C55"));
-                b2.setBackgroundColor(Color.parseColor("#A9A9A9"));
-                b3.setBackgroundColor(Color.parseColor("#A9A9A9"));
-                b4.setBackgroundColor(Color.parseColor("#A9A9A9"));
-            }
-        });
-        b2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                b1Check = false;
-                b2Check = true;
-                b3Check = false;
-                b4Check = false;
-                b1.setBackgroundColor(Color.parseColor("#A9A9A9"));
-                b2.setBackgroundColor(Color.parseColor("#151C55"));
-                b3.setBackgroundColor(Color.parseColor("#A9A9A9"));
-                b4.setBackgroundColor(Color.parseColor("#A9A9A9"));
-            }
-        });
-        b3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                b1Check = false;
-                b2Check = false;
-                b3Check = true;
-                b4Check = false;
-                b1.setBackgroundColor(Color.parseColor("#A9A9A9"));
-                b2.setBackgroundColor(Color.parseColor("#A9A9A9"));
-                b3.setBackgroundColor(Color.parseColor("#151C55"));
-                b4.setBackgroundColor(Color.parseColor("#A9A9A9"));
-            }
-        });
-        b4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                b1Check = false;
-                b2Check = false;
-                b3Check = false;
-                b4Check = true;
-                b1.setBackgroundColor(Color.parseColor("#A9A9A9"));
-                b2.setBackgroundColor(Color.parseColor("#A9A9A9"));
-                b3.setBackgroundColor(Color.parseColor("#A9A9A9"));
-                b4.setBackgroundColor(Color.parseColor("#151C55"));
-            }
-        });
+        if(InstanceDAO.isLeader) {
+            b1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    b1Check = true;
+                    b2Check = false;
+                    b3Check = false;
+                    b4Check = false;
+                    b1.setBackgroundColor(Color.parseColor("#151C55"));
+                    b2.setBackgroundColor(Color.parseColor("#A9A9A9"));
+                    b3.setBackgroundColor(Color.parseColor("#A9A9A9"));
+                    b4.setBackgroundColor(Color.parseColor("#A9A9A9"));
+                }
+            });
+            b2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    b1Check = false;
+                    b2Check = true;
+                    b3Check = false;
+                    b4Check = false;
+                    b1.setBackgroundColor(Color.parseColor("#A9A9A9"));
+                    b2.setBackgroundColor(Color.parseColor("#151C55"));
+                    b3.setBackgroundColor(Color.parseColor("#A9A9A9"));
+                    b4.setBackgroundColor(Color.parseColor("#A9A9A9"));
+                }
+            });
+            b3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    b1Check = false;
+                    b2Check = false;
+                    b3Check = true;
+                    b4Check = false;
+                    b1.setBackgroundColor(Color.parseColor("#A9A9A9"));
+                    b2.setBackgroundColor(Color.parseColor("#A9A9A9"));
+                    b3.setBackgroundColor(Color.parseColor("#151C55"));
+                    b4.setBackgroundColor(Color.parseColor("#A9A9A9"));
+                }
+            });
+            b4.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    b1Check = false;
+                    b2Check = false;
+                    b3Check = false;
+                    b4Check = true;
+                    b1.setBackgroundColor(Color.parseColor("#A9A9A9"));
+                    b2.setBackgroundColor(Color.parseColor("#A9A9A9"));
+                    b3.setBackgroundColor(Color.parseColor("#A9A9A9"));
+                    b4.setBackgroundColor(Color.parseColor("#151C55"));
+                }
+            });
+        }else{
+            b1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Context context = getApplicationContext();
+                    CharSequence text = "Only the leader is allowed to submit his quiz! Feel free to discuss the answers!";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
+            });
+            b2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Context context = getApplicationContext();
+                    CharSequence text = "Only the leader is allowed to submit his quiz! Feel free to discuss the answers!";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
+            });
+            b3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Context context = getApplicationContext();
+                    CharSequence text = "Only the leader is allowed to submit his quiz! Feel free to discuss the answers!";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
+            });
+            b4.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Context context = getApplicationContext();
+                    CharSequence text = "Only the leader is allowed to submit his quiz! Feel free to discuss the answers!";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
+            });
+        }
         if(questionsList!=null) {
             questionCountTotal = questionsList.size();
         }else{
@@ -147,7 +193,7 @@ public class QuizActivity extends AppCompatActivity {
         buttonConfirmNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!answered){
+                if(!answered && InstanceDAO.isLeader){
                     if(b1Check|| b2Check || b3Check|| b4Check){
                         checkAnswer();
                     }else{
@@ -203,7 +249,11 @@ public class QuizActivity extends AppCompatActivity {
             answerView.setText("");
             questionCounter++;
             answered = false;
-            buttonConfirmNext.setText("Confirm");
+            if(InstanceDAO.isLeader) {
+                buttonConfirmNext.setText("Confirm");
+            }else{
+                buttonConfirmNext.setText("Next");
+            }
         }else{
             finishQuiz();
 
@@ -287,19 +337,27 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void finishQuiz(){
-        try {
-            String response = new MyHttpRequestTask().execute("http://54.255.245.23:3000/team/updateScore").get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+        Intent intent;
+        if(InstanceDAO.isLeader){
+           intent = new Intent(QuizActivity.this, QuizResults.class);
+            intent.putExtra("resultsList", resultsList);
+            intent.putExtra(QUESTION_COUNT, Integer.toString(questionsList.size()));
+            intent.putExtra(CORRECT_ANSWERS, Integer.toString(score));
+        }else{
+            intent = new Intent(QuizActivity.this, HomePage.class);
         }
-        Intent intent = new Intent(QuizActivity.this, QuizResults.class);
-        intent.putExtra("resultsList",resultsList);
-        intent.putExtra(QUESTION_COUNT, Integer.toString(questionsList.size()));
-        intent.putExtra(CORRECT_ANSWERS, Integer.toString(score));
+        if (InstanceDAO.isLeader) {
+            try {
+                String response = new MyHttpRequestTask().execute("http://54.255.245.23:3000/team/updateScore").get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
         InstanceDAO.completedList.add(placeName);
         startActivity(intent);
+
     }
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
         @Override

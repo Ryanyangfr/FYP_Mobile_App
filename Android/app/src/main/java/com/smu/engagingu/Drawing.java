@@ -21,8 +21,8 @@ import android.widget.Toast;
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.DAO.SubmissionDAO;
 import com.smu.engagingu.fyp.R;
-import com.smu.engagingu.Utility.HttpConnectionUtility;
-import com.smu.engagingu.Utility.PaintView;
+import com.smu.engagingu.Utilities.HttpConnectionUtility;
+import com.smu.engagingu.Utilities.PaintView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,6 +44,7 @@ public class Drawing extends AppCompatActivity {
     String mCurrentPhotoPath;
     File photoFile;
     Uri photoURI;
+    public static final String QUESTION= "com.smu.engagingu.QUESTION";
     private String targetQuestion;
     private String placeName;
     private PaintView paintView;
@@ -60,6 +61,12 @@ public class Drawing extends AppCompatActivity {
         paintView = (PaintView) findViewById(R.id.paintView);
         questionView = findViewById(R.id.textView13);
         getQuestion();
+        if(!InstanceDAO.isLeader){
+            Intent intent2 = new Intent(Drawing.this, MemberSubmissionPage.class);
+            intent2.putExtra(QUESTION,targetQuestion);
+            InstanceDAO.completedList.add(placeName);
+            startActivity(intent2);
+        }
         questionView.setText(targetQuestion);
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);

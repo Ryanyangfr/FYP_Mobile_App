@@ -21,7 +21,7 @@ import android.widget.Toast;
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.Objects.GameResultEntry;
 import com.smu.engagingu.Results.DragDropResults;
-import com.smu.engagingu.Utility.HttpConnectionUtility;
+import com.smu.engagingu.Utilities.HttpConnectionUtility;
 import com.smu.engagingu.fyp.R;
 
 import org.json.JSONArray;
@@ -336,19 +336,20 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
         return false;
     }
     private void submitScore(){
-        ArrayList<GameResultEntry> resultsList = new ArrayList<>();
+        if(InstanceDAO.isLeader) {
+            ArrayList<GameResultEntry> resultsList = new ArrayList<>();
 
-        for (String key : answersMap.keySet()) {
-            if (answersMap.get(key)==true){
-                score++;
+            for (String key : answersMap.keySet()) {
+                if (answersMap.get(key) == true) {
+                    score++;
+                }
             }
-        }
 
-        for(String key: resultsMap.keySet()){
-            String option = resultsMap.get(key);
-            String answer = optionsMap.get(key);
-            resultsList.add(new GameResultEntry("1",key,answer,option));
-        }
+            for (String key : resultsMap.keySet()) {
+                String option = resultsMap.get(key);
+                String answer = optionsMap.get(key);
+                resultsList.add(new GameResultEntry("1", key, answer, option));
+            }
             try {
                 String response = new MyHttpRequestTask2().execute("http://54.255.245.23:3000/team/updateScore").get();
             } catch (InterruptedException e) {
@@ -356,15 +357,15 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
-            if(answersMap.size()==4) {
+            if (answersMap.size() == 4) {
                 Intent intent = new Intent(DragDrop.this, DragDropResults.class);
-                intent.putExtra("resultsList",resultsList);
+                intent.putExtra("resultsList", resultsList);
                 intent.putExtra(QUESTION_COUNT_DRAGDROP, Integer.toString(optionsMap.size()));
                 intent.putExtra(CORRECT_ANSWERS_DRAGDROP, Integer.toString(score));
-                intent.putExtra(QUESTION_DRAGDROP,questionName);
+                intent.putExtra(QUESTION_DRAGDROP, questionName);
                 InstanceDAO.completedList.add(placeName);
                 startActivity(intent);
-            }else{
+            } else {
                 Context context = getApplicationContext();
                 CharSequence text = "You have not completed the challenge!";
                 int duration = Toast.LENGTH_SHORT;
@@ -372,6 +373,11 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
             }
+        }else{
+            Intent intent = new Intent(DragDrop.this, HomePage.class);
+            InstanceDAO.completedList.add(placeName);
+            startActivity(intent);
+        }
     }
     private class MyHttpRequestTask2 extends AsyncTask<String,Integer,String> {
         @Override

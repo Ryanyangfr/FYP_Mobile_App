@@ -59,7 +59,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
         viewHolder.event.setText(event.getName());
         //viewHolder.id.setText(event.getId());
-        viewHolder.timestamp.setReferenceTime(System.currentTimeMillis());
+        viewHolder.timestamp.setText(event.getTime());
         //viewHolder.data.setText(event.getData());
     }
 }

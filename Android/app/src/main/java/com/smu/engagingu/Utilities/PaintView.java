@@ -1,4 +1,4 @@
-package com.smu.engagingu.Utility;
+package com.smu.engagingu.Utilities;
 
 import android.content.Context;
 import android.graphics.Bitmap;

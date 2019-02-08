@@ -63,7 +63,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="scalingPercent" value="63" />
+                                                <entry key="scalingPercent" value="69" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -75,7 +75,7 @@
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
                                       <entry key="backgroundColor" value="ffffff" />
-                                      <entry key="foregroundImage" value="C:\Users\ryder\Documents\GitHub\FYP_Mobile_App\Android\app\src\main\res\drawable\logo.png" />
+                                      <entry key="foregroundImage" value="C:\Users\ryder\Documents\GitHub\FYP_Mobile_App\Android\app\src\main\res\drawable\smooLauncher.png" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -123,11 +123,6 @@
                                 </PersistentState>
                               </value>
                             </entry>
-                          </map>
-                        </option>
-                        <option name="values">
-                          <map>
-                            <entry key="outputIconType" value="ACTIONBAR" />
                           </map>
                         </option>
                       </PersistentState>

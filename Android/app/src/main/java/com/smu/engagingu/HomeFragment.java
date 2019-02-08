@@ -34,7 +34,7 @@ import com.smu.engagingu.DAO.Session;
 import com.smu.engagingu.Game.QuestionType;
 import com.smu.engagingu.Hotspot.Hotspot;
 import com.smu.engagingu.fyp.R;
-import com.smu.engagingu.Utility.HttpConnectionUtility;
+import com.smu.engagingu.Utilities.HttpConnectionUtility;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,6 +44,8 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
+
+import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
     public static final String EXTRA_MESSAGE = "com.smu.engagingu.MESSAGE1";
@@ -56,7 +58,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private LocationListener locationListener;
     private LocationManager locationManager;
     private Boolean completed;
-
+    private LatLng locationToReturn;
     private final long MIN_TIME = 1000; //1 second
     private final long MIN_DIST = 5; //metres?
     private String snippetText;
@@ -83,6 +85,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         View v = inflater.inflate(R.layout.fragment_home, container, false);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         final Activity activity = getActivity();
+        getLocation(activity);
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -92,7 +95,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     public void run() {
                         getLocation(activity);
                     }
-                }, 0, 5000);
+                }, 0, 10000);
             }
         });
 
@@ -181,10 +184,20 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             {
             @Override
             public boolean onMarkerClick(Marker arg0) {
+                while(locationToReturn==null){
+                }
+                System.out.println("Test: "+locationToReturn);
+                double distance = computeDistanceBetween(locationToReturn,new LatLng(arg0.getPosition().latitude,arg0.getPosition().longitude));
+                System.out.println("distance is: "+ distance);
                 snippetText = arg0.getSnippet();
                 if(!(snippetText.equals("Completed"))) {
-                    arg0.setSnippet("Click me to start mission");
-                    arg0.showInfoWindow();
+                    if(distance<10.0) {
+                        arg0.setSnippet("Click me to start mission");
+                        arg0.showInfoWindow();
+                    }else{
+                        arg0.setSnippet("Walk closer to start mission");
+                        arg0.showInfoWindow();
+                    }
                 }
                 return true;
             }
@@ -193,6 +206,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void onInfoWindowClick(Marker marker) {
                 String title = marker.getTitle();
+                String snippet = marker.getSnippet();
+                if(!(snippet.equals("Walk closer to start mission"))){
+                    Intent intent = new Intent(getActivity(), Narrative.class);
+                    intent.putExtra(GAMEMODE_CHECK,questionTypeMap.get(title));
+                    intent.putExtra(EXTRA_MESSAGE, title);
+                    intent.putExtra(NARRATIVE_MESSAGE, snippetText);
+                    startActivity(intent);
+                }
                  /*   QuestionDatabase qnsDB = new QuestionDatabase();
                     if(qnsDB.getQuestionsMap().size()==0){
                         Context context = getActivity().getApplicationContext();
@@ -203,11 +224,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                         toast.show();
                     }else {*/
                         //ArrayList<Question> questionsList = qnsDB.getQuestionsMap().get(title);
-                    Intent intent = new Intent(getActivity(), Narrative.class);
-                    intent.putExtra(GAMEMODE_CHECK,questionTypeMap.get(title));
-                    intent.putExtra(EXTRA_MESSAGE, title);
-                    intent.putExtra(NARRATIVE_MESSAGE, snippetText);
-                    startActivity(intent);
+
                 }
             //}
         });
@@ -293,6 +310,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                         if (location != null) {
                             // Logic to handle location object
                             System.out.println("Fucking Latitude: " + location.getLatitude()+"jibai Longitude: "+location.getLongitude());
+                            locationToReturn = new LatLng(location.getLatitude(),location.getLongitude());
                         }
                     }
                 });
@@ -385,5 +403,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         Session.setTrailInstanceID(getActivity().getApplicationContext(),InstanceDAO.trailInstanceID);
         Session.setUserName(getActivity().getApplicationContext(),InstanceDAO.userName);
         Session.setEventAdapter(getActivity().getApplicationContext(),InstanceDAO.adapter);
+        Session.setIsLeader(getActivity().getApplicationContext(),InstanceDAO.isLeader);
     }
 }

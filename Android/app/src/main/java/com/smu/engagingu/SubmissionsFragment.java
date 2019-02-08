@@ -219,6 +219,9 @@ public class SubmissionsFragment extends Fragment {
 
             imageView = view.findViewById(R.id.imageView);
             imagePath = SubmissionDAO.IMAGEPATHS.get(i);
+            for(int j =0 ; j < SubmissionDAO.IMAGEPATHS.size();j++){
+                System.out.println("Here: "+SubmissionDAO.IMAGEPATHS.get(j));
+            }
 
             loadImageFromFile(imageView, imagePath);
 //            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
@@ -226,6 +229,7 @@ public class SubmissionsFragment extends Fragment {
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v){
+                    imagePath = SubmissionDAO.IMAGEPATHS.get(i);
                     System.out.println("image clicked...");//check logcat
 
                     onButtonShowPopupWindow(v, imagePath);

@@ -26,7 +26,7 @@ import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.DAO.SubmissionDAO;
 import com.smu.engagingu.Game.QuestionDatabase;
 import com.smu.engagingu.fyp.R;
-import com.smu.engagingu.Utility.HttpConnectionUtility;
+import com.smu.engagingu.Utilities.HttpConnectionUtility;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -40,6 +40,7 @@ import java.util.concurrent.ExecutionException;
 
 public class CameraPage extends AppCompatActivity {
     public static final String EXTRA_MESSAGE = "com.smu.engagingu.MESSAGE";
+    public static final String QUESTION = "com.smu.engagingu.QUESTION";
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     Button takePictureButton;
@@ -63,6 +64,12 @@ public class CameraPage extends AppCompatActivity {
         QuestionDatabase qDB = new QuestionDatabase(true);
         HashMap<String,String> selfieQuestionMap = qDB.getSelfieQuestionsMap();
         targetQuestion = selfieQuestionMap.get(placeName);
+        if(!InstanceDAO.isLeader){
+            Intent intent2 = new Intent(CameraPage.this, MemberSubmissionPage.class);
+            intent2.putExtra(QUESTION,targetQuestion);
+            InstanceDAO.completedList.add(placeName);
+            startActivity(intent2);
+        }
         selfieQuestionView.setText(targetQuestion);
         takePictureButton.setOnClickListener(new View.OnClickListener(){
             @Override

@@ -36,6 +36,15 @@ public class Session {
         return getPreferences(context).getString("teamID","");
     }
 
+    public static void setIsLeader(Context context, Boolean b){
+        SharedPreferences.Editor editor = getPreferences(context).edit();
+        editor.putBoolean("isLeader",b).commit();
+        editor.apply();
+    }
+    public static Boolean getIsLeader (Context context) {
+        return getPreferences(context).getBoolean("isLeader",true);
+    }
+
     public static void setEventAdapter(Context context, EventAdapter eventAdapter) {
         SharedPreferences.Editor editor = getPreferences(context).edit();
         Gson gson = new Gson();

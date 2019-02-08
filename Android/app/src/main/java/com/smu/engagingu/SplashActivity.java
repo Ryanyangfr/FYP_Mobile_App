@@ -33,9 +33,9 @@ import com.smu.engagingu.DAO.Session;
 import com.smu.engagingu.DAO.SubmissionDAO;
 import com.smu.engagingu.Hotspot.Hotspot;
 import com.smu.engagingu.Objects.Event;
+import com.smu.engagingu.Utilities.HttpConnectionUtility;
+import com.smu.engagingu.Utilities.SocketHandler;
 import com.smu.engagingu.fyp.R;
-import com.smu.engagingu.Utility.HttpConnectionUtility;
-import com.smu.engagingu.Utility.SocketHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -64,13 +65,13 @@ public class SplashActivity extends AppCompatActivity {
     private Socket mSocket;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        System.out.println("HELLO!!");
         InstanceDAO.userName=Session.getUsername(getApplicationContext());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         SocketHandler socketHandler = new SocketHandler();
         mSocket = socketHandler.getSocket();
         mSocket.on("activityFeed",onNewFeedMessage);
+        mSocket.on("startTrail",onStartTrail);
         mSocket.connect();
 
         // Use LinearLayout as the layout manager
@@ -80,6 +81,7 @@ public class SplashActivity extends AppCompatActivity {
         options.setCluster("ap1");
         Pusher pusher = new Pusher("1721c662be60b9cbd43c", options);
         Channel channel = pusher.subscribe(CHANNEL_NAME);
+        final String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Timestamp(System.currentTimeMillis()));
         SubscriptionEventListener eventListener = new SubscriptionEventListener() {
             @Override
             public void onEvent(String channel, final String event, final String data) {
@@ -94,7 +96,7 @@ public class SplashActivity extends AppCompatActivity {
                             String feedTeamID = mainChildNode.getString("team_id");
                             String eventID = mainChildNode.getString("id");
                             String feedTeamName = "Team "+feedTeamID+" has just connected.";
-                            Event evt = new Event(feedTeamName,eventID,data);
+                            Event evt = new Event(feedTeamName,eventID,data,timeStamp);
                             //evt.setName(event + ":");
                             InstanceDAO.adapter.addEvent(evt);
                         } catch (JSONException e) {
@@ -168,19 +170,32 @@ public class SplashActivity extends AppCompatActivity {
                     String team;
                     String hotspot;
                     String message;
+                    String time;
                     try{
                         team = data.getString("team");
                         hotspot = data.getString("hotspot");
                         message = "Team "+team+" has just completed "+hotspot;
+                        time = data.getString("time");
                     }catch(JSONException e){
                         return;
                     }
                     //System.out.println(args[0]);
                     //String s = (String)args[0];
-                    Event evt = new Event(message,team,hotspot);
+                    Event evt = new Event(message,team,hotspot,time);
                     //evt.setName(event + ":");
                     System.out.println("Activity Feed Update");
                     InstanceDAO.adapter.addEvent(evt);
+                }
+            });
+        }
+    };
+    private Emitter.Listener onStartTrail = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    InstanceDAO.startTrail = true;
                 }
             });
         }
@@ -192,6 +207,7 @@ public class SplashActivity extends AppCompatActivity {
             InstanceDAO.teamID = Session.getTeamID(getApplicationContext());
             InstanceDAO.trailInstanceID = Session.getTrailInstanceID(getApplicationContext());
             InstanceDAO.firstTime = Session.getFirstTime(getApplicationContext());
+            InstanceDAO.isLeader = Session.getIsLeader(getApplicationContext());
                 try {
                     String endpointURL = SubmissionDAO.submissionEndPoint;
                     System.out.println("AAA"+endpointURL);

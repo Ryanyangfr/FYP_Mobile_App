@@ -3,7 +3,8 @@ package com.smu.engagingu.Game;
 import android.os.AsyncTask;
 
 import com.smu.engagingu.DAO.InstanceDAO;
-import com.smu.engagingu.Utility.HttpConnectionUtility;
+import com.smu.engagingu.Objects.Question;
+import com.smu.engagingu.Utilities.HttpConnectionUtility;
 
 import org.json.JSONArray;
 import org.json.JSONException;

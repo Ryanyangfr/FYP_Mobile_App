@@ -18,7 +18,7 @@ import android.widget.TextView;
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.Objects.PuzzlePoint;
 import com.smu.engagingu.Results.WordSearchResults;
-import com.smu.engagingu.Utility.HttpConnectionUtility;
+import com.smu.engagingu.Utilities.HttpConnectionUtility;
 import com.smu.engagingu.fyp.R;
 
 import org.json.JSONArray;
@@ -62,17 +62,30 @@ public class WordsSearch extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word_search);
-        setupUI(findViewById(R.id.wordSearchMain));
         b = findViewById(R.id.wordSearchSubmit);
         e1 = findViewById(R.id.editText);
         e2 = findViewById(R.id.editText2);
         e3 = findViewById(R.id.editText4);
         e4 = findViewById(R.id.editText5);
         e5 = findViewById(R.id.editText6);
+        if(InstanceDAO.isLeader){
+            setupUI(findViewById(R.id.wordSearchMain));
+        }else{
+            b.setText("EXIT");
+            e1.setVisibility(View.GONE);
+            e2.setVisibility(View.GONE);
+            e3.setVisibility(View.GONE);
+            e4.setVisibility(View.GONE);
+            e5.setVisibility(View.GONE);
+        }
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if(!InstanceDAO.isLeader){
+                    Intent intent = new Intent(WordsSearch.this, HomePage.class);
+                    InstanceDAO.completedList.add(placeName);
+                    startActivity(intent);
+                }
                 String answer1 = e1.getText().toString().toUpperCase();
                 String answer2 = e2.getText().toString().toUpperCase();
                 String answer3 = e3.getText().toString().toUpperCase();
@@ -98,7 +111,11 @@ public class WordsSearch extends Activity {
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
-                Intent intent = new Intent(WordsSearch.this, WordSearchResults.class);
+                Intent intent = null;
+                intent = new Intent(WordsSearch.this, WordSearchResults.class);
+                if(!InstanceDAO.isLeader){
+                    intent = new Intent(WordsSearch.this,HomePage.class);
+                }
                 intent.putExtra("resultsList",answerList);
                 intent.putExtra("puzzle", puzzle);
                 intent.putExtra("wordPointMap",wordPointMap);
