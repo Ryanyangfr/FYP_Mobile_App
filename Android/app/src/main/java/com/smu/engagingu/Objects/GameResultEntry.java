@@ -1,4 +1,4 @@
-package com.smu.engagingu;
+package com.smu.engagingu.Objects;
 
 import java.io.Serializable;
 

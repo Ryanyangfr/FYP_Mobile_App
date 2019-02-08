@@ -16,6 +16,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.smu.engagingu.DAO.InstanceDAO;
+import com.smu.engagingu.Objects.PuzzlePoint;
 import com.smu.engagingu.Results.WordSearchResults;
 import com.smu.engagingu.Utility.HttpConnectionUtility;
 import com.smu.engagingu.fyp.R;

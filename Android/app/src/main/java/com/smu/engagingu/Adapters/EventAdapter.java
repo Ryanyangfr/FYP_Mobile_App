@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.github.curioustechizen.ago.RelativeTimeTextView;
-import com.smu.engagingu.Event;
+import com.smu.engagingu.Objects.Event;
 import com.smu.engagingu.fyp.R;
 
 import java.util.List;

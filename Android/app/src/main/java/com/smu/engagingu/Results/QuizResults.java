@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.smu.engagingu.Adapters.QuizResultAdapter;
 import com.smu.engagingu.HomePage;
 import com.smu.engagingu.QuizActivity;
-import com.smu.engagingu.GameResultEntry;
+import com.smu.engagingu.Objects.GameResultEntry;
 import com.smu.engagingu.fyp.R;
 
 import java.util.ArrayList;

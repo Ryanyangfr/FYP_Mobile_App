@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.smu.engagingu.GameResultEntry;
+import com.smu.engagingu.Objects.GameResultEntry;
 import com.smu.engagingu.fyp.R;
 
 import java.util.ArrayList;

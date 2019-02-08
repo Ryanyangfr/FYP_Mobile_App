@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.smu.engagingu.Adapters.FAQAdapter;
+import com.smu.engagingu.Objects.FaqEntry;
 import com.smu.engagingu.fyp.R;
 
 import java.util.ArrayList;

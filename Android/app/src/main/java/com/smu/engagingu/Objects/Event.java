@@ -1,4 +1,4 @@
-package com.smu.engagingu;
+package com.smu.engagingu.Objects;
 
 public class Event  {
     private String name;

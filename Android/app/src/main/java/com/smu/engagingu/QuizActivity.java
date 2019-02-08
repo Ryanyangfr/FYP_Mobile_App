@@ -18,6 +18,7 @@ import com.github.nkzawa.socketio.client.Socket;
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.Game.Question;
 import com.smu.engagingu.Game.QuestionDatabase;
+import com.smu.engagingu.Objects.GameResultEntry;
 import com.smu.engagingu.Results.QuizResults;
 import com.smu.engagingu.Utility.HttpConnectionUtility;
 import com.smu.engagingu.fyp.R;

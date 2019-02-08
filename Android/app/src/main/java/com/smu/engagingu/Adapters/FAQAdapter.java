@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.smu.engagingu.FaqEntry;
+import com.smu.engagingu.Objects.FaqEntry;
 import com.smu.engagingu.fyp.R;
 
 import java.util.ArrayList;

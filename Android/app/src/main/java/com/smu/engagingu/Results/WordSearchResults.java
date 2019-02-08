@@ -13,7 +13,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.smu.engagingu.HomePage;
-import com.smu.engagingu.PuzzlePoint;
+import com.smu.engagingu.Objects.PuzzlePoint;
 import com.smu.engagingu.WordsSearch;
 import com.smu.engagingu.fyp.R;
 
