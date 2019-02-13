@@ -4,6 +4,7 @@ import com.smu.engagingu.Adapters.EventAdapter;
 import com.smu.engagingu.Hotspot.Hotspot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class InstanceDAO {
     public static String teamID;
@@ -19,7 +20,7 @@ public class InstanceDAO {
     public static String userName= "";
     public static ArrayList<String> userList = new ArrayList<>();
     public static EventAdapter adapter=null;
-
+    public static HashMap<String, String> questionTypeMap = new HashMap<>();
 
 
 }

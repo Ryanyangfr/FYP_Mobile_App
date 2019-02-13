@@ -10,7 +10,7 @@ public class SocketHandler{
     public SocketHandler(){
         {
             try {
-                mSocket = IO.socket("http://54.255.245.23:3000");
+                mSocket = IO.socket("http://13.229.115.32:3000");
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }

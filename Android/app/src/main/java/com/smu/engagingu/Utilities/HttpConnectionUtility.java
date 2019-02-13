@@ -26,6 +26,7 @@ public class HttpConnectionUtility{
             URL url = new URL(myurl);
 //                System.out.println(url);
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.setConnectTimeout(5000);
             // setting the  Request Method Type
             httpURLConnection.setRequestMethod("GET");
             // adding the headers for request
@@ -46,7 +47,10 @@ public class HttpConnectionUtility{
                     return null;
                 }
 
-            }catch (Exception e){
+            }catch(java.net.SocketTimeoutException e){
+                return null;
+            }
+            catch (Exception e){
                 e.printStackTrace();
             }finally {
                 // this is done so that there are no open connections left when this task is going to complete
@@ -236,98 +240,4 @@ public class HttpConnectionUtility{
         }
         return sb.toString();
     }
-
-
-
-
-
-
-// public static String multipartPost(String myurl, String filepath){
-//        String boundary = "===" + System.currentTimeMillis() + "===";
-//        final String LINE_FEED = "\r\n";
-//        HttpURLConnection httpURLConnection = null;
-//        PrintWriter writer;
-//        StringBuffer response = new StringBuffer();
-//
-//        try {
-//            URL url = new URL(myurl);
-//            httpURLConnection = (HttpURLConnection) url.openConnection();
-//            httpURLConnection.setDoOutput(true);
-//            httpURLConnection.setRequestMethod("post");
-//            httpURLConnection.setRequestProperty("Content-Type",
-//                    "multipart/form-data; boundary=" + boundary);
-//
-//            System.out.println("headers : " + httpURLConnection.getHeaderFields().toString());
-//
-//            OutputStream outputstream = httpURLConnection.getOutputStream();
-//            writer = new PrintWriter(new OutputStreamWriter(outputstream),
-//                    true);
-//
-//            File file = new File(filepath);
-//            System.out.println(file.getPath());
-//            HttpConnectionUtility.addFilePart(httpURLConnection, boundary, LINE_FEED, writer, file, outputstream);
-//            writer.append(LINE_FEED).flush();
-//            writer.append("--" + boundary + "--").append(LINE_FEED);
-//            writer.close();
-//
-//            int responseCode = httpURLConnection.getResponseCode();
-//            if(responseCode == httpURLConnection.HTTP_OK){
-//                String input;
-//                BufferedReader in = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
-//                while((input = in.readLine()) != null){
-//                    response.append(input);
-//                }
-//            } else{
-//                System.out.println("Response Status: " + responseCode);
-//            }
-//
-//
-//        } catch (Exception e){
-//            System.out.println("There is an error");
-//            e.getStackTrace();
-//            System.out.println(e);
-//        }
-//        return response.toString();
-//    }
-//
-//    public static void addFilePart(HttpURLConnection urlConnection, String boundary, String LINE_FEED, PrintWriter writer, File uploadFile, OutputStream outputStream)
-//            throws IOException {
-//        String fileName = uploadFile.getName();
-//        System.out.println("Content-Disposition: form-data; name=\"" + "image"
-//                + "\"; filename=\"" + fileName + "\"");
-//        writer.append("--" + boundary).append(LINE_FEED);
-//        writer.append(
-//                "Content-Disposition: form-data; name=\"" + "image"
-//                        + "\"; filename=\"" + fileName + "\"")
-//                .append(LINE_FEED);
-//        writer.append(
-//                "Content-Type: "
-//                        + urlConnection.guessContentTypeFromName(fileName))
-//                .append(LINE_FEED);
-//        writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
-//        writer.append(LINE_FEED);
-//        writer.flush();
-//
-//        FileInputStream inputStream = new FileInputStream(uploadFile);
-//        byte[] buffer = new byte[4096];
-//        int bytesRead = -1;
-//        while ((bytesRead = inputStream.read(buffer)) != -1) {
-//            outputStream.write(buffer, 0, bytesRead);
-//        }
-//        outputStream.flush();
-//        inputStream.close();
-//        writer.append(LINE_FEED);
-//        writer.flush();
-//    }
-//
-//    public static void addFormField(PrintWriter writer, String LINE_FEED, String boundary, String name, String value) {
-//        writer.append("--" + boundary).append(LINE_FEED);
-//        writer.append("Content-Disposition: form-data; name=\"" + name + "\"")
-//                .append(LINE_FEED);
-////        writer.append("Content-Type: text/plain; charset=" + charset).append(
-////                LINE_FEED);
-//        writer.append(LINE_FEED);
-//        writer.append(value).append(LINE_FEED);
-//        writer.flush();
-//    }
 }

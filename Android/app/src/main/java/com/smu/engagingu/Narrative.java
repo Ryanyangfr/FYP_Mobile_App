@@ -44,34 +44,33 @@ public class Narrative extends AppCompatActivity {
     }
     private void goToGame(){
         Intent intent = null;
-        switch(gameModeCheck)
-        {
-            case "1":
-                intent = new Intent(Narrative.this, QuizActivity .class);
-                break;
-            case "2":
-                intent = new Intent(Narrative.this, CameraPage .class);
-                break;
-            case "3":
-                intent = new Intent(Narrative.this, Drawing .class);
-                break;
-            case "4":
-                intent = new Intent(Narrative.this, Anagram .class);
-                break;
-            case "5":
-                intent = new Intent(Narrative.this, DragDrop .class);
-                break;
-            case "6":
-                intent = new Intent(Narrative.this, WordsSearch .class);
-                break;
-            default:
-                System.out.println("no match");
+        if(gameModeCheck==null){
+            intent = new Intent(Narrative.this, HomePage .class);
+            startActivity(intent);
+        }else {
+            switch (gameModeCheck) {
+                case "1":
+                    intent = new Intent(Narrative.this, QuizActivity.class);
+                    break;
+                case "2":
+                    intent = new Intent(Narrative.this, CameraPage.class);
+                    break;
+                case "3":
+                    intent = new Intent(Narrative.this, Drawing.class);
+                    break;
+                case "4":
+                    intent = new Intent(Narrative.this, Anagram.class);
+                    break;
+                case "5":
+                    intent = new Intent(Narrative.this, DragDrop.class);
+                    break;
+                case "6":
+                    intent = new Intent(Narrative.this, WordsSearch.class);
+                    break;
+                default:
+                    System.out.println("no match");
+            }
         }
-        //if(selfieCheck.equals("1")) {
-         //   intent = new Intent(Narrative.this, QuizActivity .class);
-        //}else{
-        //    intent = new Intent(Narrative.this, CameraPage.class);
-       // }
         intent.putExtra(EXTRA_MESSAGE2, placeName);
         startActivity(intent);
     }
@@ -116,7 +115,7 @@ public class Narrative extends AppCompatActivity {
             userHash.put("score",message);
             userHash.put("hotspot",placeName);
             System.out.println("message: "+message);
-            String response = HttpConnectionUtility.post("http://54.255.245.23:3000/team/updateScore",userHash);
+            String response = HttpConnectionUtility.post("http://13.229.115.32:3000/team/updateScore",userHash);
             if (response == null){
                 return null;
             }

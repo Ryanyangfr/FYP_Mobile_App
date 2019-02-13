@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.github.nkzawa.socketio.client.Socket;
 import com.smu.engagingu.DAO.InstanceDAO;
+import com.smu.engagingu.StoryLine.Welcome;
 import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.Utilities.HttpConnectionUtility;
 
@@ -36,7 +37,7 @@ public class UserName extends AppCompatActivity {
     }
 
     public void sendUserName(View view) throws ExecutionException, InterruptedException {
-        InstanceDAO.teamID = new MyHttpRequestTask().execute("http://54.255.245.23:3000/user/register").get();
+        InstanceDAO.teamID = new MyHttpRequestTask().execute("http://13.229.115.32:3000/user/register").get();
         if(message.equals("")){
             Context context = getApplicationContext();
             CharSequence text = "Please enter a valid username!";
@@ -45,7 +46,7 @@ public class UserName extends AppCompatActivity {
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
         }else {
-            Intent intent = new Intent(this, TeamDisplay.class);
+            Intent intent = new Intent(this, Welcome.class);
             InstanceDAO.userName=message;
             startActivity(intent);
         }
@@ -67,7 +68,7 @@ public class UserName extends AppCompatActivity {
             message = editText.getText().toString();
             HashMap<String,String> userHash = new HashMap<>();
             userHash.put("username",message);
-            String response = HttpConnectionUtility.post("http://54.255.245.23:3000/user/register",userHash);
+            String response = HttpConnectionUtility.post("http://13.229.115.32:3000/user/register",userHash);
             try {
                 JSONObject userObject = new JSONObject(response);
                 return userObject.getString("team_id");

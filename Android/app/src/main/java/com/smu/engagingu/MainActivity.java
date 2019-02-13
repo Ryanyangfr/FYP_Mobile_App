@@ -22,10 +22,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.smu.engagingu.DAO.InstanceDAO;
-import com.smu.engagingu.DAO.Session;
 import com.smu.engagingu.DAO.SubmissionDAO;
-import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.Utilities.HttpConnectionUtility;
+import com.smu.engagingu.fyp.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,13 +50,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         showPhoneStatePermission();
+        showPhoneStatePermission3();
 
     }
 
     public void sendMessage(View view) {
         String jsonString = null;
         try {
-            jsonString= new MyHttpRequestTask().execute("http://54.255.245.23:3000/getInstance").get();
+            jsonString= new MyHttpRequestTask().execute("http://13.229.115.32:3000/getInstance").get();
             JSONObject jsonObject = new JSONObject(jsonString);
             InstanceDAO.trailInstanceID = jsonObject.getString("trail_instance_id");
         } catch (InterruptedException | ExecutionException | JSONException e) {
@@ -66,9 +66,6 @@ public class MainActivity extends AppCompatActivity {
 
         EditText editText = (EditText) findViewById(R.id.editText3);
         String message = editText.getText().toString();
-        //String message = ;
-        //String my_url = "http://10.124.5.151:3000/upload/uploadSubmission";
-        //new MyHttpRequestTask().execute(my_url,"");
 
         if(message.equals(InstanceDAO.trailInstanceID)) {
             Intent intent = new Intent(this, UserName.class);
@@ -96,6 +93,36 @@ public class MainActivity extends AppCompatActivity {
 //            Toast.makeText(MainActivity.this, "The app was not allowed to read your store.", Toast.LENGTH_SHORT).show();
         }
     }
+    private void showPhoneStatePermission2() {
+        int permissionCheck2 = ContextCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_FINE_LOCATION);
+
+        if(permissionCheck2 != PackageManager.PERMISSION_GRANTED){
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_PHONE_STATE)) {
+                showExplanation("Permission Needed", "Rationale", Manifest.permission.ACCESS_FINE_LOCATION,PackageManager.PERMISSION_GRANTED);
+                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
+            } else {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PackageManager.PERMISSION_GRANTED);
+            }
+        } else {
+//            Toast.makeText(MainActivity.this, "The app was not allowed to read your store.", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void showPhoneStatePermission3() {
+        int permissionCheck3 = ContextCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_COARSE_LOCATION);
+        if(permissionCheck3 != PackageManager.PERMISSION_GRANTED){
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_PHONE_STATE)) {
+                showExplanation("Permission Needed", "Rationale", Manifest.permission.ACCESS_COARSE_LOCATION,PackageManager.PERMISSION_GRANTED);
+            } else {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
+            }
+        } else {
+//            Toast.makeText(MainActivity.this, "The app was not allowed to read your store.", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     @Override
     public void onRequestPermissionsResult(
@@ -107,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(MainActivity.this, "Permission Granted!", Toast.LENGTH_SHORT).show();
+                    showPhoneStatePermission2();
                 } else {
                     Toast.makeText(MainActivity.this, "Permission Denied!", Toast.LENGTH_SHORT).show();
                 }
@@ -151,21 +179,12 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-    private void populateInstanceDAO(){
-        InstanceDAO.teamID = Session.getTeamID(getApplicationContext());
-        System.out.println("teamID: "+InstanceDAO.teamID);
-        InstanceDAO.trailInstanceID = Session.getTrailInstanceID(getApplicationContext());
-        System.out.println("trailInstanceID: "+InstanceDAO.trailInstanceID);
-        InstanceDAO.firstTime = Session.getFirstTime(getApplicationContext());
-
-
-    }
     private static class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
 
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/getInstance");
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/getInstance");
             if (response == null){
                 return null;
             }

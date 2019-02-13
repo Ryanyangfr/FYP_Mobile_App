@@ -2,9 +2,13 @@ package com.smu.engagingu;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -13,9 +17,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -33,8 +39,8 @@ import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.DAO.Session;
 import com.smu.engagingu.Game.QuestionType;
 import com.smu.engagingu.Hotspot.Hotspot;
-import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.Utilities.HttpConnectionUtility;
+import com.smu.engagingu.fyp.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -71,17 +77,22 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         System.out.println("trailInstanceID2: " + InstanceDAO.trailInstanceID);
-        QuestionType questionType = new QuestionType();
-        questionTypeMap = questionType.getQuestionTypeMap();
         saveSession();
+        questionTypeMap = InstanceDAO.questionTypeMap;
+        if(InstanceDAO.completedList.size()!=0 && (InstanceDAO.completedList.size()==questionTypeMap.size()) ){
+            openDialog();
+        }
         //InstanceDAO.adapter = Session.getEventAdapter(getActivity().getApplicationContext());
         //System.out.println(Session.getEventAdapter(getActivity().getApplicationContext()));
         if (!InstanceDAO.hasPulled) {
             populateData();
+            QuestionType questionType = new QuestionType();
+            questionTypeMap = questionType.getQuestionTypeMap();
+            InstanceDAO.questionTypeMap = questionTypeMap;
         }
 
-        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PackageManager.PERMISSION_GRANTED);
-        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
+        //requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PackageManager.PERMISSION_GRANTED);
+        //requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
         View v = inflater.inflate(R.layout.fragment_home, container, false);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         final Activity activity = getActivity();
@@ -131,11 +142,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
         mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
-        //Intent intent = getActivity().getIntent();
-        //String completedPlace = intent.getStringExtra(QuizActivity.EXTRA_MESSAGE);
-        //if(completedPlace!=null) {
-        //    InstanceDAO.completedList.add(completedPlace);
-        //}
         try{
             mGoogleMap.setMyLocationEnabled(true);
         }
@@ -191,12 +197,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 System.out.println("distance is: "+ distance);
                 snippetText = arg0.getSnippet();
                 if(!(snippetText.equals("Completed"))) {
-                    if(distance<20.0) {
+                    if(distance<50.0) {
                         arg0.setSnippet("Click me to start mission");
                         arg0.showInfoWindow();
                     }else{
-                        arg0.setSnippet("Walk closer to start mission");
-                        arg0.showInfoWindow();
+                        Toast.makeText(getActivity(), "You need to walk closer!", Toast.LENGTH_SHORT).show();
                     }
                 }
                 return true;
@@ -207,13 +212,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             public void onInfoWindowClick(Marker marker) {
                 String title = marker.getTitle();
                 String snippet = marker.getSnippet();
-                if(!(snippet.equals("Walk closer to start mission"))){
                     Intent intent = new Intent(getActivity(), Narrative.class);
                     intent.putExtra(GAMEMODE_CHECK,questionTypeMap.get(title));
                     intent.putExtra(EXTRA_MESSAGE, title);
                     intent.putExtra(NARRATIVE_MESSAGE, snippetText);
                     startActivity(intent);
-                }
                  /*   QuestionDatabase qnsDB = new QuestionDatabase();
                     if(qnsDB.getQuestionsMap().size()==0){
                         Context context = getActivity().getApplicationContext();
@@ -226,14 +229,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                         //ArrayList<Question> questionsList = qnsDB.getQuestionsMap().get(title);
 
                 }
-            //}
         });
 
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                System.out.println(latLng.latitude+"   jibai "+latLng.longitude);
             }
 
             @Override
@@ -309,7 +310,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             // Logic to handle location object
-                            System.out.println("Fucking Latitude: " + location.getLatitude()+"jibai Longitude: "+location.getLongitude());
+                            System.out.println("Latitude: " + location.getLatitude()+"Longitude: "+location.getLongitude());
                             locationToReturn = new LatLng(location.getLatitude(),location.getLongitude());
                         }
                     }
@@ -370,7 +371,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private class getCompletedList extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/completedHotspots?trail_instance_id="+InstanceDAO.trailInstanceID+"&team="+InstanceDAO.teamID);
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/completedHotspots?trail_instance_id="+InstanceDAO.trailInstanceID+"&team="+InstanceDAO.teamID);
             if (response == null) {
                 return null;
             }
@@ -380,7 +381,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private class getAllHotspot extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/hotspot/getAllHotspots?trail_instance_id=" + InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/hotspot/getAllHotspots?trail_instance_id=" + InstanceDAO.trailInstanceID);
             if (response == null) {
                 return null;
             }
@@ -390,7 +391,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private class getStartingHotspot extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/team/startingHotspot?trail_instance_id=" + InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/team/startingHotspot?trail_instance_id=" + InstanceDAO.trailInstanceID);
             if (response == null) {
                 return null;
             }
@@ -405,4 +406,46 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         Session.setEventAdapter(getActivity().getApplicationContext(),InstanceDAO.adapter);
         Session.setIsLeader(getActivity().getApplicationContext(),InstanceDAO.isLeader);
     }
+    public void openDialog() {
+
+        AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+
+        // Set Custom Title
+        TextView title = new TextView(getActivity());
+        // Title Properties
+        title.setText("Congratulations!");
+        title.setPadding(10, 10, 10, 10);   // Set Position
+        title.setGravity(Gravity.CENTER);
+        title.setTextColor(Color.parseColor("#151C55"));
+        title.setTextSize(20);
+        alertDialog.setCustomTitle(title);
+
+        // Set Message
+        TextView msg = new TextView(getActivity());
+        // Message Properties
+        msg.setText("Congratulations on completing all your missions! \n Please head back to the admin building \n for a debrief.");
+        msg.setGravity(Gravity.CENTER_HORIZONTAL);
+        msg.setTextColor(Color.BLACK);
+        alertDialog.setView(msg);
+
+        // Set Button
+        // you can more buttons
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,"OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Perform Action on Button
+            }
+        });
+
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"CANCEL", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Perform Action on Button
+            }
+        });
+
+
+        new Dialog(getContext());
+        alertDialog.show();
+
+    }
 }
+

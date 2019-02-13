@@ -129,10 +129,11 @@ public class SplashActivity extends AppCompatActivity {
             String response = new getAllUsers().execute("").get();
             response2 = new getStartingHotspot().execute("").get();
             if(response!=null) {
-                JSONObject mainObject = new JSONObject(response);
-                JSONArray mainChildNode = mainObject.getJSONArray("username");
+                JSONArray mainChildNode = new JSONArray(response);
                 for(int i =0 ; i < mainChildNode.length();i++){
-                    userList.add(mainChildNode.getString(i));
+                    JSONObject firstChildNode = mainChildNode.getJSONObject(i);
+                    String userName = firstChildNode.getString("username");
+                    userList.add(userName);
                 }
                 InstanceDAO.userList = userList;
             }
@@ -210,9 +211,7 @@ public class SplashActivity extends AppCompatActivity {
             InstanceDAO.isLeader = Session.getIsLeader(getApplicationContext());
                 try {
                     String endpointURL = SubmissionDAO.submissionEndPoint;
-                    System.out.println("AAA"+endpointURL);
                     String submissionResponse = HttpConnectionUtility.get(endpointURL);
-                    System.out.println("response: "+submissionResponse);
                     JSONArray submissionJsonArr= new JSONArray(submissionResponse);
                     System.out.println(submissionJsonArr.length());
                     //int jsonArrLength = submissionJsonArr.length();
@@ -375,7 +374,7 @@ public class SplashActivity extends AppCompatActivity {
     private class getAllUsers extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/user/retrieveAllUsers");
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/user/retrieveAllUser");
             if (response == null) {
                 return null;
             }
@@ -400,7 +399,7 @@ public class SplashActivity extends AppCompatActivity {
     private class getStartingHotspot extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/team/startingHotspot?trail_instance_id=" + InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/team/startingHotspot?trail_instance_id=" + InstanceDAO.trailInstanceID);
             if (response == null) {
                 return null;
             }

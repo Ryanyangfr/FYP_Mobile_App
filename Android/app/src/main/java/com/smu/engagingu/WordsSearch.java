@@ -105,7 +105,7 @@ public class WordsSearch extends Activity {
                     }
                 }
                 try {
-                    String response = new MyHttpRequestTask2().execute("http://54.255.245.23:3000/team/updateScore").get();
+                    String response = new MyHttpRequestTask2().execute("http://13.229.115.32:3000/team/updateScore").get();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
@@ -345,7 +345,7 @@ public class WordsSearch extends Activity {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/wordsearch/getWordSearchWords?trail_instance_id=175239");
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/wordsearch/getWordSearchWords?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
@@ -365,7 +365,7 @@ public class WordsSearch extends Activity {
             userHash.put("score",message);
             userHash.put("hotspot",placeName);
             System.out.println("message: "+message);
-            String response = HttpConnectionUtility.post("http://54.255.245.23:3000/team/updateScore",userHash);
+            String response = HttpConnectionUtility.post("http://13.229.115.32:3000/team/updateScore",userHash);
             if (response == null){
                 return null;
             }

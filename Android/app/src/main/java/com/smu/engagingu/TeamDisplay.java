@@ -10,7 +10,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.smu.engagingu.DAO.InstanceDAO;
-import com.smu.engagingu.StoryLine.Welcome;
 import com.smu.engagingu.Utilities.HttpConnectionUtility;
 import com.smu.engagingu.fyp.R;
 
@@ -36,83 +35,88 @@ public class TeamDisplay extends AppCompatActivity {
             e.printStackTrace();
         }
         HashMap<String,Integer> isLeaderMap = handleResponse(response);
-        String temp = InstanceDAO.userName+InstanceDAO.teamID;
-        Integer isLeader = isLeaderMap.get(temp);
-        TextView leaderTv = findViewById(R.id.isLeaderTv);
-        if(isLeader==0){
-            InstanceDAO.isLeader = false;
-            leaderTv.setText("MEMBER");
-        }else if (isLeader == 1){
-            InstanceDAO.isLeader = true;
-            leaderTv.setText("LEADER");
-        }
-        TextView groupNumberView = findViewById(R.id.GroupNumberView);
-        String toDisplay = "TEAM "+InstanceDAO.teamID;
-        groupNumberView.setText(toDisplay);
+        if(isLeaderMap==null){
+            Intent intent = new Intent(this, SplashActivity.class);
+            startActivity(intent);
+        }else {
+            String temp = InstanceDAO.userName + InstanceDAO.teamID;
+            Integer isLeader = isLeaderMap.get(temp);
+            TextView leaderTv = findViewById(R.id.isLeaderTv);
+            if (isLeader == 0) {
+                InstanceDAO.isLeader = false;
+                leaderTv.setText("MEMBER");
+            } else if (isLeader == 1) {
+                InstanceDAO.isLeader = true;
+                leaderTv.setText("LEADER");
+            }
+            TextView groupNumberView = findViewById(R.id.GroupNumberView);
+            String toDisplay = "TEAM " + InstanceDAO.teamID;
+            groupNumberView.setText(toDisplay);
 
-        final Button confirmationButton = findViewById(R.id.groupNumberButton);
-        final ProgressBar pb = findViewById(R.id.teamDisplayProgress);
-        confirmationButton.setVisibility(View.GONE);
-        Runnable myRunnable = new Runnable() {
-            @Override
-            public void run() {
-                while (!InstanceDAO.startTrail) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+            final Button confirmationButton = findViewById(R.id.groupNumberButton);
+            final ProgressBar pb = findViewById(R.id.teamDisplayProgress);
+            confirmationButton.setVisibility(View.GONE);
+            Runnable myRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    while (!InstanceDAO.startTrail) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        confirmationButton.post(new Runnable() {
+                            @Override
+                            public void run() {
+                            }
+                        });
                     }
-                    confirmationButton.post(new Runnable() {
+                    runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            confirmationButton.invalidate();
+                            confirmationButton.requestLayout();
+                            confirmationButton.setText("GO");
+                            confirmationButton.setVisibility(View.VISIBLE);
+                            pb.setVisibility(View.GONE);
+
                         }
                     });
+
                 }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        confirmationButton.invalidate();
-                        confirmationButton.requestLayout();
-                        confirmationButton.setText("GO");
-                        confirmationButton.setVisibility(View.VISIBLE);
-                        pb.setVisibility(View.GONE);
+            };
+            if (!InstanceDAO.startTrail) {
+                Thread myThread = new Thread(myRunnable);
+                myThread.start();
+            }
+
+            confirmationButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    System.out.println("Hello" + InstanceDAO.startTrail);
+                    if (InstanceDAO.startTrail) {
+                        try {
+                            goToStoryPage();
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
 
                     }
-                });
-
-            }
-        };
-        if(!InstanceDAO.startTrail) {
-            Thread myThread = new Thread(myRunnable);
-            myThread.start();
+                }
+            });
         }
-
-        confirmationButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                System.out.println("Hello"+InstanceDAO.startTrail);
-                if (InstanceDAO.startTrail) {
-                    try {
-                        goToStoryPage();
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }else{
-
-                }
-            }
-        });
     }
     private void goToStoryPage(){
-        Intent intent = new Intent(this, Welcome.class);
+        Intent intent = new Intent(this, HomePage.class);
         startActivity(intent);
     }
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/user/retrieveAllUser");
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/user/retrieveAllUser");
             if (response == null){
                 return null;
             }

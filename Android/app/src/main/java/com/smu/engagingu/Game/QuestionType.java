@@ -45,46 +45,58 @@ public class QuestionType {
         JSONArray jsonMainNode6 = null;
         try {
             jsonMainNode = new JSONArray(responseQuiz);
-            for(int i = 0; i< jsonMainNode.length();i++){
-                JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
-                String placeName = jsonChildNode.getString("hotspot");
-                System.out.println("quiz: "+placeName);
-                QuestionTypeMap.put(placeName,"1");
+            if(jsonMainNode.length()!=0) {
+                for (int i = 0; i < jsonMainNode.length(); i++) {
+                    JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
+                    String placeName = jsonChildNode.getString("hotspot");
+                    System.out.println("quiz: " + placeName);
+                    QuestionTypeMap.put(placeName, "1");
+                }
             }
             jsonMainNode2 = new JSONArray(responseSelfie);
-            for(int i = 0; i< jsonMainNode2.length();i++){
-                JSONObject jsonChildNode = jsonMainNode2.getJSONObject(i);
-                String placeName = jsonChildNode.getString("hotspot");
-                System.out.println("selfie: "+placeName);
-                QuestionTypeMap.put(placeName,"2");
+            if(jsonMainNode2.length()!=0) {
+                for (int i = 0; i < jsonMainNode2.length(); i++) {
+                    JSONObject jsonChildNode = jsonMainNode2.getJSONObject(i);
+                    String placeName = jsonChildNode.getString("hotspot");
+                    System.out.println("selfie: " + placeName);
+                    QuestionTypeMap.put(placeName, "2");
+                }
             }
             jsonMainNode3 = new JSONArray(responseDrawing);
-            for(int i = 0; i< jsonMainNode3.length();i++){
-                JSONObject jsonChildNode = jsonMainNode3.getJSONObject(i);
-                String placeName = jsonChildNode.getString("hotspot");
-                System.out.println("drawing: "+placeName);
-                QuestionTypeMap.put(placeName,"3");
+            if(jsonMainNode3.length()!=0) {
+                for (int i = 0; i < jsonMainNode3.length(); i++) {
+                    JSONObject jsonChildNode = jsonMainNode3.getJSONObject(i);
+                    String placeName = jsonChildNode.getString("hotspot");
+                    System.out.println("drawing: " + placeName);
+                    QuestionTypeMap.put(placeName, "3");
+                }
             }
             jsonMainNode4 = new JSONArray(responseAnagram);
-            for(int i = 0; i< jsonMainNode4.length();i++){
-                JSONObject jsonChildNode = jsonMainNode4.getJSONObject(i);
-                String placeName = jsonChildNode.getString("hotspot");
-                System.out.println("anagram: "+placeName);
-                QuestionTypeMap.put(placeName,"4");
+            if(jsonMainNode4.length()!=0) {
+                for (int i = 0; i < jsonMainNode4.length(); i++) {
+                    JSONObject jsonChildNode = jsonMainNode4.getJSONObject(i);
+                    String placeName = jsonChildNode.getString("hotspot");
+                    System.out.println("anagram: " + placeName);
+                    QuestionTypeMap.put(placeName, "4");
+                }
             }
             jsonMainNode5 = new JSONArray(responseDragAndDrop);
-            for(int i = 0; i< jsonMainNode5.length();i++){
-                JSONObject jsonChildNode = jsonMainNode5.getJSONObject(i);
-                String placeName = jsonChildNode.getString("hotspot");
-                System.out.println("dragndrop: "+placeName);
-                QuestionTypeMap.put(placeName,"5");
+            if(jsonMainNode5.length()!=0) {
+                for (int i = 0; i < jsonMainNode5.length(); i++) {
+                    JSONObject jsonChildNode = jsonMainNode5.getJSONObject(i);
+                    String placeName = jsonChildNode.getString("hotspot");
+                    System.out.println("dragndrop: " + placeName);
+                    QuestionTypeMap.put(placeName, "5");
+                }
             }
             jsonMainNode6 = new JSONArray(responseWordsSearch);
-            for(int i = 0; i < jsonMainNode6.length();i++) {
-                JSONArray firstChildNode = jsonMainNode6.getJSONArray(i);
-                JSONObject hotspotName = firstChildNode.getJSONObject(0);
-                String placeName = hotspotName.getString("hotspot");
-                QuestionTypeMap.put(placeName,"6");
+            if(jsonMainNode6.length()!=0) {
+                for (int i = 0; i < jsonMainNode6.length(); i++) {
+                    JSONArray firstChildNode = jsonMainNode6.getJSONArray(i);
+                    JSONObject hotspotName = firstChildNode.getJSONObject(0);
+                    String placeName = hotspotName.getString("hotspot");
+                    QuestionTypeMap.put(placeName, "6");
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -95,7 +107,7 @@ public class QuestionType {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/quiz/getQuizzes?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/quiz/getQuizzes?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
@@ -106,7 +118,7 @@ public class QuestionType {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/upload/getSubmissionQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/upload/getSubmissionQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
@@ -117,7 +129,7 @@ public class QuestionType {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/upload/getDrawingQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/upload/getDrawingQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
@@ -128,7 +140,8 @@ public class QuestionType {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/anagram/getAnagrams?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/anagram/getAnagrams?trail_instance_id="+InstanceDAO.trailInstanceID);
+            System.out.println("Debug:"+response);
             if (response == null){
                 return null;
             }
@@ -139,7 +152,7 @@ public class QuestionType {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/draganddrop/getDragAndDrop?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/draganddrop/getDragAndDrop?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
@@ -150,7 +163,7 @@ public class QuestionType {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/wordsearch/getWordSearchWords?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/wordsearch/getWordSearchWords?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }

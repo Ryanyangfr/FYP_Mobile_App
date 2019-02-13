@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-import com.smu.engagingu.HomePage;
+import com.smu.engagingu.TeamDisplay;
 import com.smu.engagingu.fyp.R;
 
 public class Tutorial extends AppCompatActivity {
@@ -24,7 +24,7 @@ public class Tutorial extends AppCompatActivity {
         });
     }
     private void goNext(){
-        Intent intent = new Intent(Tutorial.this, HomePage.class);
+        Intent intent = new Intent(Tutorial.this, TeamDisplay.class);
         startActivity(intent);
     }
 }

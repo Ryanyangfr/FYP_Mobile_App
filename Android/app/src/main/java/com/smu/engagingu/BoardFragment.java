@@ -85,7 +85,7 @@ public class BoardFragment extends Fragment {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/team/hotspotStatus?trail_instance_id="+ InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/team/hotspotStatus?trail_instance_id="+ InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
