@@ -44,6 +44,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
@@ -62,7 +63,7 @@ public class SubmissionsFragment extends Fragment {
 //    private boolean needsToBeUpdated = false;
 //    private String teamId = InstanceDAO.teamID;
 //    private String trailInstanceId = InstanceDAO.trailInstanceID;
-//    private String submissionEndPoint = "http://13.229.115.32:3000/upload/getAllSubmissionURL?team=" + teamId + "&trail_instance_id=" + trailInstanceId;
+//    private String submissionEndPoint = "http://54.255.245.23:3000/upload/getAllSubmissionURL?team=" + teamId + "&trail_instance_id=" + trailInstanceId;
 
     @Nullable
     @Override
@@ -226,7 +227,7 @@ public class SubmissionsFragment extends Fragment {
         private void onButtonShowPopupWindow(View view, final String imagePath) {
 
             // inflate the layout of the popup window, must require non null
-            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) Objects.requireNonNull(getActivity()).getSystemService(LAYOUT_INFLATER_SERVICE);
 
             if(inflater != null) {
                 View popupView = inflater.inflate(R.layout.submission_popup_window, null);
@@ -304,7 +305,7 @@ public class SubmissionsFragment extends Fragment {
             mediaScanIntent.setData(contentUri);
 
             //send broadcast out must require non null
-            getActivity().sendBroadcast(mediaScanIntent);
+            Objects.requireNonNull(getActivity()).sendBroadcast(mediaScanIntent);
         }
     }
 }

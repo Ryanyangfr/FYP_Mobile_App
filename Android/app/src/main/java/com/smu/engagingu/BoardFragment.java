@@ -12,8 +12,8 @@ import android.widget.ListView;
 
 import com.smu.engagingu.Adapters.LeaderboardAdapter;
 import com.smu.engagingu.DAO.InstanceDAO;
-import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.Utilities.HttpConnectionUtility;
+import com.smu.engagingu.fyp.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,6 +34,7 @@ public class BoardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         //System.out.println("hello"+jsonString);
+        System.out.println(3);
         View view = inflater.inflate(R.layout.fragment_board, container, false);
         initList();
 
@@ -54,6 +55,7 @@ public class BoardFragment extends Fragment {
 
 
     private void initList(){
+        System.out.println(4);
         String jsonString = null;
         try {
             jsonString = new MyHttpRequestTask().execute("").get();
@@ -85,7 +87,7 @@ public class BoardFragment extends Fragment {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/team/hotspotStatus?trail_instance_id="+ InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/team/hotspotStatus?trail_instance_id="+ InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }

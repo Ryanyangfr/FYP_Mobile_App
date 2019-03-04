@@ -11,6 +11,7 @@ import com.smu.engagingu.Objects.FaqEntry;
 import com.smu.engagingu.fyp.R;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class FAQAdapter extends ArrayAdapter<FaqEntry> {
     public FAQAdapter(Context context, ArrayList<FaqEntry> faqResults) {
@@ -30,7 +31,7 @@ public class FAQAdapter extends ArrayAdapter<FaqEntry> {
         TextView questionName = (TextView) convertView.findViewById(R.id.questionView);
         TextView answerName = (TextView) convertView.findViewById(R.id.answerView);
 
-        questionName.setText((position+1)+" . "+entry.getQuestion());
+        questionName.setText((position+1)+" . "+ Objects.requireNonNull(entry).getQuestion());
         answerName.setText("Answer: "+entry.getAnswer());
 
         // Return the completed view to render on screen

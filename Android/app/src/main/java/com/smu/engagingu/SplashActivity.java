@@ -1,16 +1,24 @@
 package com.smu.engagingu;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -21,12 +29,6 @@ import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.Socket;
-import com.pusher.client.Pusher;
-import com.pusher.client.PusherOptions;
-import com.pusher.client.channel.Channel;
-import com.pusher.client.channel.SubscriptionEventListener;
-import com.pusher.client.connection.ConnectionEventListener;
-import com.pusher.client.connection.ConnectionStateChange;
 import com.smu.engagingu.Adapters.EventAdapter;
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.DAO.Session;
@@ -47,7 +49,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -58,8 +59,8 @@ public class SplashActivity extends AppCompatActivity {
     private static final int REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 10;
     private ArrayList<String>userList = new ArrayList<>();
     private RecyclerView.LayoutManager lManager;
-    private PusherOptions options = new PusherOptions().setCluster("ap1");
-    private Pusher pusher = new Pusher("1721c662be60b9cbd43c", options);
+    //private PusherOptions options = new PusherOptions().setCluster("ap1");
+    //private Pusher pusher = new Pusher("1721c662be60b9cbd43c", options);
     private static final String CHANNEL_NAME = "events_to_be_shown";
     private String response2 = "";
     private Socket mSocket;
@@ -72,13 +73,14 @@ public class SplashActivity extends AppCompatActivity {
         mSocket = socketHandler.getSocket();
         mSocket.on("activityFeed",onNewFeedMessage);
         mSocket.on("startTrail",onStartTrail);
+        mSocket.on("notification",onNotification);
         mSocket.connect();
 
         // Use LinearLayout as the layout manager
 
         List<Event> eventList = new ArrayList<>();
         InstanceDAO.adapter = new EventAdapter(eventList);
-        options.setCluster("ap1");
+        /*options.setCluster("ap1");
         Pusher pusher = new Pusher("1721c662be60b9cbd43c", options);
         Channel channel = pusher.subscribe(CHANNEL_NAME);
         final String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Timestamp(System.currentTimeMillis()));
@@ -90,7 +92,7 @@ public class SplashActivity extends AppCompatActivity {
                     public void run()  {
                         System.out.println("Received event with data: " + data);
                         //Gson gson = new Gson();
-                        JSONObject mainChildNode = null;
+                        JSONObject mainChildNode;
                         try {
                             mainChildNode = new JSONObject(data);
                             String feedTeamID = mainChildNode.getString("team_id");
@@ -121,7 +123,7 @@ public class SplashActivity extends AppCompatActivity {
                 System.out.println("There was a problem connecting!");
                 e.printStackTrace();
             }
-        });
+        });*/
 
         showPhoneStatePermission();
 
@@ -144,17 +146,27 @@ public class SplashActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        boolean connected = false;
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            //we are connected to a network
+            connected = true;
+        }
         if(getLoginStatus(Session.getUsername(getApplicationContext()))) {
             startHeavyProcessing();
         }else{
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
+            if(!connected){
+                Toast.makeText(this, "Bad Wifi Connection! Try again later", Toast.LENGTH_SHORT).show();
+            }else {
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+            }
         }
     }
     @Override
     public void onDestroy() {
         super.onDestroy();
-        pusher.disconnect();
     }
     private void startHeavyProcessing(){
         new LongOperation().execute("");
@@ -166,7 +178,6 @@ public class SplashActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    System.out.println(args.toString());
                     JSONObject data = (JSONObject) args[0];
                     String team;
                     String hotspot;
@@ -201,6 +212,46 @@ public class SplashActivity extends AppCompatActivity {
             });
         }
     };
+    private Emitter.Listener onNotification= new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("Received");
+                    JSONObject data = (JSONObject) args[0];
+                    String message = "";
+                    try {
+                        message = data.getString("message");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    showNotification("Notification",message);
+                }
+            });
+        }
+    };
+    private void showNotification(String title, String content){
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("default",
+                    "CHANNEL",
+                    NotificationManager.IMPORTANCE_HIGH);
+            channel.setDescription("description");
+            mNotificationManager.createNotificationChannel(channel);
+        }
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), "default")
+                .setSmallIcon(R.mipmap.ic_launcher) // notification icon
+                .setPriority(Notification.PRIORITY_HIGH)
+                .setContentTitle(title) // title for notification
+                .setContentText(content)// message for notification
+                .setAutoCancel(true); // clear notification after click
+        Intent intent = new Intent(getApplicationContext(), SplashActivity.class);
+        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        mBuilder.setContentIntent(pi);
+        mNotificationManager.notify(0, mBuilder.build());
+    }
     private class LongOperation extends AsyncTask<String, Void, String> {
 
         @Override
@@ -374,7 +425,7 @@ public class SplashActivity extends AppCompatActivity {
     private class getAllUsers extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/user/retrieveAllUser");
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/user/retrieveAllUser");
             if (response == null) {
                 return null;
             }
@@ -399,7 +450,7 @@ public class SplashActivity extends AppCompatActivity {
     private class getStartingHotspot extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/team/startingHotspot?trail_instance_id=" + InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/team/startingHotspot?trail_instance_id=" + InstanceDAO.trailInstanceID);
             if (response == null) {
                 return null;
             }

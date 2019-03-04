@@ -26,6 +26,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
@@ -103,7 +104,7 @@ public class Anagram extends AppCompatActivity implements View.OnClickListener{
             if (wordToFind.equals(w.toUpperCase())) {
                 Toast.makeText(this, "Congratulations ! You found the word " + wordToFind, Toast.LENGTH_SHORT).show();
                 try {
-                    String response = new MyHttpRequestTask2().execute("http://13.229.115.32:3000/team/updateScore").get();
+                    String response = new MyHttpRequestTask2().execute("http://54.255.245.23:3000/team/updateScore").get();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
@@ -120,8 +121,8 @@ public class Anagram extends AppCompatActivity implements View.OnClickListener{
         InputMethodManager inputMethodManager =
                 (InputMethodManager) activity.getSystemService(
                         Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(
-                activity.getCurrentFocus().getWindowToken(), 0);
+        Objects.requireNonNull(inputMethodManager).hideSoftInputFromWindow(
+                Objects.requireNonNull(activity.getCurrentFocus()).getWindowToken(), 0);
     }
     public void setupUI(View view) {
 
@@ -186,7 +187,7 @@ public class Anagram extends AppCompatActivity implements View.OnClickListener{
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/anagram/getAnagrams?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/anagram/getAnagrams?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
@@ -205,10 +206,7 @@ public class Anagram extends AppCompatActivity implements View.OnClickListener{
             userHash.put("score",message);
             userHash.put("hotspot",placeName);
             System.out.println("message: "+message);
-            String response = HttpConnectionUtility.post("http://13.229.115.32:3000/team/updateScore",userHash);
-            if (response == null){
-                return null;
-            }
+            String response = HttpConnectionUtility.post("http://54.255.245.23:3000/team/updateScore",userHash);
             return response;
         }
     }

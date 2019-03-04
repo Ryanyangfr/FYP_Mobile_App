@@ -47,6 +47,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
@@ -76,6 +77,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        locationToReturn = new LatLng(0.0,0.0);
         System.out.println("trailInstanceID2: " + InstanceDAO.trailInstanceID);
         saveSession();
         questionTypeMap = InstanceDAO.questionTypeMap;
@@ -97,6 +99,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         final Activity activity = getActivity();
         getLocation(activity);
+        //new MyHttpRequestTask().execute("");
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -106,9 +109,22 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     public void run() {
                         getLocation(activity);
                     }
-                }, 0, 10000);
+                }, 0, 5000);
             }
         });
+        /*AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                Timer t = new Timer();
+                t.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        new MyHttpRequestTask().execute("");
+                    }
+                }, 0, 10000);
+            }
+        });*/
+
 
         // getLocation(); // getting and printing current location
 
@@ -168,9 +184,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             String placeName = InstanceDAO.startingHotspot.getLocationName();
             String narrative = InstanceDAO.startingHotspot.getNarrative();
             mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(placeName).snippet(narrative));
-            Session.setFirstTime(getActivity().getApplicationContext(), false);
+            Session.setFirstTime(Objects.requireNonNull(getActivity()).getApplicationContext(), false);
         }else{
-            Context context = getActivity().getApplicationContext();
+            Context context = Objects.requireNonNull(getActivity()).getApplicationContext();
             CharSequence text = "Oops, There is something wrong with the connection. Please logout and restart the app.";
             int duration = Toast.LENGTH_SHORT;
 
@@ -192,16 +208,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             public boolean onMarkerClick(Marker arg0) {
                 while(locationToReturn==null){
                 }
-                System.out.println("Test: "+locationToReturn);
                 double distance = computeDistanceBetween(locationToReturn,new LatLng(arg0.getPosition().latitude,arg0.getPosition().longitude));
-                System.out.println("distance is: "+ distance);
                 snippetText = arg0.getSnippet();
                 if(!(snippetText.equals("Completed"))) {
-                    if(distance<50.0) {
+                    if(distance<500000.0) {
                         arg0.setSnippet("Click me to start mission");
                         arg0.showInfoWindow();
                     }else{
-                        Toast.makeText(getActivity(), "You need to walk closer!", Toast.LENGTH_SHORT).show();
+                        String placeName = arg0.getTitle();
+                        Toast.makeText(getActivity(), placeName+" seems to be too far away!", Toast.LENGTH_SHORT).show();
                     }
                 }
                 return true;
@@ -230,11 +245,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
                 }
         });
-
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                latLng = new LatLng(location.getLatitude(), location.getLongitude());
             }
 
             @Override
@@ -254,8 +267,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         };
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
-        try{
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,MIN_TIME,MIN_DIST,locationListener);
+        try {
+            Objects.requireNonNull(locationManager).requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DIST, locationListener);
         }
         catch (SecurityException e){
             e.printStackTrace();
@@ -310,11 +323,31 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             // Logic to handle location object
-                            System.out.println("Latitude: " + location.getLatitude()+"Longitude: "+location.getLongitude());
+                            //System.out.println("Latitude: " + location.getLatitude()+"Longitude: "+location.getLongitude());
+                            LatLng oldLocation = locationToReturn;
                             locationToReturn = new LatLng(location.getLatitude(),location.getLongitude());
+                            double distance = computeDistanceBetween(locationToReturn,oldLocation);
+                            if(distance>10) {
+                                new MyHttpRequestTask().execute("");
+                            }
                         }
                     }
                 });
+    }
+    private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
+        @Override
+        protected String doInBackground(String... params) {
+            //System.out.println("Reached");
+            HashMap<String,String> userHash = new HashMap<>();
+            userHash.put("teamID",InstanceDAO.teamID);
+            userHash.put("long",Double.toString(locationToReturn.longitude));
+            userHash.put("lat",Double.toString(locationToReturn.latitude));
+            String response = HttpConnectionUtility.post("http://54.255.245.23/team/teamLocation",userHash);
+            if (response == null){
+                return null;
+            }
+            return response;
+        }
     }
     private void populateData(){
         try {
@@ -371,7 +404,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private class getCompletedList extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/completedHotspots?trail_instance_id="+InstanceDAO.trailInstanceID+"&team="+InstanceDAO.teamID);
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/completedHotspots?trail_instance_id="+InstanceDAO.trailInstanceID+"&team="+InstanceDAO.teamID);
             if (response == null) {
                 return null;
             }
@@ -381,7 +414,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private class getAllHotspot extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/hotspot/getAllHotspots?trail_instance_id=" + InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/hotspot/getAllHotspots?trail_instance_id=" + InstanceDAO.trailInstanceID);
             if (response == null) {
                 return null;
             }
@@ -391,7 +424,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private class getStartingHotspot extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/team/startingHotspot?trail_instance_id=" + InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/team/startingHotspot?trail_instance_id=" + InstanceDAO.trailInstanceID);
             if (response == null) {
                 return null;
             }
@@ -400,7 +433,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     }
     private void saveSession(){
        // Session.setLoggedIn(getActivity().getApplicationContext(),true);
-        Session.setTeamID(getActivity().getApplicationContext(),InstanceDAO.teamID);
+        Session.setTeamID(Objects.requireNonNull(getActivity()).getApplicationContext(),InstanceDAO.teamID);
         Session.setTrailInstanceID(getActivity().getApplicationContext(),InstanceDAO.trailInstanceID);
         Session.setUserName(getActivity().getApplicationContext(),InstanceDAO.userName);
         Session.setEventAdapter(getActivity().getApplicationContext(),InstanceDAO.adapter);

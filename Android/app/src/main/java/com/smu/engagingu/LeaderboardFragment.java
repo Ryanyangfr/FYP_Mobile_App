@@ -19,17 +19,20 @@ public class  LeaderboardFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        System.out.println(1);
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        System.out.println(2);
         View view = inflater.inflate(R.layout.fragment_leaderboard,container, false);
         // Setting ViewPager for each Tabs
         ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewpager);
         setupViewPager(viewPager);
+        //ProgressBar pb = view.findViewById(R.id.progressBar2);
+        //pb.setVisibility(view.VISIBLE);
         // Set Tabs inside Toolbar
         TabLayout tabs = (TabLayout) view.findViewById(R.id.result_tabs);
         tabs.setupWithViewPager(viewPager);

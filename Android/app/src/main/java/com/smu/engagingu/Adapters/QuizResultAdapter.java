@@ -12,6 +12,7 @@ import com.smu.engagingu.Objects.GameResultEntry;
 import com.smu.engagingu.fyp.R;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class QuizResultAdapter extends ArrayAdapter<GameResultEntry> {
     public QuizResultAdapter(Context context, ArrayList<GameResultEntry> quizResults) {
@@ -31,7 +32,7 @@ public class QuizResultAdapter extends ArrayAdapter<GameResultEntry> {
         TextView questionName = (TextView) convertView.findViewById(R.id.questionView);
         TextView answerName = (TextView) convertView.findViewById(R.id.answerView);
         TextView userAnswerName = (TextView) convertView.findViewById(R.id.userAnswerView);
-        if(entry.getAnswer().equals(entry.getUserAnswer())){
+        if(Objects.requireNonNull(entry).getAnswer().equals(entry.getUserAnswer())){
             answerName.setTextColor(Color.parseColor("#92d050"));//Green Colour
             //userAnswerName.setBackgroundColor(Color.parseColor("#E85858"));
             userAnswerName.setTextColor(Color.parseColor("#92d050"));//Green Colour

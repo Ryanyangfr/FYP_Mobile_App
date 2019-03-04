@@ -55,9 +55,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void sendMessage(View view) {
-        String jsonString = null;
+        String jsonString;
         try {
-            jsonString= new MyHttpRequestTask().execute("http://13.229.115.32:3000/getInstance").get();
+            jsonString= new MyHttpRequestTask().execute("http://54.255.245.23:3000/getInstance").get();
             JSONObject jsonObject = new JSONObject(jsonString);
             InstanceDAO.trailInstanceID = jsonObject.getString("trail_instance_id");
         } catch (InterruptedException | ExecutionException | JSONException e) {
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/getInstance");
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/getInstance");
             if (response == null){
                 return null;
             }

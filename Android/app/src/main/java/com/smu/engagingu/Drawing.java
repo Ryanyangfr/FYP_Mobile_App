@@ -36,6 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 public class Drawing extends AppCompatActivity {
@@ -103,7 +104,7 @@ public class Drawing extends AppCompatActivity {
                                     }
                                     b.compress(Bitmap.CompressFormat.PNG, 50, ostream);
                                     try {
-                                        ostream.close();
+                                        Objects.requireNonNull(ostream).close();
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
@@ -186,7 +187,7 @@ public class Drawing extends AppCompatActivity {
             jsonMap.put("trail_instance_id", params[1]);
             jsonMap.put("question", params[2]);
             jsonMap.put("hotspot",params[3]);
-            String responseCode = HttpConnectionUtility.multipartPost("http://13.229.115.32:3000/upload/uploadSubmission", jsonMap, mCurrentPhotoPath, "image", "image/png");
+            String responseCode = HttpConnectionUtility.multipartPost("http://54.255.245.23:3000/upload/uploadSubmission", jsonMap, mCurrentPhotoPath, "image", "image/png");
             return responseCode;
         }
     }
@@ -220,7 +221,7 @@ public class Drawing extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/upload/getDrawingQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/upload/getDrawingQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }

@@ -87,6 +87,7 @@ public class CameraPage extends AppCompatActivity {
         uploadButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                String responseCode = null;
             if (mCurrentPhotoPath == null) {
                 Context context = getApplicationContext();
                 CharSequence text = "You have to take a photo first!";
@@ -99,11 +100,12 @@ public class CameraPage extends AppCompatActivity {
                 String trail_instance_id = InstanceDAO.trailInstanceID;
                 String question = targetQuestion;
                 try {
-                    String responseCode = new PictureUploader().execute(team_id, trail_instance_id, question, placeName).get();
-
-                    SubmissionDAO.HOTSPOTS.add(placeName);
-                    SubmissionDAO.QUESTIONS.add(question);
-                    SubmissionDAO.IMAGEPATHS.add(mCurrentPhotoPath);
+                    responseCode = new PictureUploader().execute(team_id, trail_instance_id, question, placeName).get();
+                    if(responseCode.equals("fail")) {
+                        SubmissionDAO.HOTSPOTS.add(placeName);
+                        SubmissionDAO.QUESTIONS.add(question);
+                        SubmissionDAO.IMAGEPATHS.add(mCurrentPhotoPath);
+                    }
 
                     System.out.println("Response Code: " + responseCode);
                 } catch (InterruptedException e) {
@@ -111,11 +113,17 @@ public class CameraPage extends AppCompatActivity {
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
-                Toast toast = Toast.makeText(CameraPage.this, "Photo Successfully Uploaded!", Toast.LENGTH_SHORT);
-                toast.show();
-                Intent intent = new Intent(CameraPage.this, HomePage.class);
-                InstanceDAO.completedList.add(placeName);
-                startActivity(intent);
+                System.out.println("CHECK THIS: "+responseCode);
+                if(responseCode.equals("fail")|| responseCode.equals("")){
+                    Toast toast = Toast.makeText(CameraPage.this, "Bad Internet Connection, Try Again Later!", Toast.LENGTH_SHORT);
+                    toast.show();
+                }else {
+                    Toast toast = Toast.makeText(CameraPage.this, "Photo Successfully Uploaded!", Toast.LENGTH_SHORT);
+                    toast.show();
+                    Intent intent = new Intent(CameraPage.this, HomePage.class);
+                    InstanceDAO.completedList.add(placeName);
+                    startActivity(intent);
+                }
             }
             }
         });
@@ -266,7 +274,7 @@ public class CameraPage extends AppCompatActivity {
             jsonMap.put("trail_instance_id", params[1]);
             jsonMap.put("question", params[2]);
             jsonMap.put("hotspot",params[3]);
-            String responseCode = HttpConnectionUtility.multipartPost("http://13.229.115.32:3000/upload/uploadSubmission", jsonMap, mCurrentPhotoPath, "image", "image/png");
+            String responseCode = HttpConnectionUtility.multipartPost("http://54.255.245.23:3000/upload/uploadSubmission", jsonMap, mCurrentPhotoPath, "image", "image/png");
             return responseCode;
         }
     }

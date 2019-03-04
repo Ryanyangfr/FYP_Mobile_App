@@ -37,12 +37,12 @@ public class QuestionType {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        JSONArray jsonMainNode = null;
-        JSONArray jsonMainNode2 = null;
-        JSONArray jsonMainNode3 = null;
-        JSONArray jsonMainNode4 = null;
-        JSONArray jsonMainNode5 = null;
-        JSONArray jsonMainNode6 = null;
+        JSONArray jsonMainNode;
+        JSONArray jsonMainNode2;
+        JSONArray jsonMainNode3;
+        JSONArray jsonMainNode4;
+        JSONArray jsonMainNode5;
+        JSONArray jsonMainNode6;
         try {
             jsonMainNode = new JSONArray(responseQuiz);
             if(jsonMainNode.length()!=0) {
@@ -92,9 +92,8 @@ public class QuestionType {
             jsonMainNode6 = new JSONArray(responseWordsSearch);
             if(jsonMainNode6.length()!=0) {
                 for (int i = 0; i < jsonMainNode6.length(); i++) {
-                    JSONArray firstChildNode = jsonMainNode6.getJSONArray(i);
-                    JSONObject hotspotName = firstChildNode.getJSONObject(0);
-                    String placeName = hotspotName.getString("hotspot");
+                    JSONObject hotspot = jsonMainNode6.getJSONObject(i);
+                    String placeName = hotspot.getString("hotspot");
                     QuestionTypeMap.put(placeName, "6");
                 }
             }
@@ -107,7 +106,7 @@ public class QuestionType {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/quiz/getQuizzes?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/quiz/getQuizzes?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
@@ -118,7 +117,7 @@ public class QuestionType {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/upload/getSubmissionQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/upload/getSubmissionQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
@@ -129,7 +128,7 @@ public class QuestionType {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/upload/getDrawingQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/upload/getDrawingQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
@@ -140,7 +139,7 @@ public class QuestionType {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/anagram/getAnagrams?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/anagram/getAnagrams?trail_instance_id="+InstanceDAO.trailInstanceID);
             System.out.println("Debug:"+response);
             if (response == null){
                 return null;
@@ -152,7 +151,7 @@ public class QuestionType {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/draganddrop/getDragAndDrop?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/draganddrop/getDragAndDrop?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
@@ -163,7 +162,7 @@ public class QuestionType {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/wordsearch/getWordSearchWords?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/wordsearch/getWordSearchWords?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }

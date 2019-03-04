@@ -16,6 +16,7 @@ import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.Utilities.HttpConnectionUtility;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class Narrative extends AppCompatActivity {
     public static final String EXTRA_MESSAGE2 = "com.smu.engagingu.MESSAGE";
@@ -71,7 +72,7 @@ public class Narrative extends AppCompatActivity {
                     System.out.println("no match");
             }
         }
-        intent.putExtra(EXTRA_MESSAGE2, placeName);
+        Objects.requireNonNull(intent).putExtra(EXTRA_MESSAGE2, placeName);
         startActivity(intent);
     }
     private String findNarrative(String placeName){
@@ -115,7 +116,7 @@ public class Narrative extends AppCompatActivity {
             userHash.put("score",message);
             userHash.put("hotspot",placeName);
             System.out.println("message: "+message);
-            String response = HttpConnectionUtility.post("http://13.229.115.32:3000/team/updateScore",userHash);
+            String response = HttpConnectionUtility.post("http://54.255.245.23:3000/team/updateScore",userHash);
             if (response == null){
                 return null;
             }

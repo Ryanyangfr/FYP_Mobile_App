@@ -44,11 +44,11 @@ public class HttpConnectionUtility{
                     in.close();
 //                    System.out.println(response.toString());
                 }else{
-                    return null;
+                    return "fail";
                 }
 
             }catch(java.net.SocketTimeoutException e){
-                return null;
+                e.printStackTrace();
             }
             catch (Exception e){
                 e.printStackTrace();
@@ -73,6 +73,7 @@ public class HttpConnectionUtility{
             URL url = new URL(myurl);
 //                System.out.println(url);
             httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.setConnectTimeout(5000);
             // setting the  Request Method Type
             httpURLConnection.setRequestMethod("POST");
             // adding the headers for request
@@ -122,8 +123,8 @@ public class HttpConnectionUtility{
     //fileMimeType = "image/png"
     public static String multipartPost(String urlTo, Map<String, String> params, String filepath, String filefield, String fileMimeType){
         HttpURLConnection connection = null;
-        DataOutputStream outputStream = null;
-        InputStream inputStream = null;
+        DataOutputStream outputStream;
+        InputStream inputStream;
 
         System.out.println(filepath);
         System.out.println(params);
@@ -198,6 +199,7 @@ public class HttpConnectionUtility{
 
             if (200 != connection.getResponseCode()) {
                 System.out.println("ResponseCode: " + connection.getResponseCode());
+                return "fail";
 //                throw new CustomException("Failed to upload code:" + connection.getResponseCode() + " " + connection.getResponseMessage());
             }
 
@@ -224,7 +226,7 @@ public class HttpConnectionUtility{
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         StringBuilder sb = new StringBuilder();
 
-        String line = null;
+        String line;
         try {
             while ((line = reader.readLine()) != null) {
                 sb.append(line);

@@ -31,7 +31,7 @@ public class QuestionDatabase {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        JSONArray jsonMainNode = null;
+        JSONArray jsonMainNode;
         try {
             jsonMainNode = new JSONArray(response);
             for(int i = 0; i< jsonMainNode.length();i++){
@@ -96,7 +96,7 @@ public class QuestionDatabase {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/quiz/getQuizzes?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/quiz/getQuizzes?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
@@ -107,7 +107,7 @@ private class MyHttpRequestTask2 extends AsyncTask<String,Integer,String> {
     @Override
     protected String doInBackground(String... params) {
         Map<String, String> req = new HashMap<>();
-        String response = HttpConnectionUtility.get("http://13.229.115.32:3000/upload/getSubmissionQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
+        String response = HttpConnectionUtility.get("http://54.255.245.23:3000/upload/getSubmissionQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
         if (response == null){
             return null;
         }

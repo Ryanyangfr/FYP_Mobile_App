@@ -29,12 +29,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 public class WordsSearch extends Activity {
     public static final String CORRECT_ANSWERS = "com.smu.engagingu.CORRECTQUIZANSWERS2";
-    private int SIZE = 10;
+    private int SIZE = 12;
     private final static int HORIZONTAL = 0;
     private final static int VERTICAL = 1;
     private final static int DIAGONALLEFTTORIGHT = 2;
@@ -105,7 +106,7 @@ public class WordsSearch extends Activity {
                     }
                 }
                 try {
-                    String response = new MyHttpRequestTask2().execute("http://13.229.115.32:3000/team/updateScore").get();
+                    String response = new MyHttpRequestTask2().execute("http://54.255.245.23:3000/team/updateScore").get();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
@@ -128,14 +129,14 @@ public class WordsSearch extends Activity {
         //Populating List of Words from dictionary
         String word;
         try {
+            System.out.println("WordSearch Reach");
             word = new MyHttpRequestTask().execute("").get();
             JSONArray mainChildNode = new JSONArray(word);
             for(int i = 0; i < mainChildNode.length();i++){
-                JSONArray firstChildNode = mainChildNode.getJSONArray(i);
-                    JSONObject hotspotName = firstChildNode.getJSONObject(0);
-                    placeName = hotspotName.getString("hotspot");
-                    JSONObject wordsArrayObject = firstChildNode.getJSONObject(1);
-                    JSONArray wordsArray = wordsArrayObject.getJSONArray("words");
+                    JSONObject hotspot= mainChildNode.getJSONObject(i);
+                    placeName = hotspot.getString("hotspot");
+                    //JSONObject wordsArrayObject = firstChildNode.getJSONObject(1);
+                    JSONArray wordsArray = hotspot.getJSONArray("words");
                     for(int x = 0 ; x < wordsArray.length();x++){
                         System.out.println(x+" "+wordsArray.getString(x));
                         wordList[x] = wordsArray.getString(x);
@@ -199,8 +200,8 @@ public class WordsSearch extends Activity {
         InputMethodManager inputMethodManager =
                 (InputMethodManager) activity.getSystemService(
                         Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(
-                activity.getCurrentFocus().getWindowToken(), 0);
+        Objects.requireNonNull(inputMethodManager).hideSoftInputFromWindow(
+                Objects.requireNonNull(activity.getCurrentFocus()).getWindowToken(), 0);
     }
     public void setupUI(View view) {
 
@@ -345,7 +346,7 @@ public class WordsSearch extends Activity {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/wordsearch/getWordSearchWords?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/wordsearch/getWordSearchWords?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
@@ -365,7 +366,7 @@ public class WordsSearch extends Activity {
             userHash.put("score",message);
             userHash.put("hotspot",placeName);
             System.out.println("message: "+message);
-            String response = HttpConnectionUtility.post("http://13.229.115.32:3000/team/updateScore",userHash);
+            String response = HttpConnectionUtility.post("http://54.255.245.23:3000/team/updateScore",userHash);
             if (response == null){
                 return null;
             }
