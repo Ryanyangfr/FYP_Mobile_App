@@ -116,7 +116,7 @@ public class TeamDisplay extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/user/retrieveAllUser");
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/user/retrieveAllUser");
             if (response == null){
                 return null;
             }

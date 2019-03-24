@@ -135,7 +135,9 @@ public class PaintView extends View {
             mY = y;
         }
     }
-
+    public void setCurrentColor(int i){
+        currentColor=i;
+    }
     private void touchUp() {
         mPath.lineTo(mX, mY);
     }

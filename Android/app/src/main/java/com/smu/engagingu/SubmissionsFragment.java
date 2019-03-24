@@ -63,7 +63,7 @@ public class SubmissionsFragment extends Fragment {
 //    private boolean needsToBeUpdated = false;
 //    private String teamId = InstanceDAO.teamID;
 //    private String trailInstanceId = InstanceDAO.trailInstanceID;
-//    private String submissionEndPoint = "http://54.255.245.23:3000/upload/getAllSubmissionURL?team=" + teamId + "&trail_instance_id=" + trailInstanceId;
+//    private String submissionEndPoint = "http://13.229.115.32:3000/upload/getAllSubmissionURL?team=" + teamId + "&trail_instance_id=" + trailInstanceId;
 
     @Nullable
     @Override
@@ -104,10 +104,11 @@ public class SubmissionsFragment extends Fragment {
                 System.out.println(submissionJsonArr.length());
                 SubmissionDAO.IMAGEURLS = new ArrayList<>();
                 SubmissionDAO.IMAGEPATHS = new ArrayList<>();
+                SubmissionDAO.HOTSPOTS = new ArrayList<>();
+                SubmissionDAO.QUESTIONS = new ArrayList<>();
 
                 for (int i = 0; i < submissionJsonArr.length(); i++) {
                     JSONObject jsonObj = submissionJsonArr.getJSONObject(i);
-
                     String imageURL = jsonObj.getString("submissionURL");
                     String hotspot = jsonObj.getString("hotspot");
                     String question = jsonObj.getString("question");
@@ -196,9 +197,6 @@ public class SubmissionsFragment extends Fragment {
 
             imageView = view.findViewById(R.id.imageView);
             imagePath = SubmissionDAO.IMAGEPATHS.get(i);
-            for(int j =0 ; j < SubmissionDAO.IMAGEPATHS.size();j++){
-                System.out.println("Here: "+SubmissionDAO.IMAGEPATHS.get(j));
-            }
 
             loadImageFromFile(imageView, imagePath);
 //            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);

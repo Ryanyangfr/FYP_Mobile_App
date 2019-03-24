@@ -3,6 +3,7 @@ package com.smu.engagingu;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,9 +21,9 @@ import android.widget.Toast;
 
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.DAO.SubmissionDAO;
-import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.Utilities.HttpConnectionUtility;
 import com.smu.engagingu.Utilities.PaintView;
+import com.smu.engagingu.fyp.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -75,6 +76,48 @@ public class Drawing extends AppCompatActivity {
 
 
         Button btn = (Button) findViewById(R.id.submitButton);
+        Button clearBtn = findViewById(R.id.clear);
+        Button redBtn = findViewById(R.id.red);
+        Button blueBtn = findViewById(R.id.blue);
+        Button greenBtn = findViewById(R.id.green);
+        Button yellowBtn = findViewById(R.id.yellow);
+        Button blackBtn = findViewById(R.id.black);
+        clearBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                paintView.clear();
+            }
+        });
+        redBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                paintView.setCurrentColor(Color.RED);
+            }
+        });
+        blueBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                paintView.setCurrentColor(Color.BLUE);
+            }
+        });
+        greenBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                paintView.setCurrentColor(Color.GREEN);
+            }
+        });
+        yellowBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                paintView.setCurrentColor(Color.YELLOW);
+            }
+        });
+        blackBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                paintView.setCurrentColor(Color.BLACK);
+            }
+        });
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -187,7 +230,7 @@ public class Drawing extends AppCompatActivity {
             jsonMap.put("trail_instance_id", params[1]);
             jsonMap.put("question", params[2]);
             jsonMap.put("hotspot",params[3]);
-            String responseCode = HttpConnectionUtility.multipartPost("http://54.255.245.23:3000/upload/uploadSubmission", jsonMap, mCurrentPhotoPath, "image", "image/png");
+            String responseCode = HttpConnectionUtility.multipartPost("http://13.229.115.32:3000/upload/uploadSubmission", jsonMap, mCurrentPhotoPath, "image", "image/png");
             return responseCode;
         }
     }
@@ -221,7 +264,7 @@ public class Drawing extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/upload/getDrawingQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/upload/getDrawingQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }

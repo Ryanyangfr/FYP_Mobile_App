@@ -27,7 +27,7 @@
         android:background="@color/colorAccent"
         android:text="WAIT"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:textSize="18sp"
+        android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.smu.engagingu.fyp.R;
@@ -27,10 +28,16 @@ public class LeaderboardAdapter extends ArrayAdapter<String> {
         }
         if (position == 0) {
             convertView.setBackgroundColor(Color.parseColor("#FFD700"));
+            ImageView iv = convertView.findViewById(R.id.imageView3);
+            iv.setImageResource(R.drawable.gold_medal);
         } else if(position ==1) {
             convertView.setBackgroundColor(Color.parseColor("#C0C0C0"));
+            ImageView iv = convertView.findViewById(R.id.imageView3);
+            iv.setImageResource(R.drawable.silver_medal);
         } else if(position == 2){
             convertView.setBackgroundColor(Color.parseColor("#cd7f32"));
+            ImageView iv = convertView.findViewById(R.id.imageView3);
+            iv.setImageResource(R.drawable.bronze_medal);
         }else{
             convertView.setBackgroundColor(Color.parseColor("#ffffff"));
         }

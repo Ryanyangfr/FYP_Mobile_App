@@ -99,7 +99,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         final Activity activity = getActivity();
         getLocation(activity);
-        //new MyHttpRequestTask().execute("");
+        new MyHttpRequestTask().execute("");
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -211,7 +211,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 double distance = computeDistanceBetween(locationToReturn,new LatLng(arg0.getPosition().latitude,arg0.getPosition().longitude));
                 snippetText = arg0.getSnippet();
                 if(!(snippetText.equals("Completed"))) {
-                    if(distance<500000.0) {
+                    if(distance<5000000.0) {
                         arg0.setSnippet("Click me to start mission");
                         arg0.showInfoWindow();
                     }else{
@@ -328,7 +328,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                             locationToReturn = new LatLng(location.getLatitude(),location.getLongitude());
                             double distance = computeDistanceBetween(locationToReturn,oldLocation);
                             if(distance>10) {
-                                new MyHttpRequestTask().execute("");
+                                if(InstanceDAO.isLeader) {
+                                    new MyHttpRequestTask().execute("");
+                                }
                             }
                         }
                     }
@@ -337,12 +339,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {
-            //System.out.println("Reached");
+            System.out.println("Reached");
             HashMap<String,String> userHash = new HashMap<>();
             userHash.put("teamID",InstanceDAO.teamID);
             userHash.put("long",Double.toString(locationToReturn.longitude));
             userHash.put("lat",Double.toString(locationToReturn.latitude));
-            String response = HttpConnectionUtility.post("http://54.255.245.23/team/teamLocation",userHash);
+            String response = HttpConnectionUtility.post("http://13.229.115.32:3000/team/teamLocation",userHash);
             if (response == null){
                 return null;
             }
@@ -404,7 +406,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private class getCompletedList extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/completedHotspots?trail_instance_id="+InstanceDAO.trailInstanceID+"&team="+InstanceDAO.teamID);
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/completedHotspots?trail_instance_id="+InstanceDAO.trailInstanceID+"&team="+InstanceDAO.teamID);
             if (response == null) {
                 return null;
             }
@@ -414,7 +416,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private class getAllHotspot extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/hotspot/getAllHotspots?trail_instance_id=" + InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/hotspot/getAllHotspots?trail_instance_id=" + InstanceDAO.trailInstanceID);
             if (response == null) {
                 return null;
             }
@@ -424,7 +426,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private class getStartingHotspot extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/team/startingHotspot?trail_instance_id=" + InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/team/startingHotspot?trail_instance_id=" + InstanceDAO.trailInstanceID);
             if (response == null) {
                 return null;
             }

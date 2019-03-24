@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.smu.engagingu.Adapters.LeaderboardAdapter;
 import com.smu.engagingu.DAO.InstanceDAO;
@@ -37,7 +38,8 @@ public class BoardFragment extends Fragment {
         System.out.println(3);
         View view = inflater.inflate(R.layout.fragment_board, container, false);
         initList();
-
+        TextView tv = view.findViewById(R.id.BoardText);
+        tv.setText("You are in Team "+InstanceDAO.teamID);
         ListView listView = (ListView)view.findViewById(R.id.listView1);
         //listView.getItemAtPosition(0);
         LeaderboardAdapter leaderboardAdapter = new LeaderboardAdapter(getContext(),leaderboardList);
@@ -87,7 +89,7 @@ public class BoardFragment extends Fragment {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/team/hotspotStatus?trail_instance_id="+ InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/team/hotspotStatus?trail_instance_id="+ InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }

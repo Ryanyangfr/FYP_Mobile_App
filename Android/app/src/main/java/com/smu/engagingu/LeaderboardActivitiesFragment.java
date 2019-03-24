@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.fyp.R;
@@ -20,7 +21,8 @@ public class LeaderboardActivitiesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_leaderboard_activities, container, false);
         // Get the RecyclerView
         RecyclerView recycler = (RecyclerView)view.findViewById(R.id.recycler_view);
-
+        TextView tv = view.findViewById(R.id.BoardActivityText);
+        tv.setText("You are in Team "+InstanceDAO.teamID);
         // Use LinearLayout as the layout manager
         lManager = new LinearLayoutManager(getActivity());
         recycler.setLayoutManager(lManager);

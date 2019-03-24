@@ -177,7 +177,7 @@
                     android:layout_width="30dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Use those facts to complete the missions and earn your SMU badges "
+                    android:text="Use those facts to complete the missions"
                     android:textAlignment="textStart"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -202,7 +202,7 @@
                     android:layout_width="30dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Earn all badges to be an  SMU’s ambassador "
+                    android:text="Finish all hotspots and head back to the Admin Building quickly"
                     android:textAlignment="textStart"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -228,7 +228,7 @@
                     android:layout_width="30dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="If you need help, click on the Help Icon at the top right-hand corner.  "
+                    android:text="If you need help, click on the Help Icon at the bottom right-hand corner.  "
                     android:textAlignment="textStart"
                     android:textSize="18sp"
                     android:textStyle="bold" />

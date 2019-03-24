@@ -22,7 +22,6 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -58,11 +57,12 @@ import java.util.concurrent.ExecutionException;
 public class SplashActivity extends AppCompatActivity {
     private static final int REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 10;
     private ArrayList<String>userList = new ArrayList<>();
-    private RecyclerView.LayoutManager lManager;
+    //private RecyclerView.LayoutManager lManager;
     //private PusherOptions options = new PusherOptions().setCluster("ap1");
     //private Pusher pusher = new Pusher("1721c662be60b9cbd43c", options);
-    private static final String CHANNEL_NAME = "events_to_be_shown";
-    private String response2 = "";
+    //private static final String CHANNEL_NAME = "events_to_be_shown";
+    private String startingHotspotString = "";
+    private String activityFeedString = "";
     private Socket mSocket;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +129,8 @@ public class SplashActivity extends AppCompatActivity {
 
         try {
             String response = new getAllUsers().execute("").get();
-            response2 = new getStartingHotspot().execute("").get();
+            startingHotspotString = new getStartingHotspot().execute("").get();
+            activityFeedString = new getActivityFeed().execute("").get();
             if(response!=null) {
                 JSONArray mainChildNode = new JSONArray(response);
                 for(int i =0 ; i < mainChildNode.length();i++){
@@ -312,7 +313,7 @@ public class SplashActivity extends AppCompatActivity {
                         is.close();
                     }
 
-                    JSONArray jsonMainNode2 = new JSONArray(response2);
+                    JSONArray jsonMainNode2 = new JSONArray(startingHotspotString);
                     for (int i = 0; i < jsonMainNode2.length(); i++) {
                         JSONObject jsonChildNode2 = jsonMainNode2.getJSONObject(i);
                         String teamID = jsonChildNode2.getString("team");
@@ -326,6 +327,16 @@ public class SplashActivity extends AppCompatActivity {
                             String narrativeString2 = jsonChildNode2.getString("narrative");
                             InstanceDAO.startingHotspot = new Hotspot(startingHotspot2,lat2,lng2,narrativeString2);
                         }
+                    }
+                    JSONArray jsonMainNode3 = new JSONArray(activityFeedString);
+                    for(int i =0; i < jsonMainNode3.length();i++){
+                        JSONObject jsonChildNode3 = jsonMainNode3.getJSONObject(i);
+                        String team = jsonChildNode3.getString("team");
+                        String hotspot = jsonChildNode3.getString("hotspot");
+                        String message = "Team "+team+" has just completed "+hotspot;
+                        String time = jsonChildNode3.getString("time");
+                        Event evt = new Event(message,team,hotspot,time);
+                        InstanceDAO.adapter.addEvent(evt);
                     }
                 } catch (JSONException | IOException e) {
                     e.printStackTrace();
@@ -425,7 +436,7 @@ public class SplashActivity extends AppCompatActivity {
     private class getAllUsers extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/user/retrieveAllUser");
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/user/retrieveAllUser");
             if (response == null) {
                 return null;
             }
@@ -450,7 +461,17 @@ public class SplashActivity extends AppCompatActivity {
     private class getStartingHotspot extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://54.255.245.23:3000/team/startingHotspot?trail_instance_id=" + InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/team/startingHotspot?trail_instance_id=" + InstanceDAO.trailInstanceID);
+            if (response == null) {
+                return null;
+            }
+            return response;
+        }
+    }
+    private class getActivityFeed extends AsyncTask<String, Integer, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/team/activityfeed");
             if (response == null) {
                 return null;
             }

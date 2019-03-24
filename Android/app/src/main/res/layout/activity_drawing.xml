@@ -7,6 +7,42 @@
     android:layout_height="match_parent"
     tools:context="com.smu.engagingu.Drawing">
 
+    <Button
+        android:id="@+id/green"
+        android:layout_width="40dp"
+        android:layout_height="25dp"
+        android:layout_below="@+id/textView13"
+        android:layout_toEndOf="@+id/red"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/holo_green_dark"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/yellow"
+        android:layout_width="40dp"
+        android:layout_height="25dp"
+        android:layout_below="@+id/textView13"
+        android:layout_toEndOf="@+id/blue"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/holo_orange_light"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/black"
+        android:layout_width="40dp"
+        android:layout_height="25dp"
+        android:layout_below="@+id/textView13"
+        android:layout_toEndOf="@+id/yellow"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/common_google_signin_btn_text_dark_focused"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold" />
+
     <com.smu.engagingu.Utilities.PaintView
         android:id="@+id/paintView"
         android:layout_width="match_parent"
@@ -26,6 +62,42 @@
         android:textColor="@color/colorPrimary"
         android:textStyle="bold" />
 
+    <Button
+        android:id="@+id/clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="24dp"
+        android:background="@color/colorAccent"
+        android:text="Clear"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/red"
+        android:layout_width="40dp"
+        android:layout_height="25dp"
+        android:layout_below="@+id/textView13"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="25dp"
+        android:background="@android:color/holo_red_dark"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/blue"
+        android:layout_width="40dp"
+        android:layout_height="25dp"
+        android:layout_below="@+id/textView13"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@+id/green"
+        android:layout_marginStart="20dp"
+        android:background="@android:color/holo_blue_dark"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold" />
+
     <TextView
         android:id="@+id/textView13"
         android:layout_width="match_parent"
@@ -40,4 +112,5 @@
         android:textColor="@color/cardview_light_background"
         android:textSize="25sp"
         android:textStyle="bold" />
+
 </RelativeLayout>
