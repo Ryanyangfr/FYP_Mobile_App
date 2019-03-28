@@ -68,7 +68,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
-                android:background="@color/colorAccent"
+                android:background="@drawable/button_selector"
                 android:text="START MISSION"
                 android:textColor="@color/cardview_light_background"
                 android:textSize="18sp"

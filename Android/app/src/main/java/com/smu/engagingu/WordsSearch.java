@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.Objects.PuzzlePoint;
@@ -82,6 +83,7 @@ public class WordsSearch extends Activity {
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String response = null;
                 if(!InstanceDAO.isLeader){
                     Intent intent = new Intent(WordsSearch.this, HomePage.class);
                     InstanceDAO.completedList.add(placeName);
@@ -106,30 +108,36 @@ public class WordsSearch extends Activity {
                     }
                 }
                 try {
-                    String response = new MyHttpRequestTask2().execute("http://13.229.115.32:3000/team/updateScore").get();
+                    response = new MyHttpRequestTask2().execute("http://13.229.115.32:3000/team/updateScore").get();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
                 Intent intent = null;
-                intent = new Intent(WordsSearch.this, WordSearchResults.class);
-                if(!InstanceDAO.isLeader){
-                    intent = new Intent(WordsSearch.this,HomePage.class);
+                if(response.equals("fail")|| response.equals("")) {
+                    Toast toast = Toast.makeText(WordsSearch.this, "Bad Internet Connection, Try Again Later!", Toast.LENGTH_SHORT);
+                    toast.show();
+                } else {
+                    intent = new Intent(WordsSearch.this, WordSearchResults.class);
+                    if (!InstanceDAO.isLeader) {
+                        intent = new Intent(WordsSearch.this, HomePage.class);
+                    }
+                    intent.putExtra("resultsList", answerList);
+                    intent.putExtra("puzzle", puzzle);
+                    intent.putExtra("wordPointMap", wordPointMap);
+
+                    intent.putExtra(CORRECT_ANSWERS, Integer.toString(score));
+                    InstanceDAO.completedList.add(placeName);
+                    startActivity(intent);
                 }
-                intent.putExtra("resultsList",answerList);
-                intent.putExtra("puzzle", puzzle);
-                intent.putExtra("wordPointMap",wordPointMap);
-                intent.putExtra(CORRECT_ANSWERS, Integer.toString(score));
-                InstanceDAO.completedList.add(placeName);
-                startActivity(intent);
             }
         });
 
         //Populating List of Words from dictionary
         String word;
         try {
-            System.out.println("WordSearch Reach");
+            //System.out.println("WordSearch Reach");
             word = new MyHttpRequestTask().execute("").get();
             JSONArray mainChildNode = new JSONArray(word);
             for(int i = 0; i < mainChildNode.length();i++){

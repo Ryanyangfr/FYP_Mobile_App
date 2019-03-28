@@ -64,6 +64,7 @@ public class SplashActivity extends AppCompatActivity {
     private String startingHotspotString = "";
     private String activityFeedString = "";
     private Socket mSocket;
+    private String response= null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         InstanceDAO.userName=Session.getUsername(getApplicationContext());
@@ -128,17 +129,22 @@ public class SplashActivity extends AppCompatActivity {
         showPhoneStatePermission();
 
         try {
-            String response = new getAllUsers().execute("").get();
-            startingHotspotString = new getStartingHotspot().execute("").get();
-            activityFeedString = new getActivityFeed().execute("").get();
-            if(response!=null) {
-                JSONArray mainChildNode = new JSONArray(response);
-                for(int i =0 ; i < mainChildNode.length();i++){
-                    JSONObject firstChildNode = mainChildNode.getJSONObject(i);
-                    String userName = firstChildNode.getString("username");
-                    userList.add(userName);
+            response = new getAllUsers().execute("").get();
+            if(response.equals("fail") || response.equals("")){
+                Toast toast = Toast.makeText(SplashActivity.this, "Bad Internet Connection, Try Again Later!", Toast.LENGTH_SHORT);
+                toast.show();
+            }else {
+                startingHotspotString = new getStartingHotspot().execute("").get();
+                activityFeedString = new getActivityFeed().execute("").get();
+                if (response != null) {
+                    JSONArray mainChildNode = new JSONArray(response);
+                    for (int i = 0; i < mainChildNode.length(); i++) {
+                        JSONObject firstChildNode = mainChildNode.getJSONObject(i);
+                        String userName = firstChildNode.getString("username");
+                        userList.add(userName);
+                    }
+                    InstanceDAO.userList = userList;
                 }
-                InstanceDAO.userList = userList;
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -157,7 +163,7 @@ public class SplashActivity extends AppCompatActivity {
         if(getLoginStatus(Session.getUsername(getApplicationContext()))) {
             startHeavyProcessing();
         }else{
-            if(!connected){
+            if(!connected || response == null || response.equals("fail") || response.equals("")){
                 Toast.makeText(this, "Bad Wifi Connection! Try again later", Toast.LENGTH_SHORT).show();
             }else {
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -334,7 +340,7 @@ public class SplashActivity extends AppCompatActivity {
                         String team = jsonChildNode3.getString("team");
                         String hotspot = jsonChildNode3.getString("hotspot");
                         String message = "Team "+team+" has just completed "+hotspot;
-                        String time = jsonChildNode3.getString("time");
+                        String time = jsonChildNode3. getString("time");
                         Event evt = new Event(message,team,hotspot,time);
                         InstanceDAO.adapter.addEvent(evt);
                     }

@@ -99,20 +99,26 @@ public class Anagram extends AppCompatActivity implements View.OnClickListener{
         }
 
         private void validate () {
+            String response = null;
             String w = wordEnteredTv.getText().toString();
 
             if (wordToFind.equals(w.toUpperCase())) {
                 Toast.makeText(this, "Congratulations ! You found the word " + wordToFind, Toast.LENGTH_SHORT).show();
                 try {
-                    String response = new MyHttpRequestTask2().execute("http://13.229.115.32:3000/team/updateScore").get();
+                    response = new MyHttpRequestTask2().execute("http://13.229.115.32:3000/team/updateScore").get();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
-                Intent intent = new Intent(this, HomePage.class);
-                InstanceDAO.completedList.add(placeName);
-                startActivity(intent);
+                if(response.equals("fail")|| response.equals("")){
+                    Toast toast = Toast.makeText(Anagram.this, "Bad Internet Connection, Try Again Later!", Toast.LENGTH_SHORT);
+                    toast.show();
+                }else {
+                    Intent intent = new Intent(this, HomePage.class);
+                    InstanceDAO.completedList.add(placeName);
+                    startActivity(intent);
+                }
             } else {
                 Toast.makeText(this, "Wrong Word! Please Retry", Toast.LENGTH_SHORT).show();
             }
@@ -148,11 +154,16 @@ public class Anagram extends AppCompatActivity implements View.OnClickListener{
             String word;
             try {
                 word = new MyHttpRequestTask().execute("").get();
-                JSONArray jsonMainNode = new JSONArray(word);
-                for (int i = 0 ; i < jsonMainNode.length();i++){
-                    JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
-                    if(jsonChildNode.getString("hotspot").equals(placeName)) {
-                        wordToFind = jsonChildNode.getString("anagram").toUpperCase();
+                if(word.equals("fail")|| word.equals("")){
+                    Toast toast = Toast.makeText(Anagram.this, "Bad Internet Connection, Try Again Later!", Toast.LENGTH_SHORT);
+                    toast.show();
+                }else {
+                    JSONArray jsonMainNode = new JSONArray(word);
+                    for (int i = 0; i < jsonMainNode.length(); i++) {
+                        JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
+                        if (jsonChildNode.getString("hotspot").equals(placeName)) {
+                            wordToFind = jsonChildNode.getString("anagram").toUpperCase();
+                        }
                     }
                 }
             } catch (InterruptedException e) {

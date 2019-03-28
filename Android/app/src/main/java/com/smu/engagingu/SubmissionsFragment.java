@@ -54,7 +54,7 @@ public class SubmissionsFragment extends Fragment {
     //String[] HOTSPOTS = {"Li Ka Shing Library", "School of Law"};
     //String[] MISSIONS = {"Take a selfie with mission statement", "Take a selfie in the lawyer room"};
     //int[] IMAGES = {R.drawable.engagingulogo, R.drawable.pixel_link};
-
+      private String submissionResponse = null;
 //    private ArrayList<String> HOTSPOTS = new ArrayList<>();
 //    private ArrayList<String> QUESTIONS = new ArrayList<>();
 //    private ArrayList<String> IMAGEURLS = new ArrayList<>();
@@ -99,42 +99,42 @@ public class SubmissionsFragment extends Fragment {
         protected String doInBackground(String... params) {
             try {
                 String endpointURL = SubmissionDAO.submissionEndPoint;
-                String submissionResponse = HttpConnectionUtility.get(endpointURL);
-                JSONArray submissionJsonArr= new JSONArray(submissionResponse);
-                System.out.println(submissionJsonArr.length());
-                SubmissionDAO.IMAGEURLS = new ArrayList<>();
-                SubmissionDAO.IMAGEPATHS = new ArrayList<>();
-                SubmissionDAO.HOTSPOTS = new ArrayList<>();
-                SubmissionDAO.QUESTIONS = new ArrayList<>();
+                submissionResponse = HttpConnectionUtility.get(endpointURL);
+                    JSONArray submissionJsonArr = new JSONArray(submissionResponse);
+                    System.out.println(submissionJsonArr.length());
+                    SubmissionDAO.IMAGEURLS = new ArrayList<>();
+                    SubmissionDAO.IMAGEPATHS = new ArrayList<>();
+                    SubmissionDAO.HOTSPOTS = new ArrayList<>();
+                    SubmissionDAO.QUESTIONS = new ArrayList<>();
 
-                for (int i = 0; i < submissionJsonArr.length(); i++) {
-                    JSONObject jsonObj = submissionJsonArr.getJSONObject(i);
-                    String imageURL = jsonObj.getString("submissionURL");
-                    String hotspot = jsonObj.getString("hotspot");
-                    String question = jsonObj.getString("question");
-                    SubmissionDAO.IMAGEURLS.add(imageURL);
-                    SubmissionDAO.HOTSPOTS.add(hotspot);
-                    SubmissionDAO.QUESTIONS.add(question);
-                }
-                for (int i=0; i<SubmissionDAO.IMAGEURLS.size(); i++) {
+                    for (int i = 0; i < submissionJsonArr.length(); i++) {
+                        JSONObject jsonObj = submissionJsonArr.getJSONObject(i);
+                        String imageURL = jsonObj.getString("submissionURL");
+                        String hotspot = jsonObj.getString("hotspot");
+                        String question = jsonObj.getString("question");
+                        SubmissionDAO.IMAGEURLS.add(imageURL);
+                        SubmissionDAO.HOTSPOTS.add(hotspot);
+                        SubmissionDAO.QUESTIONS.add(question);
+                    }
+                    for (int i = 0; i < SubmissionDAO.IMAGEURLS.size(); i++) {
 
-                    String imageUrl = SubmissionDAO.IMAGEURLS.get(i);
-                    //Create Image File
-                    String imagePath = createImageFile();
-                    SubmissionDAO.IMAGEPATHS.add(imagePath);
+                        String imageUrl = SubmissionDAO.IMAGEURLS.get(i);
+                        //Create Image File
+                        String imagePath = createImageFile();
+                        SubmissionDAO.IMAGEPATHS.add(imagePath);
 
-                    //Download Image
-                    URL url = new URL(SubmissionDAO.imageEndPoint + imageUrl);
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.setDoInput(true);
-                    connection.connect();
-                    InputStream is = connection.getInputStream();
-                    Bitmap myBitmap = BitmapFactory.decodeStream(is);
-                    FileOutputStream out = new FileOutputStream(imagePath);
-                    myBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-                    out.close();
-                    is.close();
-                }
+                        //Download Image
+                        URL url = new URL(SubmissionDAO.imageEndPoint + imageUrl);
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        connection.setDoInput(true);
+                        connection.connect();
+                        InputStream is = connection.getInputStream();
+                        Bitmap myBitmap = BitmapFactory.decodeStream(is);
+                        FileOutputStream out = new FileOutputStream(imagePath);
+                        myBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                        out.close();
+                        is.close();
+                    }
             } catch (JSONException | IOException e) {
                 e.printStackTrace();
             }
@@ -144,6 +144,10 @@ public class SubmissionsFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String result) {
+            if(submissionResponse.equals("fail") || submissionResponse.equals("")){
+                Toast toast = Toast.makeText(getActivity(), "Bad Internet Connection, Try Again Later!", Toast.LENGTH_SHORT);
+                toast.show();
+            }
             ProgressBar pb = view.findViewById(R.id.submissionProgress);
             listView.setAdapter(customAdaptor);
             pb.setVisibility(view.GONE);

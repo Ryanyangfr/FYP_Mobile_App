@@ -337,6 +337,7 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void finishQuiz(){
+        String response = null;
         Intent intent;
         if(InstanceDAO.isLeader){
            intent = new Intent(QuizActivity.this, QuizResults.class);
@@ -348,15 +349,20 @@ public class QuizActivity extends AppCompatActivity {
         }
         if (InstanceDAO.isLeader) {
             try {
-                String response = new MyHttpRequestTask().execute("http://13.229.115.32:3000/team/updateScore").get();
+                response = new MyHttpRequestTask().execute("http://13.229.115.32:3000/team/updateScore").get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
         }
-        InstanceDAO.completedList.add(placeName);
-        startActivity(intent);
+        if (response.equals("fail") || response.equals("")){
+            Toast toast = Toast.makeText(QuizActivity.this, "Bad Internet Connection, Try Again Later!", Toast.LENGTH_SHORT);
+            toast.show();
+        }else {
+            InstanceDAO.completedList.add(placeName);
+            startActivity(intent);
+        }
 
     }
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {

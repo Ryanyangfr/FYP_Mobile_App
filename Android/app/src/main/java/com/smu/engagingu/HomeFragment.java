@@ -81,6 +81,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         System.out.println("trailInstanceID2: " + InstanceDAO.trailInstanceID);
         saveSession();
         questionTypeMap = InstanceDAO.questionTypeMap;
+        System.out.println(questionTypeMap.size());
+        System.out.println(InstanceDAO.completedList.size());
         if(InstanceDAO.completedList.size()!=0 && (InstanceDAO.completedList.size()==questionTypeMap.size()) ){
             openDialog();
         }
@@ -211,7 +213,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 double distance = computeDistanceBetween(locationToReturn,new LatLng(arg0.getPosition().latitude,arg0.getPosition().longitude));
                 snippetText = arg0.getSnippet();
                 if(!(snippetText.equals("Completed"))) {
-                    if(distance<5000000.0) {
+                    if(distance<50.0) {
                         arg0.setSnippet("Click me to start mission");
                         arg0.showInfoWindow();
                     }else{

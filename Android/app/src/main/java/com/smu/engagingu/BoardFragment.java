@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.smu.engagingu.Adapters.LeaderboardAdapter;
 import com.smu.engagingu.DAO.InstanceDAO;
@@ -66,8 +67,10 @@ public class BoardFragment extends Fragment {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        if (jsonString==null){
+        if (jsonString==null || jsonString.equals("fail") || jsonString.equals("")){
             leaderboardList.add(null);
+            Toast toast = Toast.makeText(getActivity(), "Bad Internet Connection, Try Again Later!", Toast.LENGTH_SHORT);
+            toast.show();
         }else {
             try {
                 JSONArray jsonMainNode = new JSONArray(jsonString);

@@ -26,7 +26,7 @@ public class HttpConnectionUtility{
             URL url = new URL(myurl);
 //                System.out.println(url);
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setConnectTimeout(5000);
+            httpURLConnection.setConnectTimeout(2000);
             // setting the  Request Method Type
             httpURLConnection.setRequestMethod("GET");
             // adding the headers for request
@@ -49,9 +49,11 @@ public class HttpConnectionUtility{
 
             }catch(java.net.SocketTimeoutException e){
                 e.printStackTrace();
+                return "fail";
             }
             catch (Exception e){
                 e.printStackTrace();
+                return "fail";
             }finally {
                 // this is done so that there are no open connections left when this task is going to complete
                 httpURLConnection.disconnect();
@@ -69,11 +71,12 @@ public class HttpConnectionUtility{
         StringBuffer response = new StringBuffer();
         HttpURLConnection httpURLConnection = null;
 
+
         try {
             URL url = new URL(myurl);
 //                System.out.println(url);
             httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setConnectTimeout(5000);
+            httpURLConnection.setConnectTimeout(2000);
             // setting the  Request Method Type
             httpURLConnection.setRequestMethod("POST");
             // adding the headers for request
@@ -148,7 +151,7 @@ public class HttpConnectionUtility{
 
             URL url = new URL(urlTo);
             connection = (HttpURLConnection) url.openConnection();
-
+            connection.setConnectTimeout(2000);
             connection.setDoInput(true);
             connection.setDoOutput(true);
             connection.setUseCaches(false);
@@ -216,10 +219,10 @@ public class HttpConnectionUtility{
             return result;
         } catch (Exception e) {
             e.printStackTrace();
+            return "fail";
 //            logger.error(e);
 //            throw new CustomException(e);
         }
-        return result;
     }
 
     private static String convertStreamToString(InputStream is) {

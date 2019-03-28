@@ -335,8 +335,9 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
         }
         return false;
     }
-    private void submitScore(){
-        if(InstanceDAO.isLeader) {
+    private void submitScore() {
+        String response = null;
+        if (InstanceDAO.isLeader) {
             ArrayList<GameResultEntry> resultsList = new ArrayList<>();
 
             for (String key : answersMap.keySet()) {
@@ -351,7 +352,7 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
                 resultsList.add(new GameResultEntry("1", key, answer, option));
             }
             try {
-                String response = new MyHttpRequestTask2().execute("http://13.229.115.32:3000/team/updateScore").get();
+                response = new MyHttpRequestTask2().execute("http://13.229.115.32:3000/team/updateScore").get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -373,10 +374,15 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
             }
-        }else{
-            Intent intent = new Intent(DragDrop.this, HomePage.class);
-            InstanceDAO.completedList.add(placeName);
-            startActivity(intent);
+        }else {
+            if (response.equals("fail") || response.equals("")) {
+                Toast toast = Toast.makeText(DragDrop.this, "Bad Internet Connection, Try Again Later!", Toast.LENGTH_SHORT);
+                toast.show();
+            }else{
+                Intent intent = new Intent(DragDrop.this, HomePage.class);
+                InstanceDAO.completedList.add(placeName);
+                startActivity(intent);
+            }
         }
     }
     private class MyHttpRequestTask2 extends AsyncTask<String,Integer,String> {

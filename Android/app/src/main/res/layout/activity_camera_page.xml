@@ -24,10 +24,19 @@
         android:layout_above="@+id/btnUpload"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="13dp"
-        android:background="@color/colorAccent"
+        android:background="@drawable/button_selector"
         android:text="Take a picture!"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textStyle="bold" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/selfieQuestionView"
+        android:layout_marginTop="30dp"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/btnUpload"
@@ -35,7 +44,7 @@
         android:layout_height="48dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:background="@color/colorAccent"
+        android:background="@drawable/button_selector"
         android:text="Confirm Submission"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textStyle="bold" />

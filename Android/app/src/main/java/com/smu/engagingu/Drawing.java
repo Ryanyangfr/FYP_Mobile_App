@@ -129,6 +129,7 @@ public class Drawing extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                String responseCode = null;
                                 paintView.setDrawingCacheEnabled(true);
                                 Bitmap b = paintView.getDrawingCache();
                                 try {
@@ -152,7 +153,7 @@ public class Drawing extends AppCompatActivity {
                                         e.printStackTrace();
                                     }
                                     try {
-                                        String responseCode = new PictureUploader().execute(InstanceDAO.teamID, InstanceDAO.trailInstanceID, targetQuestion, placeName).get();
+                                        responseCode = new PictureUploader().execute(InstanceDAO.teamID, InstanceDAO.trailInstanceID, targetQuestion, placeName).get();
 
                                         SubmissionDAO.HOTSPOTS.add(placeName);
                                         SubmissionDAO.QUESTIONS.add(targetQuestion);
@@ -164,12 +165,17 @@ public class Drawing extends AppCompatActivity {
                                     } catch (ExecutionException e) {
                                         e.printStackTrace();
                                     }
-                                    Toast toast = Toast.makeText(Drawing.this, "Photo Successfully Uploaded!", Toast.LENGTH_SHORT);
-                                    toast.show();
-                                    Intent intent = new Intent(Drawing.this, HomePage.class);
-                                    //paintView.clear();
-                                    InstanceDAO.completedList.add(placeName);
-                                    startActivity(intent);
+                                    if(responseCode.equals("fail")|| responseCode.equals("")) {
+                                        Toast toast = Toast.makeText(Drawing.this, "Bad Internet Connection, Try Again Later!", Toast.LENGTH_SHORT);
+                                        toast.show();
+                                    }else {
+                                        Toast toast = Toast.makeText(Drawing.this, "Photo Successfully Uploaded!", Toast.LENGTH_SHORT);
+                                        toast.show();
+                                        Intent intent = new Intent(Drawing.this, HomePage.class);
+                                        //paintView.clear();
+                                        InstanceDAO.completedList.add(placeName);
+                                        startActivity(intent);
+                                    }
                                 }
                             }
                         });

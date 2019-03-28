@@ -24,7 +24,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="50dp"
-        android:background="@color/colorAccent"
+        android:background="@drawable/button_selector"
         android:text="WAIT"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textSize="30sp"

@@ -20,7 +20,9 @@ import com.smu.engagingu.Utilities.HttpConnectionUtility;
 import com.smu.engagingu.fyp.R;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 public class Narrative extends AppCompatActivity {
     public static final String EXTRA_MESSAGE2 = "com.smu.engagingu.MESSAGE";
@@ -48,45 +50,59 @@ public class Narrative extends AppCompatActivity {
         });
     }
     private void goToGame(){
+        String word = null;
         Intent intent = null;
+        Boolean isConnected = false;
         if(gameModeCheck==null){
             intent = new Intent(Narrative.this, HomePage .class);
             startActivity(intent);
         }else {
             ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-            boolean isConnected = activeNetwork != null &&
-                    activeNetwork.isConnectedOrConnecting();
-            if(isConnected) {
-                switch (gameModeCheck) {
-                    case "1":
-                        intent = new Intent(Narrative.this, QuizActivity.class);
-                        break;
-                    case "2":
-                        intent = new Intent(Narrative.this, CameraPage.class);
-                        break;
-                    case "3":
-                        intent = new Intent(Narrative.this, Drawing.class);
-                        break;
-                    case "4":
-                        intent = new Intent(Narrative.this, Anagram.class);
-                        break;
-                    case "5":
-                        intent = new Intent(Narrative.this, DragDrop.class);
-                        break;
-                    case "6":
-                        intent = new Intent(Narrative.this, WordsSearch.class);
-                        break;
-                    default:
-                        System.out.println("no match");
-                }
+            try {
+                word = new MyHttpRequestTask().execute("").get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            if (word.equals("fail") || word.equals("")) {
+                Toast toast = Toast.makeText(Narrative.this, "Bad Internet Connection, Try Again Later!", Toast.LENGTH_SHORT);
+                toast.show();
             }else{
+                isConnected = activeNetwork != null &&
+                        activeNetwork.isConnectedOrConnecting();
+                if(isConnected) {
+                    switch (gameModeCheck) {
+                        case "1":
+                            intent = new Intent(Narrative.this, QuizActivity.class);
+                            break;
+                        case "2":
+                            intent = new Intent(Narrative.this, CameraPage.class);
+                            break;
+                        case "3":
+                            intent = new Intent(Narrative.this, Drawing.class);
+                            break;
+                        case "4":
+                            intent = new Intent(Narrative.this, Anagram.class);
+                            break;
+                        case "5":
+                            intent = new Intent(Narrative.this, DragDrop.class);
+                            break;
+                        case "6":
+                            intent = new Intent(Narrative.this, WordsSearch.class);
+                            break;
+                        default:
+                            System.out.println("no match");
+                    }
+                }
+                Objects.requireNonNull(intent).putExtra(EXTRA_MESSAGE2, placeName);
+                startActivity(intent);
+            }if(!isConnected){
                 Toast toast = Toast.makeText(Narrative.this, "Bad Internet Connection, Try Again Later!", Toast.LENGTH_SHORT);
                 toast.show();
             }
         }
-        Objects.requireNonNull(intent).putExtra(EXTRA_MESSAGE2, placeName);
-        startActivity(intent);
     }
     private String findNarrative(String placeName){
         for(int i =0; i < InstanceDAO.hotspotList.size();i++){
@@ -121,15 +137,8 @@ public class Narrative extends AppCompatActivity {
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {
-            String message = Integer.toString(1);//Score
-            HashMap<String,String> userHash = new HashMap<>();
-            userHash.put("team_id",InstanceDAO.teamID);
-            System.out.println("tid: "+InstanceDAO.teamID);
-            userHash.put("trail_instance_id",InstanceDAO.trailInstanceID);
-            userHash.put("score",message);
-            userHash.put("hotspot",placeName);
-            System.out.println("message: "+message);
-            String response = HttpConnectionUtility.post("http://13.229.115.32:3000/team/updateScore",userHash);
+            Map<String, String> req = new HashMap<>();
+            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/draganddrop/getDragAndDrop?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }

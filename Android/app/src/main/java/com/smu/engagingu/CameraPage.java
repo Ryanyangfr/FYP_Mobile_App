@@ -19,14 +19,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.DAO.SubmissionDAO;
 import com.smu.engagingu.Game.QuestionDatabase;
-import com.smu.engagingu.fyp.R;
 import com.smu.engagingu.Utilities.HttpConnectionUtility;
+import com.smu.engagingu.fyp.R;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -44,6 +45,7 @@ public class CameraPage extends AppCompatActivity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     Button takePictureButton;
+    ProgressBar mProgressBar;
     Button uploadButton;
     ImageView mImageView;
     Uri photoURI;
@@ -96,6 +98,7 @@ public class CameraPage extends AppCompatActivity {
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
             } else {
+                System.out.println("Reached Here");
                 String team_id = InstanceDAO.teamID;
                 String trail_instance_id = InstanceDAO.trailInstanceID;
                 String question = targetQuestion;
