@@ -154,7 +154,6 @@ public class SplashActivity extends AppCompatActivity {
                     }
                     Event evt = new Event(message,team,hotspot,time);
                     InstanceDAO.adapter.addEvent(evt);
-                    System.out.println("ActivityFeedTrigger");
                 }
             });
         }
