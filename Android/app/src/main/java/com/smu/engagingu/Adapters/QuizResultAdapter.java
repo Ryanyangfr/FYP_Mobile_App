@@ -13,7 +13,12 @@ import com.smu.engagingu.fyp.R;
 
 import java.util.ArrayList;
 import java.util.Objects;
-
+/*
+ * QuizResultAdapter is intended to be used to convert quiz results
+ * into a listview to be easily viewable by users
+ * The data displayed are question, actual answer, users answer
+ * and total score obtained by user
+ */
 public class QuizResultAdapter extends ArrayAdapter<GameResultEntry> {
     public QuizResultAdapter(Context context, ArrayList<GameResultEntry> quizResults) {
         super(context,0,quizResults);

@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.nkzawa.socketio.client.Socket;
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.Game.QuestionDatabase;
 import com.smu.engagingu.Objects.GameResultEntry;
@@ -27,14 +26,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
+/*
+ * QuizActivity refers to the page that displays the quiz game mode. The textview that displays
+ * the question and the buttons that displays the answer options are predetermined. The relevant
+ * information is obtained from the database through a RESTful get method and the text of the
+ * corresponding text views are set accordingly.
+ */
 public class QuizActivity extends AppCompatActivity {
     public static final String CORRECT_ANSWERS = "com.smu.engagingu.CORRECTQUIZANSWERS";
     public static final String QUESTION_COUNT = "com.smu.engagingu.QUIZQUESTIONCOUNT";
     private TextView textViewQuestion;
     private TextView textViewScore;
     private TextView answerView;
-    //private RadioGroup rbGroup;
     private Button b1;
     private Button b2;
     private Button b3;
@@ -54,18 +57,15 @@ public class QuizActivity extends AppCompatActivity {
     private int score;
     private boolean answered;
     private String placeName;
-    private Socket mSocket;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         score = 0;
         Intent intent = getIntent();
         placeName = intent.getStringExtra(Narrative.EXTRA_MESSAGE2);
-        System.out.println("QuizActivity: "+placeName);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
         QuestionDatabase qnsDB = new QuestionDatabase();
         questionsList = qnsDB.getQuestionsMap().get(placeName);
-        System.out.println("Questions List: "+questionsList);
         textViewQuestion = findViewById(R.id.text_view_question);
         answerView = findViewById(R.id.correctAnswerView);
         textViewScore = findViewById(R.id.text_view_score);
@@ -86,6 +86,7 @@ public class QuizActivity extends AppCompatActivity {
                     b2Check = false;
                     b3Check = false;
                     b4Check = false;
+                    //selected option has a different colour from unselected options
                     b1.setBackgroundColor(Color.parseColor("#151C55"));
                     b2.setBackgroundColor(Color.parseColor("#A9A9A9"));
                     b3.setBackgroundColor(Color.parseColor("#A9A9A9"));
@@ -131,6 +132,7 @@ public class QuizActivity extends AppCompatActivity {
                     b4.setBackgroundColor(Color.parseColor("#151C55"));
                 }
             });
+            //a different format would be displayed if the current user is not a Leader
         }else{
             b1.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -209,30 +211,9 @@ public class QuizActivity extends AppCompatActivity {
     public void onBackPressed() {
 
     }
-    /*private Emitter.Listener onNewMessage = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    System.out.println("Reached listener");
-                    System.out.println(args.toString());
-                    JSONObject data = (JSONObject) args[0];
-                    String message;
-                    try{
-                        message = data.getString("test");
-                    }catch(JSONException e){
-                        return;
-                    }
-                    //System.out.println(args[0]);
-                    //String s = (String)args[0];
-                    System.out.println("Ryan's Message: "+message);
-                }
-            });
-        }
-    };*/
+   //Method called when user presses next. The textviews have their text newly set to prepare for
+    //next question
     private void showNextQuestion(){
-        //rbGroup.clearCheck();
         b1.setBackgroundColor(Color.parseColor("#A9A9A9"));
         b2.setBackgroundColor(Color.parseColor("#A9A9A9"));
         b3.setBackgroundColor(Color.parseColor("#A9A9A9"));
@@ -259,6 +240,7 @@ public class QuizActivity extends AppCompatActivity {
 
         }
     }
+    //user checks his/her answer against the answer obtained from database
     private void checkAnswer(){
         String usersAnswer = "";
         String answer = "";
@@ -308,6 +290,7 @@ public class QuizActivity extends AppCompatActivity {
         resultsList.add(new GameResultEntry("1",currentQuestion.getQuestion(),answer,usersAnswer));
         showSolution();
     }
+    //Actual answer is displayed to the user
     private void showSolution(){
         b1.setBackgroundColor(Color.parseColor("#E85858"));//Color RED
         b2.setBackgroundColor(Color.parseColor("#E85858"));
@@ -335,9 +318,9 @@ public class QuizActivity extends AppCompatActivity {
             buttonConfirmNext.setText("Finish");
         }
     }
-
+    // score is tabulated and sent to the database via RESTful post request
     private void finishQuiz(){
-        String response = null;
+        String response = "a";
         Intent intent;
         if(InstanceDAO.isLeader){
            intent = new Intent(QuizActivity.this, QuizResults.class);
@@ -349,7 +332,7 @@ public class QuizActivity extends AppCompatActivity {
         }
         if (InstanceDAO.isLeader) {
             try {
-                response = new MyHttpRequestTask().execute("http://13.229.115.32:3000/team/updateScore").get();
+                response = new MyHttpRequestTask().execute("https://amazingtrail.ml/api/team/updateScore").get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -371,12 +354,10 @@ public class QuizActivity extends AppCompatActivity {
             String message = Integer.toString(score);
             HashMap<String,String> userHash = new HashMap<>();
             userHash.put("team_id",InstanceDAO.teamID);
-            System.out.println("tid: "+InstanceDAO.teamID);
             userHash.put("trail_instance_id",InstanceDAO.trailInstanceID);
             userHash.put("score",message);
             userHash.put("hotspot",placeName);
-            System.out.println("message: "+message);
-            String response = HttpConnectionUtility.post("http://13.229.115.32:3000/team/updateScore",userHash);
+            String response = HttpConnectionUtility.post("https://amazingtrail.ml/api/team/updateScore",userHash);
             if (response == null){
                 return null;
             }
@@ -391,7 +372,6 @@ public class QuizActivity extends AppCompatActivity {
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        System.out.println(item.getItemId());
         switch (item.getItemId()) {
             case R.id.action_logout:
                 // User chose the "Settings" item, show the app settings UI...

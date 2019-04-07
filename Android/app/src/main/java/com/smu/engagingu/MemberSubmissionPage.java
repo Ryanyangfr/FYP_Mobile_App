@@ -8,7 +8,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.smu.engagingu.fyp.R;
-
+/*
+ * MemberSubmissionPage is a general instructional page that is shown to members when they reach
+ * the either the CameraPage or the Drawing page. As these submission questions are restricted to
+ * only leaders, members would see this informational page.
+ */
 public class MemberSubmissionPage extends AppCompatActivity {
     private String questionName;
     @Override

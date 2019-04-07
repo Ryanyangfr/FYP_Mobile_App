@@ -8,7 +8,11 @@ import com.google.gson.Gson;
 import com.smu.engagingu.Adapters.EventAdapter;
 
 import static com.smu.engagingu.DAO.InstanceDAO.LOGGED_IN_PREF;
-
+/*
+ * SharedPreferences is used to store information and details in regards to the user's session.
+ * SharedPreferences persist even after user closes the application. Only integers and strings
+ * are allowed to be saved.
+ */
 public class Session {
 
     static SharedPreferences getPreferences(Context context) {

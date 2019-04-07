@@ -12,7 +12,11 @@ import com.smu.engagingu.fyp.R;
 
 import java.util.ArrayList;
 import java.util.Objects;
-
+/*
+ *FAQAdapter is intended to be used to convert FAQ question and answers
+ * into a listview to be easily viewable by users
+ * The data displayed are question and answer
+ */
 public class FAQAdapter extends ArrayAdapter<FaqEntry> {
     public FAQAdapter(Context context, ArrayList<FaqEntry> faqResults) {
         super(context,0,faqResults);

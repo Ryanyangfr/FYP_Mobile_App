@@ -13,8 +13,10 @@ import com.smu.engagingu.Objects.FaqEntry;
 import com.smu.engagingu.fyp.R;
 
 import java.util.ArrayList;
-
-
+/*
+ * The HelpPageFragment is used to display the FAQ page of the application
+ * All the questions and answers for the FAQ page are fixed
+ */
 public class HelpPageFragment extends Fragment {
    @Nullable
    @Override

@@ -11,6 +11,12 @@ import com.smu.engagingu.Objects.Event;
 import com.smu.engagingu.fyp.R;
 
 import java.util.List;
+/*
+ * EventAdapter is intended to be used to convert activity feed JSON Data
+ * into viewable card views.
+ * The data displayed are event name, event ID, timestamp of activity occurrence
+ * and the full details of the activity
+ */
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
     private List<Event> items;
@@ -33,6 +39,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             data = (TextView) v.findViewById(R.id.data);
         }
     }
+    //add event entry into arraylist to be displayed
     public void addEvent(Event event) {
         // Add the event at the beginning of the list
         items.add(0, event);
@@ -49,17 +56,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     public EventViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.event_row, viewGroup, false);
-
         return new EventViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(EventViewHolder viewHolder, int i) {
         Event event = items.get(i);
-
         viewHolder.event.setText(event.getName());
-        //viewHolder.id.setText(event.getId());
         viewHolder.timestamp.setText(event.getTime());
-        //viewHolder.data.setText(event.getData());
     }
 }

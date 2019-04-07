@@ -1,5 +1,8 @@
-package com.smu.engagingu.Hotspot;
-
+package com.smu.engagingu.Objects;
+/*
+ * Hotspot object to store location name, longitude, latitude and its respective narrative
+ * this is used for display location pins on the homepage google map
+ */
 public class Hotspot {
     private String locationName;
     private Double latitude;

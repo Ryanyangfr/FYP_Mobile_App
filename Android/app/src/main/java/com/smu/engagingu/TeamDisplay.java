@@ -56,35 +56,41 @@ public class TeamDisplay extends AppCompatActivity {
             final Button confirmationButton = findViewById(R.id.groupNumberButton);
             final ProgressBar pb = findViewById(R.id.teamDisplayProgress);
             confirmationButton.setVisibility(View.GONE);
-            Runnable myRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    while (!InstanceDAO.startTrail) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+            Runnable myRunnable = null;
+            if(InstanceDAO.startTrail){
+                confirmationButton.setText(("GO"));
+                confirmationButton.setVisibility(View.VISIBLE);
+            }else {
+                myRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        while (!InstanceDAO.startTrail) {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            confirmationButton.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                }
+                            });
                         }
-                        confirmationButton.post(new Runnable() {
+                        runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                confirmationButton.invalidate();
+                                confirmationButton.requestLayout();
+                                confirmationButton.setText("GO");
+                                confirmationButton.setVisibility(View.VISIBLE);
+                                pb.setVisibility(View.GONE);
+
                             }
                         });
+
                     }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            confirmationButton.invalidate();
-                            confirmationButton.requestLayout();
-                            confirmationButton.setText("GO");
-                            confirmationButton.setVisibility(View.VISIBLE);
-                            pb.setVisibility(View.GONE);
-
-                        }
-                    });
-
-                }
-            };
+                };
+            }
             if (!InstanceDAO.startTrail) {
                 Thread myThread = new Thread(myRunnable);
                 myThread.start();
@@ -93,7 +99,6 @@ public class TeamDisplay extends AppCompatActivity {
             confirmationButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    System.out.println("Hello" + InstanceDAO.startTrail);
                     if (InstanceDAO.startTrail) {
                         try {
                             goToStoryPage();
@@ -116,7 +121,7 @@ public class TeamDisplay extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/user/retrieveAllUser");
+            String response = HttpConnectionUtility.get("https://amazingtrail.ml/api/user/retrieveAllUser");
             if (response == null){
                 return null;
             }
@@ -139,5 +144,9 @@ public class TeamDisplay extends AppCompatActivity {
         e.printStackTrace();
     }
     return toReturn;
+    }
+    @Override
+    public void onBackPressed() {
+
     }
 }

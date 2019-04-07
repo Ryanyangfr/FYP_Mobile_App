@@ -1,7 +1,10 @@
 package com.smu.engagingu.Objects;
 
 import java.io.Serializable;
-
+/*
+ * GameResultEntry is used to store all information pertaining to a game-mode result entry
+ * data displayed includes quiz title, question, actual answer and user's answer
+ */
 public class GameResultEntry implements Serializable {
     private String QuizNumber;
     private String Question;

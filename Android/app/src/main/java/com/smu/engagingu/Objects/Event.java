@@ -1,5 +1,8 @@
 package com.smu.engagingu.Objects;
-
+/*
+ * Event is the object used to store all the information pertaining to each
+ * activity feed entry
+ */
 public class Event  {
     private String name;
     private String id;

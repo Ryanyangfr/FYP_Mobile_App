@@ -8,7 +8,11 @@ import android.widget.Button;
 
 import com.smu.engagingu.Tutorial.Tutorial;
 import com.smu.engagingu.fyp.R;
-
+/*
+ * Welcome refers to the page that displays the welcome message that greets all new users
+ * of the amazing race trail.
+ * The wording on this particular page is fixed.
+ */
 public class Welcome extends AppCompatActivity {
 
     @Override

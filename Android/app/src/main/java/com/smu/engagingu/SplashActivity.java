@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -32,8 +31,8 @@ import com.smu.engagingu.Adapters.EventAdapter;
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.DAO.Session;
 import com.smu.engagingu.DAO.SubmissionDAO;
-import com.smu.engagingu.Hotspot.Hotspot;
 import com.smu.engagingu.Objects.Event;
+import com.smu.engagingu.Objects.Hotspot;
 import com.smu.engagingu.Utilities.HttpConnectionUtility;
 import com.smu.engagingu.Utilities.SocketHandler;
 import com.smu.engagingu.fyp.R;
@@ -53,14 +52,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
+/*
+ * Used to retrieve and load user's session before displaying to either trailID input page or
+ * homepage depending on whether the session exists.
+ * Sockets are also initialised on this page
+ */
 public class SplashActivity extends AppCompatActivity {
     private static final int REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 10;
     private ArrayList<String>userList = new ArrayList<>();
-    //private RecyclerView.LayoutManager lManager;
-    //private PusherOptions options = new PusherOptions().setCluster("ap1");
-    //private Pusher pusher = new Pusher("1721c662be60b9cbd43c", options);
-    //private static final String CHANNEL_NAME = "events_to_be_shown";
     private String startingHotspotString = "";
     private String activityFeedString = "";
     private Socket mSocket;
@@ -81,51 +80,6 @@ public class SplashActivity extends AppCompatActivity {
 
         List<Event> eventList = new ArrayList<>();
         InstanceDAO.adapter = new EventAdapter(eventList);
-        /*options.setCluster("ap1");
-        Pusher pusher = new Pusher("1721c662be60b9cbd43c", options);
-        Channel channel = pusher.subscribe(CHANNEL_NAME);
-        final String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Timestamp(System.currentTimeMillis()));
-        SubscriptionEventListener eventListener = new SubscriptionEventListener() {
-            @Override
-            public void onEvent(String channel, final String event, final String data) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run()  {
-                        System.out.println("Received event with data: " + data);
-                        //Gson gson = new Gson();
-                        JSONObject mainChildNode;
-                        try {
-                            mainChildNode = new JSONObject(data);
-                            String feedTeamID = mainChildNode.getString("team_id");
-                            String eventID = mainChildNode.getString("id");
-                            String feedTeamName = "Team "+feedTeamID+" has just connected.";
-                            Event evt = new Event(feedTeamName,eventID,data,timeStamp);
-                            //evt.setName(event + ":");
-                            InstanceDAO.adapter.addEvent(evt);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
-        };
-        channel.bind("created", eventListener);
-        channel.bind("updated", eventListener);
-        channel.bind("deleted", eventListener);
-        pusher.connect(new ConnectionEventListener() {
-            @Override
-            public void onConnectionStateChange(ConnectionStateChange change) {
-                System.out.println("State changed to " + change.getCurrentState() +
-                        " from " + change.getPreviousState());
-            }
-
-            @Override
-            public void onError(String message, String code, Exception e) {
-                System.out.println("There was a problem connecting!");
-                e.printStackTrace();
-            }
-        });*/
-
         showPhoneStatePermission();
 
         try {
@@ -198,12 +152,9 @@ public class SplashActivity extends AppCompatActivity {
                     }catch(JSONException e){
                         return;
                     }
-                    //System.out.println(args[0]);
-                    //String s = (String)args[0];
                     Event evt = new Event(message,team,hotspot,time);
-                    //evt.setName(event + ":");
-                    System.out.println("Activity Feed Update");
                     InstanceDAO.adapter.addEvent(evt);
+                    System.out.println("ActivityFeedTrigger");
                 }
             });
         }
@@ -225,7 +176,6 @@ public class SplashActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    System.out.println("Received");
                     JSONObject data = (JSONObject) args[0];
                     String message = "";
                     try {
@@ -254,9 +204,6 @@ public class SplashActivity extends AppCompatActivity {
                 .setContentTitle(title) // title for notification
                 .setContentText(content)// message for notification
                 .setAutoCancel(true); // clear notification after click
-        Intent intent = new Intent(getApplicationContext(), SplashActivity.class);
-        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        mBuilder.setContentIntent(pi);
         mNotificationManager.notify(0, mBuilder.build());
     }
     private class LongOperation extends AsyncTask<String, Void, String> {
@@ -271,24 +218,13 @@ public class SplashActivity extends AppCompatActivity {
                     String endpointURL = SubmissionDAO.submissionEndPoint;
                     String submissionResponse = HttpConnectionUtility.get(endpointURL);
                     JSONArray submissionJsonArr= new JSONArray(submissionResponse);
-                    System.out.println(submissionJsonArr.length());
-                    //int jsonArrLength = submissionJsonArr.length();
-                   // JSONObject jsonSizeObj = submissionJsonArr.getJSONObject(jsonArrLength-1);
-
-//                    int size = Integer.parseInt(jsonSizeObj.getString("size"));
-//                    System.out.println("Size: " + size);
-
                     for (int i = 0; i < submissionJsonArr.length(); i++) {
                         JSONObject jsonObj = submissionJsonArr.getJSONObject(i);
 
                         String imageURL = jsonObj.getString("submissionURL");
-                        System.out.println("imageURL: "+imageURL);
                         String hotspot = jsonObj.getString("hotspot");
                         String question = jsonObj.getString("question");
 
-                        System.out.println(i + ". imageURL: " + imageURL);
-                        System.out.println(i + ". hotspot: " + hotspot);
-                        System.out.println(i + ". question: " + question);
 
                         SubmissionDAO.IMAGEURLS.add(imageURL);
                         SubmissionDAO.HOTSPOTS.add(hotspot);
@@ -301,7 +237,6 @@ public class SplashActivity extends AppCompatActivity {
 
                         //Create Image File
                         String imagePath = createImageFile();
-                        System.out.println(i + " imagePath: " + imagePath);
                         SubmissionDAO.IMAGEPATHS.add(imagePath);
 
                         //Download Image
@@ -375,7 +310,6 @@ public class SplashActivity extends AppCompatActivity {
                 requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
             }
         } else {
-//            Toast.makeText(MainActivity.this, "The app was not allowed to read your store.", Toast.LENGTH_SHORT).show();
         }
     }
     @Override
@@ -442,7 +376,7 @@ public class SplashActivity extends AppCompatActivity {
     private class getAllUsers extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/user/retrieveAllUser");
+            String response = HttpConnectionUtility.get("https://amazingtrail.ml/api/user/retrieveAllUser");
             if (response == null) {
                 return null;
             }
@@ -454,7 +388,6 @@ public class SplashActivity extends AppCompatActivity {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStorageDirectory();
-        System.out.println("Storage DIR" + storageDir.getAbsolutePath());
         File image = File.createTempFile(
                 imageFileName,    /*prefix */
                 ".jpg",    /*suffix */
@@ -467,7 +400,7 @@ public class SplashActivity extends AppCompatActivity {
     private class getStartingHotspot extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/team/startingHotspot?trail_instance_id=" + InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("https://amazingtrail.ml/api/team/startingHotspot?trail_instance_id=" + InstanceDAO.trailInstanceID);
             if (response == null) {
                 return null;
             }
@@ -477,7 +410,7 @@ public class SplashActivity extends AppCompatActivity {
     private class getActivityFeed extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/team/activityfeed");
+            String response = HttpConnectionUtility.get("https://amazingtrail.ml/api/team/activityfeed");
             if (response == null) {
                 return null;
             }

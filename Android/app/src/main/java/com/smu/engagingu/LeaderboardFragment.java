@@ -14,45 +14,37 @@ import com.smu.engagingu.fyp.R;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/*
+ * Leaderboard Fragment hosts the fragments BoardFragment and LeaderboardActivitiesFragment in a
+ * swipeable view container. This is to allow users to swipe between fragments in accordance to
+ * what they aim to view.
+ */
 public class  LeaderboardFragment extends Fragment {
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        System.out.println(1);
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        System.out.println(2);
         View view = inflater.inflate(R.layout.fragment_leaderboard,container, false);
         // Setting ViewPager for each Tabs
         ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewpager);
         setupViewPager(viewPager);
-        //ProgressBar pb = view.findViewById(R.id.progressBar2);
-        //pb.setVisibility(view.VISIBLE);
         // Set Tabs inside Toolbar
         TabLayout tabs = (TabLayout) view.findViewById(R.id.result_tabs);
         tabs.setupWithViewPager(viewPager);
-
-
         return view;
-
     }
 
 
     // Add Fragments to Tabs
     private void setupViewPager(ViewPager viewPager) {
-
-
         Adapter adapter = new Adapter(getChildFragmentManager());
         adapter.addFragment(new BoardFragment(), "Leader Board");
         adapter.addFragment(new LeaderboardActivitiesFragment(), "Activity Feed");
         viewPager.setAdapter(adapter);
-
-
 
     }
 

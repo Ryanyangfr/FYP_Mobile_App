@@ -39,9 +39,6 @@ public class WordsSearch extends Activity {
     private int SIZE = 12;
     private final static int HORIZONTAL = 0;
     private final static int VERTICAL = 1;
-    private final static int DIAGONALLEFTTORIGHT = 2;
-    private final static int DIAGONALRIGHTTOLEFT = 3;
-    private final static int FORWARD = 0;
     private final static int BACKWARD = 1;
     private int direction;
     private int orientation;
@@ -108,13 +105,13 @@ public class WordsSearch extends Activity {
                     }
                 }
                 try {
-                    response = new MyHttpRequestTask2().execute("http://13.229.115.32:3000/team/updateScore").get();
+                    response = new MyHttpRequestTask2().execute("https://amazingtrail.ml/api/team/updateScore").get();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
-                Intent intent = null;
+                Intent intent;
                 if(response.equals("fail")|| response.equals("")) {
                     Toast toast = Toast.makeText(WordsSearch.this, "Bad Internet Connection, Try Again Later!", Toast.LENGTH_SHORT);
                     toast.show();
@@ -137,16 +134,13 @@ public class WordsSearch extends Activity {
         //Populating List of Words from dictionary
         String word;
         try {
-            //System.out.println("WordSearch Reach");
             word = new MyHttpRequestTask().execute("").get();
             JSONArray mainChildNode = new JSONArray(word);
             for(int i = 0; i < mainChildNode.length();i++){
                     JSONObject hotspot= mainChildNode.getJSONObject(i);
                     placeName = hotspot.getString("hotspot");
-                    //JSONObject wordsArrayObject = firstChildNode.getJSONObject(1);
                     JSONArray wordsArray = hotspot.getJSONArray("words");
                     for(int x = 0 ; x < wordsArray.length();x++){
-                        System.out.println(x+" "+wordsArray.getString(x));
                         wordList[x] = wordsArray.getString(x);
                     }
 
@@ -173,35 +167,14 @@ public class WordsSearch extends Activity {
         //adding words to the puzzle
         for(int i = 0; i < wordList.length; i++){
             addWord(wordList[i], puzzle);
-            //System.out.println(wordList[i] + " successfully added!");
             characterCount += wordList[i].length();
             if(characterCount > maxCharacters)
                 break;
         }
 
-        //printing the puzzle
-        /*System.out.println("PUZZLE\n");
-        for(int i = 0; i < puzzle.length; i++){
-            for(int j = 0; j < puzzle.length; j++){
-                System.out.print(puzzle[i][j] + " ");
-            }
-            System.out.print("\n");
-        }*/
 
         //filling empty spaces
         puzzle = fill(puzzle);
-        //System.out.println("\n");
-
-        //printing the complete puzzle
-        /*
-        for(int i = 0; i < puzzle.length; i++){
-            for(int j = 0; j < puzzle.length; j++){
-                System.out.print(puzzle[i][j] + " ");
-            }
-            System.out.print("\n");
-        }
-        //creating the grid
-        */
         createGrid(puzzle);
     }
     public static void hideSoftKeyboard(Activity activity) {
@@ -236,9 +209,6 @@ public class WordsSearch extends Activity {
         TableLayout table = (TableLayout) findViewById(R.id.mainLayout);
 
         for(int i = 0; i < input.length; i++){
-            //LinearLayout rowLayout = new LinearLayout(this);
-            //rowLayout.setOrientation(LinearLayout.HORIZONTAL);
-            //rowLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             TableRow row = new TableRow(this);
             row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
             row.setGravity(Gravity.CENTER);
@@ -286,15 +256,7 @@ public class WordsSearch extends Activity {
             else if(direction == VERTICAL){
                 row = random.nextInt(puzzle.length - word.length());
                 col = random.nextInt(puzzle.length);
-            }/*
-            else if(direction == DIAGONALLEFTTORIGHT) {
-                row = random.nextInt(puzzle.length - word.length());
-                col = random.nextInt(puzzle.length - word.length());
             }
-			else if(direction == DIAGONALRIGHTTOLEFT) {
-				row = random.nextInt(puzzle.length - word.length());
-				col = random.nextInt(puzzle.length - (puzzle.length - word.length()));
-			}*/
             ArrayList<PuzzlePoint> wordPoints = new ArrayList<>();
             for(int i = 0; i < word.length(); i++){
                 if(puzzle[row][col] == ' ' || puzzle[row][col] == word.charAt(i)){
@@ -303,8 +265,6 @@ public class WordsSearch extends Activity {
                     flag++;
                     if(direction == HORIZONTAL)		col++;
                     if(direction == VERTICAL)		row++;
-                    //if(direction == DIAGONALLEFTTORIGHT) { col++; row++; }
-                    //if(direction == DIAGONALLEFTTORIGHT) { col--; row++; }
                 }
                 else {
                     for(int j = i; j >= 0; j--){
@@ -312,8 +272,6 @@ public class WordsSearch extends Activity {
                         wordPoints = new ArrayList<>();
                         if(direction == HORIZONTAL)		col--;
                         if(direction == VERTICAL)		row--;
-                       // if(direction == DIAGONALLEFTTORIGHT) {		col--; row--; }
-                        //if(direction == DIAGONALRIGHTTOLEFT) {	col++; row--; }
                     }
                     flag = 0;
                     break;
@@ -354,7 +312,7 @@ public class WordsSearch extends Activity {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/wordsearch/getWordSearchWords?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("https://amazingtrail.ml/api/wordsearch/getWordSearchWords?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
@@ -366,15 +324,12 @@ public class WordsSearch extends Activity {
         @Override
         protected String doInBackground(String... params) {
             String message = Integer.toString(score);
-            System.out.println("Score:"+score);
             HashMap<String,String> userHash = new HashMap<>();
             userHash.put("team_id",InstanceDAO.teamID);
-            System.out.println("tid: "+InstanceDAO.teamID);
             userHash.put("trail_instance_id",InstanceDAO.trailInstanceID);
             userHash.put("score",message);
             userHash.put("hotspot",placeName);
-            System.out.println("message: "+message);
-            String response = HttpConnectionUtility.post("http://13.229.115.32:3000/team/updateScore",userHash);
+            String response = HttpConnectionUtility.post("https://amazingtrail.ml/api/team/updateScore",userHash);
             if (response == null){
                 return null;
             }

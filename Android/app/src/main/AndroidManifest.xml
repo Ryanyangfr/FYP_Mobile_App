@@ -72,7 +72,6 @@
             android:required="false" />
 
         <activity android:name="com.smu.engagingu.QuizActivity" />
-        <activity android:name="com.smu.engagingu.QuizStartingPage" />
         <activity android:name="com.smu.engagingu.TeamDisplay" />
         <activity
             android:name="com.smu.engagingu.StoryLine.Welcome"

@@ -11,7 +11,12 @@ import android.widget.TextView;
 
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.fyp.R;
-
+/*
+ * LeaderboardActivitiesFragment refers to the page that displays the activity feed board. All
+ * activityfeed updates are communicated to the application through the Socket and stored in an
+ * ArrayList<Event>. The eventadapter is used to convert the arraylist into a user-friendly
+ * ListView
+ */
 public class LeaderboardActivitiesFragment extends Fragment {
     private RecyclerView.LayoutManager lManager;
 
@@ -26,7 +31,6 @@ public class LeaderboardActivitiesFragment extends Fragment {
         // Use LinearLayout as the layout manager
         lManager = new LinearLayoutManager(getActivity());
         recycler.setLayoutManager(lManager);
-        //InstanceDAO.adapter = Session.getEventAdapter(getActivity().getApplicationContext());
         recycler.setAdapter(InstanceDAO.adapter);
         return view;
     }

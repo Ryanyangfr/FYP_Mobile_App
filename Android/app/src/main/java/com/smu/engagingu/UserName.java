@@ -37,7 +37,7 @@ public class UserName extends AppCompatActivity {
     }
 
     public void sendUserName(View view) throws ExecutionException, InterruptedException {
-        InstanceDAO.teamID = new MyHttpRequestTask().execute("http://13.229.115.32:3000/user/register").get();
+        InstanceDAO.teamID = new MyHttpRequestTask().execute("https://amazingtrail.ml/api/user/register").get();
         if(message.equals("")){
             Context context = getApplicationContext();
             CharSequence text = "Please enter a valid username!";
@@ -68,7 +68,7 @@ public class UserName extends AppCompatActivity {
             message = editText.getText().toString();
             HashMap<String,String> userHash = new HashMap<>();
             userHash.put("username",message);
-            String response = HttpConnectionUtility.post("http://13.229.115.32:3000/user/register",userHash);
+            String response = HttpConnectionUtility.post("https://amazingtrail.ml/api/user/register",userHash);
             try {
                 JSONObject userObject = new JSONObject(response);
                 return userObject.getString("team_id");

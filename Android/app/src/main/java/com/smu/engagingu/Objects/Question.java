@@ -1,5 +1,7 @@
 package com.smu.engagingu.Objects;
-
+/*
+ * Question the object used to store the question and answer options for each quiz question
+ */
 public class Question {
     private String question;
     private String option1;

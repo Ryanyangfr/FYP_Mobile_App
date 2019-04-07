@@ -1,7 +1,9 @@
 package com.smu.engagingu.Objects;
 
 import java.io.Serializable;
-
+/*
+ * Puzzlepoint refers to the coordinates of each character stored on the wordsearch puzzle
+ */
 public class PuzzlePoint implements Serializable {
     private int row;
     private int column;

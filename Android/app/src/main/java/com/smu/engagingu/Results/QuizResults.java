@@ -17,7 +17,10 @@ import com.smu.engagingu.QuizActivity;
 import com.smu.engagingu.fyp.R;
 
 import java.util.ArrayList;
-
+/*
+ * QuizResults refers to the page used to display the questions
+ * and answer results of the quiz activity
+ */
 public class QuizResults extends AppCompatActivity {
     private ArrayList<GameResultEntry> resultsList;
     @Override

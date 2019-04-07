@@ -32,14 +32,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-
+/*
+ * DragDrop refers to the page that displays the drag and drop game mode. This includes the question
+ * and answer areas. The draggable textboxes that represent that the answer options are also initialised
+ * with drag event listeners
+ */
 public class DragDrop extends AppCompatActivity implements View.OnDragListener, View.OnLongClickListener {
     public static final String CORRECT_ANSWERS_DRAGDROP = "com.smu.engagingu.CORRECTDRAGDROPANSWERS";
     public static final String QUESTION_COUNT_DRAGDROP = "com.smu.engagingu.DRAGDROPQUESTIONCOUNT";
     public static final String QUESTION_DRAGDROP = "com.smu.engagingu.DRAGDROPQUESTION";
 
-
-    private static final String TAG = DragDrop.class.getSimpleName();
     private int score;
     private String questionName;
     private Button textView1;
@@ -52,7 +54,6 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
     private TextView textView7;
     private TextView textView8;
     private TextView textView9;
-    private TextView textView10;
     private HashMap<String,String> optionsMap = new HashMap<>();
     private HashMap<String,Boolean> answersMap = new HashMap<>();
     private HashMap<String,Boolean> areaMap = new HashMap<>();
@@ -60,8 +61,6 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
     private String placeName;
     private String[] dragOption = new String[5];
     private String[] dragArea = new String[5];
-
-    private static final String TEXT_VIEW_TAG = "DRAG TEXT";
 
 
     @Override
@@ -103,6 +102,9 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
         }
 
     }
+    /*
+     * Initialise the display texts for all the textboxes used in drag and drop
+     */
     private void findViews() {
         textView1 = (Button) findViewById(R.id.label1);
         textView1.setTag(dragOption[0]);
@@ -131,22 +133,16 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
         question.setText(questionName);
 
         submit = (Button) findViewById(R.id.button5);
-        /*imageView = (ImageView) findViewById(R.id.image_view);
-        imageView.setTag(IMAGE_VIEW_TAG);
-        button = (Button) findViewById(R.id.button);
-        button.setTag(BUTTON_VIEW_TAG);*/
     }
 
 
-    //Implement long click and drag listener
+    //Implement long click and drag listeners
     private void implementEvents() {
         //add or remove any view that you don't want to be dragged
         textView1.setOnLongClickListener(this);
         textView2.setOnLongClickListener(this);
         textView3.setOnLongClickListener(this);
         textView4.setOnLongClickListener(this);
-        /*imageView.setOnLongClickListener(this);
-        button.setOnLongClickListener(this);*/
 
         //add or remove any layout view that you don't want to accept dragged view
         findViewById(R.id.top_layout).setOnDragListener(this);
@@ -199,8 +195,6 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
                 , 0//no needed flags
         );
 
-        //Set view visibility to INVISIBLE as we are going to drag the view
-        //view.setVisibility(View.INVISIBLE);
         return true;
     }
 
@@ -218,8 +212,6 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
                     // if you want to apply color when drag started to your view you can uncomment below lines
                     // to give any color tint to the View to indicate that it can accept
                     // data.
-
-                    //view.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN);//set background color to your view
 
                     view.invalidate();
 
@@ -249,13 +241,10 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
             case DragEvent.ACTION_DRAG_EXITED:
                 // Re-sets the color tint to blue, if you had set the BLUE color or any color in ACTION_DRAG_STARTED. Returns true; the return value is ignored.
 
-                //  view.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN);
-
                 //If u had not provided any color in ACTION_DRAG_STARTED then clear color filter.
                 String dragAreaName;
                 if(view.getTag()!=null) {
                     dragAreaName = view.getTag().toString();
-                    System.out.println("here: "+dragAreaName);
                     areaMap.put(dragAreaName, false);
                 }
                 view.getBackground().clearColorFilter();
@@ -268,7 +257,6 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
                 ClipData.Item item = event.getClipData().getItemAt(0);
                 if(view.getTag()!=null){
                     String temp = view.getTag().toString();
-                    System.out.println(temp);
                     if(areaMap.get(temp)!=null) {
                         if (areaMap.get(temp) == true) {
                             return false;
@@ -277,11 +265,8 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
                 }
                 // Gets the text data from the item.
                 String dragData = item.getText().toString();
-                System.out.println(dragData);
-                //String dragAreaName="";
                 if(view.getTag()!=null) {
                     dragAreaName = view.getTag().toString();
-                    System.out.println("There: "+dragAreaName);
                     areaMap.put(dragAreaName,true);
                     if(optionsMap.get(dragAreaName).equals(dragData)){
                         answersMap.put(dragAreaName,true);
@@ -292,7 +277,6 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
                     }
                 }
                 // Displays a message containing the dragged data.
-                //Toast.makeText(this, "Dragged data is " + dragData, Toast.LENGTH_SHORT).show();
 
                 // Turns off any color tints
                 view.getBackground().clearColorFilter();
@@ -303,12 +287,10 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
                 View v = (View) event.getLocalState();
                 ViewGroup owner = (ViewGroup) v.getParent();
                 owner.removeView(v);//remove the dragged view
-                //if (view.getId().equals(top_layout))
                 LinearLayout container = (LinearLayout) view;//caste the view into LinearLayout as our drag acceptable layout is LinearLayout
                 container.addView(v);//Add the dragged view
                 v.setVisibility(View.VISIBLE);//finally set Visibility to VISIBLE
 
-                // Returns true. DragEvent.getResult() will return true.
                 return true;
             case DragEvent.ACTION_DRAG_ENDED:
                 // Turns off any color tinting
@@ -319,7 +301,6 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
 
                 // Does a getResult(), and displays what happened.
                 if (event.getResult()) {
-                    //Toast.makeText(this, "The drop was handled.", Toast.LENGTH_SHORT).show();
                 }
                 else
                     Toast.makeText(this, "The drop didn't work.", Toast.LENGTH_SHORT).show();
@@ -335,8 +316,11 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
         }
         return false;
     }
+    /*
+     * method used to submit user's score obtained for this game to the back-end server
+     */
     private void submitScore() {
-        String response = null;
+        String response = "a";
         if (InstanceDAO.isLeader) {
             ArrayList<GameResultEntry> resultsList = new ArrayList<>();
 
@@ -352,7 +336,7 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
                 resultsList.add(new GameResultEntry("1", key, answer, option));
             }
             try {
-                response = new MyHttpRequestTask2().execute("http://13.229.115.32:3000/team/updateScore").get();
+                response = new MyHttpRequestTask2().execute("https://amazingtrail.ml/api/team/updateScore").get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -374,30 +358,30 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
             }
-        }else {
             if (response.equals("fail") || response.equals("")) {
                 Toast toast = Toast.makeText(DragDrop.this, "Bad Internet Connection, Try Again Later!", Toast.LENGTH_SHORT);
                 toast.show();
-            }else{
+            } else {
                 Intent intent = new Intent(DragDrop.this, HomePage.class);
                 InstanceDAO.completedList.add(placeName);
                 startActivity(intent);
             }
+        }else {
+            Intent intent = new Intent(DragDrop.this, HomePage.class);
+            InstanceDAO.completedList.add(placeName);
+            startActivity(intent);
         }
     }
     private class MyHttpRequestTask2 extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {
             String message = Integer.toString(score);
-            System.out.println("Score:"+score);
             HashMap<String,String> userHash = new HashMap<>();
             userHash.put("team_id",InstanceDAO.teamID);
-            System.out.println("tid: "+InstanceDAO.teamID);
             userHash.put("trail_instance_id",InstanceDAO.trailInstanceID);
             userHash.put("score",message);
             userHash.put("hotspot",placeName);
-            System.out.println("message: "+message);
-            String response = HttpConnectionUtility.post("http://13.229.115.32:3000/team/updateScore",userHash);
+            String response = HttpConnectionUtility.post("https://amazingtrail.ml/api/team/updateScore",userHash);
             if (response == null){
                 return null;
             }
@@ -408,7 +392,7 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/draganddrop/getDragAndDrop?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("https://amazingtrail.ml/api/draganddrop/getDragAndDrop?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }

@@ -17,7 +17,10 @@ import com.smu.engagingu.HomePage;
 import com.smu.engagingu.fyp.R;
 
 import java.util.ArrayList;
-
+/*
+ * DragDropResults refers to the page for displaying the results
+ * of the drag and drop game mode
+ */
 public class DragDropResults extends AppCompatActivity {
     private ArrayList<GameResultEntry> resultList;
     @Override
@@ -40,6 +43,8 @@ public class DragDropResults extends AppCompatActivity {
         Button footerButton = footer.findViewById(R.id.quizResultsFooterButton);
         TextView footerScore = footer.findViewById(R.id.quizResultsScore);
         footerScore.setText("You got "+correctAnswers+" / "+numberOfQuestions +" correct");
+        //dragdropresultadapter is used to convert the arraylist of result questions and answers
+        //into a list view
         DragDropResultAdapter ddResultAdapter = new DragDropResultAdapter(this,resultList);
         listView.setAdapter(ddResultAdapter);
 

@@ -17,7 +17,11 @@ import android.view.MenuItem;
 import com.smu.engagingu.fyp.R;
 
 import java.lang.reflect.Field;
-
+/*
+ * HomePage is strictly the layout with a bottom navigation. This is used for navigation
+ * to the main fragments of the application, namely HomePageFragment, LeaderboardFragment,
+ * SubmissionFragment and FAQFragment
+ */
 public class HomePage extends AppCompatActivity {
     private BottomNavigationView bottomNav;
     @Override
@@ -25,7 +29,6 @@ public class HomePage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,new HomeFragment()).commit();
-
         bottomNav = findViewById(R.id.bottom_navigation);
         disableShiftMode((bottomNav));
         bottomNav.setOnNavigationItemSelectedListener(navListener);
@@ -62,7 +65,6 @@ public class HomePage extends AppCompatActivity {
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        System.out.println(item.getItemId());
         switch (item.getItemId()) {
             case R.id.action_logout:
                 // User chose the "Settings" item, show the app settings UI...
@@ -79,6 +81,9 @@ public class HomePage extends AppCompatActivity {
     public void onBackPressed() {
 
     }
+    /*
+     * Used to navigate bottom navigation bar
+     */
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @TargetApi(Build.VERSION_CODES.O)

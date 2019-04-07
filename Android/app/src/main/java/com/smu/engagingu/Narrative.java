@@ -15,15 +15,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.smu.engagingu.DAO.InstanceDAO;
-import com.smu.engagingu.Hotspot.Hotspot;
+import com.smu.engagingu.Objects.Hotspot;
 import com.smu.engagingu.Utilities.HttpConnectionUtility;
 import com.smu.engagingu.fyp.R;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
-
+/*
+ * This class is used to display the narrative corresponding to each individual hotspot
+ * the information is obtained from the questiontype hashmap, according to the question type,
+ * the program redirects the user to the respective gamemode
+ */
 public class Narrative extends AppCompatActivity {
     public static final String EXTRA_MESSAGE2 = "com.smu.engagingu.MESSAGE";
     private String placeName;
@@ -72,16 +74,27 @@ public class Narrative extends AppCompatActivity {
             }else{
                 isConnected = activeNetwork != null &&
                         activeNetwork.isConnectedOrConnecting();
+                //switch case to check for which game mode to redirect the user to
                 if(isConnected) {
                     switch (gameModeCheck) {
                         case "1":
                             intent = new Intent(Narrative.this, QuizActivity.class);
                             break;
                         case "2":
-                            intent = new Intent(Narrative.this, CameraPage.class);
+                            if(!InstanceDAO.isLeader){
+                                InstanceDAO.completedList.add(placeName);
+                                intent = new Intent(Narrative.this, MemberSubmissionPage.class);
+                            }else {
+                                intent = new Intent(Narrative.this, CameraPage.class);
+                            }
                             break;
                         case "3":
-                            intent = new Intent(Narrative.this, Drawing.class);
+                            if(!InstanceDAO.isLeader) {
+                                InstanceDAO.completedList.add(placeName);
+                                intent = new Intent(Narrative.this, MemberSubmissionPage.class);
+                            }else{
+                                intent = new Intent(Narrative.this,Drawing.class);
+                            }
                             break;
                         case "4":
                             intent = new Intent(Narrative.this, Anagram.class);
@@ -93,7 +106,6 @@ public class Narrative extends AppCompatActivity {
                             intent = new Intent(Narrative.this, WordsSearch.class);
                             break;
                         default:
-                            System.out.println("no match");
                     }
                 }
                 Objects.requireNonNull(intent).putExtra(EXTRA_MESSAGE2, placeName);
@@ -121,7 +133,6 @@ public class Narrative extends AppCompatActivity {
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        System.out.println(item.getItemId());
         switch (item.getItemId()) {
             case R.id.action_logout:
                 // User chose the "Settings" item, show the app settings UI...
@@ -137,10 +148,9 @@ public class Narrative extends AppCompatActivity {
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {
-            Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/draganddrop/getDragAndDrop?trail_instance_id="+InstanceDAO.trailInstanceID);
-            if (response == null){
-                return null;
+            String response = HttpConnectionUtility.get("https://amazingtrail.ml/api/draganddrop/getDragAndDrop?trail_instance_id="+InstanceDAO.trailInstanceID);
+            if (response == null || response.equals("fail")){
+                return "fail";
             }
             return response;
         }

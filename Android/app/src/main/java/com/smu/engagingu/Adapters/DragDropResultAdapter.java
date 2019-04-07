@@ -1,3 +1,4 @@
+//Adapter to display drag and drop results
 package com.smu.engagingu.Adapters;
 
 import android.content.Context;
@@ -14,6 +15,12 @@ import com.smu.engagingu.fyp.R;
 
 import java.util.ArrayList;
 import java.util.Objects;
+/*
+ * DragDropResultAdapter is intended to be used to convert drag and drop
+ * results into a listview to be displayed on the results page
+ * The data displayed are actual answer, user's answers and the
+ * score obtained by the user
+ */
 
 public class DragDropResultAdapter extends ArrayAdapter<GameResultEntry> {
     public DragDropResultAdapter(Context context, ArrayList<GameResultEntry> dragDropResults) {
@@ -36,7 +43,6 @@ public class DragDropResultAdapter extends ArrayAdapter<GameResultEntry> {
         TextView userAnswerName = (TextView) convertView.findViewById(R.id.userAnswerView);
         if(Objects.requireNonNull(entry).getAnswer().equals(entry.getUserAnswer())){
             answerName.setTextColor(Color.parseColor("#92d050"));//Green Colour
-            //userAnswerName.setBackgroundColor(Color.parseColor("#E85858"));
             userAnswerName.setTextColor(Color.parseColor("#92d050"));//Green Colour
         }else{
             answerName.setTextColor(Color.parseColor("#92d050"));//Green Colour

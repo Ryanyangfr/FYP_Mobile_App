@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -39,13 +38,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
-
+/*
+ * Drawing refers to the page that displays the drawing game mode. This game mode is also only available
+ * for leaders. If user is not a leader, an informational page would be displayed to inform the user of
+ * the next viable steps.
+ */
 public class Drawing extends AppCompatActivity {
-    Button submitButton;
-    TextView question;
     String mCurrentPhotoPath;
     File photoFile;
-    Uri photoURI;
+
     public static final String QUESTION= "com.smu.engagingu.QUESTION";
     private String targetQuestion;
     private String placeName;
@@ -55,11 +56,10 @@ public class Drawing extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*PaintView paintView = new PaintView(this);
-        setContentView(paintView);*/
         setContentView(R.layout.activity_drawing);
         Intent intent = getIntent();
         placeName = intent.getStringExtra(Narrative.EXTRA_MESSAGE2);
+        //paintView is the canvas object
         paintView = (PaintView) findViewById(R.id.paintView);
         questionView = findViewById(R.id.textView13);
         getQuestion();
@@ -73,7 +73,6 @@ public class Drawing extends AppCompatActivity {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         paintView.init(metrics);
-
 
         Button btn = (Button) findViewById(R.id.submitButton);
         Button clearBtn = findViewById(R.id.clear);
@@ -137,7 +136,6 @@ public class Drawing extends AppCompatActivity {
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
-
                                 // Continue only if the File was successfully created
                                 if (photoFile != null) {
                                     FileOutputStream ostream = null;
@@ -154,12 +152,9 @@ public class Drawing extends AppCompatActivity {
                                     }
                                     try {
                                         responseCode = new PictureUploader().execute(InstanceDAO.teamID, InstanceDAO.trailInstanceID, targetQuestion, placeName).get();
-
                                         SubmissionDAO.HOTSPOTS.add(placeName);
                                         SubmissionDAO.QUESTIONS.add(targetQuestion);
                                         SubmissionDAO.IMAGEPATHS.add(mCurrentPhotoPath);
-
-                                        System.out.println("Response Code: " + responseCode);
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     } catch (ExecutionException e) {
@@ -172,7 +167,6 @@ public class Drawing extends AppCompatActivity {
                                         Toast toast = Toast.makeText(Drawing.this, "Photo Successfully Uploaded!", Toast.LENGTH_SHORT);
                                         toast.show();
                                         Intent intent = new Intent(Drawing.this, HomePage.class);
-                                        //paintView.clear();
                                         InstanceDAO.completedList.add(placeName);
                                         startActivity(intent);
                                     }
@@ -191,6 +185,9 @@ public class Drawing extends AppCompatActivity {
             }
         });
     }
+    /*
+     * method to get drawing question from the database
+     */
     private void getQuestion(){
         String word;
         try {
@@ -210,22 +207,26 @@ public class Drawing extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+    /*
+     * create the image file for the canvas object
+     */
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStorageDirectory();
-        System.out.println("Storage DIR" + storageDir.getAbsolutePath());
         File image = File.createTempFile(
                 imageFileName,    /*prefix */
                 ".jpg",    /*suffix */
                 storageDir    /*directory*/
         );
-
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
+    /*
+     * uploads drawing picture onto the database via multipart post
+     */
     private class PictureUploader extends AsyncTask<String,Integer,String> {
 
         @Override
@@ -236,7 +237,7 @@ public class Drawing extends AppCompatActivity {
             jsonMap.put("trail_instance_id", params[1]);
             jsonMap.put("question", params[2]);
             jsonMap.put("hotspot",params[3]);
-            String responseCode = HttpConnectionUtility.multipartPost("http://13.229.115.32:3000/upload/uploadSubmission", jsonMap, mCurrentPhotoPath, "image", "image/png");
+            String responseCode = HttpConnectionUtility.multipartPost("https://amazingtrail.ml/api/upload/uploadSubmission", jsonMap, mCurrentPhotoPath, "image", "image/png");
             return responseCode;
         }
     }
@@ -270,7 +271,7 @@ public class Drawing extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/upload/getDrawingQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("https://amazingtrail.ml/api/upload/getDrawingQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }

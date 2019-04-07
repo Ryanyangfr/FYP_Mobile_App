@@ -14,7 +14,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-
+/*
+ * QuestionDatabase is used for pulling quiz and submission questions from the database
+ * questions and answers are then stored in a hashmap to be used for the conduct
+ * of the amazing race trail
+ */
 public class QuestionDatabase {
     private HashMap<String,ArrayList<Question>> QuestionsMap;
     private HashMap<String,String> SelfieQuestionsMap;
@@ -24,7 +28,6 @@ public class QuestionDatabase {
         String response = null;
         try {
             response = new QuestionDatabase.MyHttpRequestTask().execute().get();
-            System.out.println(response);
         } catch (InterruptedException e) {
 
             e.printStackTrace();
@@ -72,7 +75,6 @@ public class QuestionDatabase {
         SelfieQuestionsMap = new HashMap<>();
         try {
             response = new MyHttpRequestTask2().execute().get();
-            System.out.println(response);
         } catch (InterruptedException e) {
 
             e.printStackTrace();
@@ -81,7 +83,6 @@ public class QuestionDatabase {
         }
         try {
             JSONArray mainChildNode = new JSONArray(response);
-            System.out.println("1"+mainChildNode);
             for(int i =0 ; i < mainChildNode.length();i++){
                 JSONObject newChildNode = mainChildNode.getJSONObject(i);
                 String hotspot = newChildNode.getString("hotspot");
@@ -92,22 +93,24 @@ public class QuestionDatabase {
             e.printStackTrace();
         }
     }
+    //Get Quiz questions JSON
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/quiz/getQuizzes?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("https://amazingtrail.ml/api/quiz/getQuizzes?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
             return response;
         }
     }
+    //Get Submission questions JSON
 private class MyHttpRequestTask2 extends AsyncTask<String,Integer,String> {
     @Override
     protected String doInBackground(String... params) {
         Map<String, String> req = new HashMap<>();
-        String response = HttpConnectionUtility.get("http://13.229.115.32:3000/upload/getSubmissionQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
+        String response = HttpConnectionUtility.get("https://amazingtrail.ml/api/upload/getSubmissionQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
         if (response == null){
             return null;
         }

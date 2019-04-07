@@ -12,7 +12,12 @@ import android.widget.TextView;
 import com.smu.engagingu.fyp.R;
 
 import java.util.ArrayList;
-
+/*
+ * LeaderboardAdapter is intended to be used to convert Leaderboard
+ * into a listview to be easily viewable by users
+ * The data displayed are position, team name and number of
+ * hotspots completed
+ */
 public class LeaderboardAdapter extends ArrayAdapter<String> {
     public LeaderboardAdapter(Context context, ArrayList<String> users) {
         super(context, 0, users);
@@ -43,7 +48,6 @@ public class LeaderboardAdapter extends ArrayAdapter<String> {
         }
         // Lookup view for data population
         TextView tvName = (TextView) convertView.findViewById(R.id.textView3);
-        //TextView tvHome = (TextView) convertView.findViewById(R.id.tvHome);
         // Populate the data into the template view using the data object
         tvName.setText(entry);
         // Return the completed view to render on screen

@@ -1,7 +1,9 @@
 package com.smu.engagingu.Utilities;
 
 import android.graphics.Path;
-
+/*
+ * FingerPath is used to define the style of the pen stroke used by the drawing page.
+ */
 public class FingerPath {
 
     public int color;

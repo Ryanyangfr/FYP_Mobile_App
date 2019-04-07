@@ -8,7 +8,11 @@ import android.widget.Button;
 
 import com.smu.engagingu.TeamDisplay;
 import com.smu.engagingu.fyp.R;
-
+/*
+ * Tutorial refers to the page that displays the tutorial page to guide new users about instructions
+ * to effectively play out the whole amazing race trail
+ * The wordings and tutorials of the tutorial page is fixed and cannot be changed
+ */
 public class Tutorial extends AppCompatActivity {
 
     @Override

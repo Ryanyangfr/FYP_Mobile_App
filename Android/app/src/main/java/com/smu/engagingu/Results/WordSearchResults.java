@@ -19,7 +19,10 @@ import com.smu.engagingu.fyp.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
+/*
+ * WordSearchResults refers to the page that displays the questions
+ * and answers of the wordsearch activity
+ */
 public class WordSearchResults extends AppCompatActivity {
     private char [][] puzzle;
     private String score;
@@ -51,6 +54,11 @@ public class WordSearchResults extends AppCompatActivity {
     public void onBackPressed() {
 
     }
+    /*
+     * createFinishedGrid takes in a wordsarch 2D char array and displays the finished grid
+     * with the correct answers highlighted in green and the words missed out
+     * in red
+     */
     public void createFinishedGrid(char[][] input){
         TableLayout table = findViewById(R.id.mainLayout);
         int count = table.getChildCount();
@@ -60,9 +68,6 @@ public class WordSearchResults extends AppCompatActivity {
         }
 
         for(int i = 0; i < input.length; i++){
-            //LinearLayout rowLayout = new LinearLayout(this);
-            //rowLayout.setOrientation(LinearLayout.HORIZONTAL);
-            //rowLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             TableRow row = new TableRow(this);
             row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
             row.setGravity(Gravity.CENTER);

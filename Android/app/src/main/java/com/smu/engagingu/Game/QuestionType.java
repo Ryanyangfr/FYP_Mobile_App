@@ -12,10 +12,13 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-
+/*
+ * QuestionType is used for pulling the information needed for all the game modes from the database
+ * this is used to determine the relationship between hotspot and their respective game-modes
+ * to be used for future narrative to game redirection.
+ */
 public class QuestionType {
     private HashMap<String,String> QuestionTypeMap;
-    private HashMap<String,String> SelfieQuestionsMap;
 
     public QuestionType() {
         QuestionTypeMap = new HashMap<>();
@@ -49,7 +52,6 @@ public class QuestionType {
                 for (int i = 0; i < jsonMainNode.length(); i++) {
                     JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
                     String placeName = jsonChildNode.getString("hotspot");
-                    System.out.println("quiz: " + placeName);
                     QuestionTypeMap.put(placeName, "1");
                 }
             }
@@ -58,7 +60,6 @@ public class QuestionType {
                 for (int i = 0; i < jsonMainNode2.length(); i++) {
                     JSONObject jsonChildNode = jsonMainNode2.getJSONObject(i);
                     String placeName = jsonChildNode.getString("hotspot");
-                    System.out.println("selfie: " + placeName);
                     QuestionTypeMap.put(placeName, "2");
                 }
             }
@@ -67,7 +68,6 @@ public class QuestionType {
                 for (int i = 0; i < jsonMainNode3.length(); i++) {
                     JSONObject jsonChildNode = jsonMainNode3.getJSONObject(i);
                     String placeName = jsonChildNode.getString("hotspot");
-                    System.out.println("drawing: " + placeName);
                     QuestionTypeMap.put(placeName, "3");
                 }
             }
@@ -76,7 +76,6 @@ public class QuestionType {
                 for (int i = 0; i < jsonMainNode4.length(); i++) {
                     JSONObject jsonChildNode = jsonMainNode4.getJSONObject(i);
                     String placeName = jsonChildNode.getString("hotspot");
-                    System.out.println("anagram: " + placeName);
                     QuestionTypeMap.put(placeName, "4");
                 }
             }
@@ -85,7 +84,6 @@ public class QuestionType {
                 for (int i = 0; i < jsonMainNode5.length(); i++) {
                     JSONObject jsonChildNode = jsonMainNode5.getJSONObject(i);
                     String placeName = jsonChildNode.getString("hotspot");
-                    System.out.println("dragndrop: " + placeName);
                     QuestionTypeMap.put(placeName, "5");
                 }
             }
@@ -101,68 +99,72 @@ public class QuestionType {
             e.printStackTrace();
         }
     }
-
+    //pull all quiz questions
     private class MyHttpRequestTaskQuiz extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/quiz/getQuizzes?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("https://amazingtrail.ml/api/quiz/getQuizzes?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
             return response;
         }
     }
+    //pull all selfie questions
     private class MyHttpRequestTaskSelfie extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/upload/getSubmissionQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("https://amazingtrail.ml/api/upload/getSubmissionQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
             return response;
         }
     }
+    //pull all drawing questions
     private class MyHttpRequestTaskDrawing extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/upload/getDrawingQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("https://amazingtrail.ml/api/upload/getDrawingQuestion?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
             return response;
         }
     }
+    //pull all anagram questions
     private class MyHttpRequestTaskAnagram extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/anagram/getAnagrams?trail_instance_id="+InstanceDAO.trailInstanceID);
-            System.out.println("Debug:"+response);
+            String response = HttpConnectionUtility.get("https://amazingtrail.ml/api/anagram/getAnagrams?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
             return response;
         }
     }
+    //pull all drag and drop questions
     private class MyHttpRequestTaskDragAndDrop extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/draganddrop/getDragAndDrop?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("https://amazingtrail.ml/api/draganddrop/getDragAndDrop?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
             return response;
         }
     }
+    //pull all word search questions
     private class MyHttpRequestTaskWordsSearch extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/wordsearch/getWordSearchWords?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("https://amazingtrail.ml/api/wordsearch/getWordSearchWords?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }

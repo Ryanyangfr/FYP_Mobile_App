@@ -34,6 +34,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Bad Internet Connection! Try again later!"
+        android:textColor="@color/common_google_signin_btn_text_dark_focused"
+        android:visibility="gone" />
+
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"

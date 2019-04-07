@@ -38,7 +38,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.smu.engagingu.DAO.InstanceDAO;
 import com.smu.engagingu.DAO.Session;
 import com.smu.engagingu.Game.QuestionType;
-import com.smu.engagingu.Hotspot.Hotspot;
+import com.smu.engagingu.Objects.Hotspot;
 import com.smu.engagingu.Utilities.HttpConnectionUtility;
 import com.smu.engagingu.fyp.R;
 
@@ -53,7 +53,10 @@ import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
-
+/*
+ * HomeFragment is the main fragment that displays the homepage of the application. It displays the
+ * map with the location hotspots as defined from the server back-end
+ */
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
     public static final String EXTRA_MESSAGE = "com.smu.engagingu.MESSAGE1";
     public static final String NARRATIVE_MESSAGE = "com.smu.engagingu.MESSAGE2";
@@ -64,7 +67,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private LocationListener locationListener;
     private LocationManager locationManager;
-    private Boolean completed;
     private LatLng locationToReturn;
     private final long MIN_TIME = 1000; //1 second
     private final long MIN_DIST = 5; //metres?
@@ -72,31 +74,22 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private HashMap<String, String> questionTypeMap;
 
 
-    private LatLng latLng;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         locationToReturn = new LatLng(0.0,0.0);
-        System.out.println("trailInstanceID2: " + InstanceDAO.trailInstanceID);
         saveSession();
         questionTypeMap = InstanceDAO.questionTypeMap;
-        System.out.println(questionTypeMap.size());
-        System.out.println(InstanceDAO.completedList.size());
         if(InstanceDAO.completedList.size()!=0 && (InstanceDAO.completedList.size()==questionTypeMap.size()) ){
             openDialog();
         }
-        //InstanceDAO.adapter = Session.getEventAdapter(getActivity().getApplicationContext());
-        //System.out.println(Session.getEventAdapter(getActivity().getApplicationContext()));
         if (!InstanceDAO.hasPulled) {
             populateData();
             QuestionType questionType = new QuestionType();
             questionTypeMap = questionType.getQuestionTypeMap();
             InstanceDAO.questionTypeMap = questionTypeMap;
         }
-
-        //requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PackageManager.PERMISSION_GRANTED);
-        //requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
         View v = inflater.inflate(R.layout.fragment_home, container, false);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         final Activity activity = getActivity();
@@ -114,48 +107,20 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 }, 0, 5000);
             }
         });
-        /*AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                Timer t = new Timer();
-                t.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        new MyHttpRequestTask().execute("");
-                    }
-                }, 0, 10000);
-            }
-        });*/
-
-
-        // getLocation(); // getting and printing current location
-
 
         mMapView = (MapView) v.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
-        mMapView.getMapAsync((OnMapReadyCallback) this); //this is important
+        mMapView.getMapAsync((OnMapReadyCallback) this);
         return v;
     }
     /*
-    private void getDeviceLocation(){
-        //Log.d(TAG,"getDeviceLocation: gettinng the current devices location");
-        System.out.println("enteredgetLocation");
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
-        try{
-            Task location = mFusedLocationProviderClient.getLastLocation();
-            location.addOnCompleteListener(new OnCompleteListener() {
-                @Override
-                public void onComplete(@NonNull Task task) {
-                    if(task.isSuccessful()){
-                        Location currentLocation = (Location) task.getResult();
-                        System.out.println(currentLocation.getLongitude()+"jibai: "+currentLocation.getLatitude());
-                    }
-                }
-            });
-        }catch(SecurityException e){
-            System.out.println("SecurityException");
-        }
-    }*/
+     * Initialise the google map view. Hotspot longitude and latitudes are obtained from the
+     * server backend and displayed as hotspot location pins on the map. If the hotspot has not been
+     * completed, the pin would be red. else, it would be displayed in green.
+     *
+     * A geofencing distance is set to ensures users only complete hotspots when they are close
+     * enough to the hotspot.
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
@@ -167,7 +132,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             e.printStackTrace();
         }
         if(InstanceDAO.completedList.size()>0) {
-            System.out.println("hotspotList: "+InstanceDAO.hotspotList);
             for(int i =0; i <InstanceDAO.hotspotList.size();i++){
                 Hotspot currentHotspot = InstanceDAO.hotspotList.get(i);
                 Double lat = currentHotspot.getLatitude();
@@ -213,7 +177,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 double distance = computeDistanceBetween(locationToReturn,new LatLng(arg0.getPosition().latitude,arg0.getPosition().longitude));
                 snippetText = arg0.getSnippet();
                 if(!(snippetText.equals("Completed"))) {
-                    if(distance<50.0) {
+                    if(distance<500000.0) {
                         arg0.setSnippet("Click me to start mission");
                         arg0.showInfoWindow();
                     }else{
@@ -224,27 +188,16 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 return true;
             }
         });
+        // to activate InfoWindow when the location pin is clicked
         mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
                 String title = marker.getTitle();
-                String snippet = marker.getSnippet();
                     Intent intent = new Intent(getActivity(), Narrative.class);
                     intent.putExtra(GAMEMODE_CHECK,questionTypeMap.get(title));
                     intent.putExtra(EXTRA_MESSAGE, title);
                     intent.putExtra(NARRATIVE_MESSAGE, snippetText);
                     startActivity(intent);
-                 /*   QuestionDatabase qnsDB = new QuestionDatabase();
-                    if(qnsDB.getQuestionsMap().size()==0){
-                        Context context = getActivity().getApplicationContext();
-                        CharSequence text = "Bad Connection, Please Try Later";
-                        int duration = Toast.LENGTH_SHORT;
-
-                        Toast toast = Toast.makeText(context, text, duration);
-                        toast.show();
-                    }else {*/
-                        //ArrayList<Question> questionsList = qnsDB.getQuestionsMap().get(title);
-
                 }
         });
         locationListener = new LocationListener() {
@@ -307,16 +260,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         super.onLowMemory();
         mMapView.onLowMemory();
     }
+    //Get user's current location
     private void getLocation(Activity activity){
         if (ActivityCompat.checkSelfPermission(activity.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-
         }
         mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
@@ -324,8 +271,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     public void onSuccess(Location location) {
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
-                            // Logic to handle location object
-                            //System.out.println("Latitude: " + location.getLatitude()+"Longitude: "+location.getLongitude());
                             LatLng oldLocation = locationToReturn;
                             locationToReturn = new LatLng(location.getLatitude(),location.getLongitude());
                             double distance = computeDistanceBetween(locationToReturn,oldLocation);
@@ -341,18 +286,22 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {
-            System.out.println("Reached");
+
             HashMap<String,String> userHash = new HashMap<>();
             userHash.put("teamID",InstanceDAO.teamID);
             userHash.put("long",Double.toString(locationToReturn.longitude));
             userHash.put("lat",Double.toString(locationToReturn.latitude));
-            String response = HttpConnectionUtility.post("http://13.229.115.32:3000/team/teamLocation",userHash);
+            String response = HttpConnectionUtility.post("https://amazingtrail.ml/api/team/teamLocation",userHash);
             if (response == null){
                 return null;
             }
             return response;
         }
     }
+    /*
+     * method to populate the application's global variables from the
+     * session shared preferences
+     */
     private void populateData(){
         try {
             String response = new getAllHotspot().execute("").get();
@@ -364,8 +313,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 String lngString = latlng.getString(1);
                 double lat = Double.parseDouble(latString);
                 double lng = Double.parseDouble(lngString);
-                System.out.println("LAT: " + lat);
-                System.out.println("LNG: " + lng);
                 String placeName = jsonChildNode.getString("name");
                 String narrative = jsonChildNode.getString("narrative");
                 Hotspot currentHotspot = new Hotspot(placeName,lat,lng,narrative);
@@ -408,7 +355,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private class getCompletedList extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/completedHotspots?trail_instance_id="+InstanceDAO.trailInstanceID+"&team="+InstanceDAO.teamID);
+            String response = HttpConnectionUtility.get("https://amazingtrail.ml/api/completedHotspots?trail_instance_id="+InstanceDAO.trailInstanceID+"&team="+InstanceDAO.teamID);
             if (response == null) {
                 return null;
             }
@@ -418,7 +365,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private class getAllHotspot extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/hotspot/getAllHotspots?trail_instance_id=" + InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("https://amazingtrail.ml/api/location/getAllHotspots?trail_instance_id=" + InstanceDAO.trailInstanceID);
             if (response == null) {
                 return null;
             }
@@ -428,28 +375,30 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private class getStartingHotspot extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/team/startingHotspot?trail_instance_id=" + InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("https://amazingtrail.ml/api/team/startingHotspot?trail_instance_id=" + InstanceDAO.trailInstanceID);
             if (response == null) {
                 return null;
             }
             return response;
         }
     }
+    /*
+     * Method called whenever user reaches homepage to save the current session
+     */
     private void saveSession(){
-       // Session.setLoggedIn(getActivity().getApplicationContext(),true);
         Session.setTeamID(Objects.requireNonNull(getActivity()).getApplicationContext(),InstanceDAO.teamID);
         Session.setTrailInstanceID(getActivity().getApplicationContext(),InstanceDAO.trailInstanceID);
         Session.setUserName(getActivity().getApplicationContext(),InstanceDAO.userName);
         Session.setEventAdapter(getActivity().getApplicationContext(),InstanceDAO.adapter);
         Session.setIsLeader(getActivity().getApplicationContext(),InstanceDAO.isLeader);
     }
+    /*
+     * Display dialog to congratulate user upon completion of whole trail
+     */
     public void openDialog() {
-
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-
         // Set Custom Title
         TextView title = new TextView(getActivity());
-        // Title Properties
         title.setText("Congratulations!");
         title.setPadding(10, 10, 10, 10);   // Set Position
         title.setGravity(Gravity.CENTER);
@@ -457,7 +406,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         title.setTextSize(20);
         alertDialog.setCustomTitle(title);
 
-        // Set Message
         TextView msg = new TextView(getActivity());
         // Message Properties
         msg.setText("Congratulations on completing all your missions! \n Please head back to the admin building \n for a debrief.");
@@ -465,8 +413,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         msg.setTextColor(Color.BLACK);
         alertDialog.setView(msg);
 
-        // Set Button
-        // you can more buttons
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,"OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 // Perform Action on Button
@@ -478,7 +424,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 // Perform Action on Button
             }
         });
-
 
         new Dialog(getContext());
         alertDialog.show();

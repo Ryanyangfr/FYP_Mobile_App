@@ -1,11 +1,15 @@
 package com.smu.engagingu.DAO;
 
 import com.smu.engagingu.Adapters.EventAdapter;
-import com.smu.engagingu.Hotspot.Hotspot;
+import com.smu.engagingu.Objects.Hotspot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
+/*
+ * InstanceDAO is used to store the variables used for the current
+ * instance of the amazing race trail.
+ * Variables are also constantly stored in a session to be used for session storing
+ */
 public class InstanceDAO {
     public static String teamID;
     public static String trailInstanceID;
@@ -21,6 +25,4 @@ public class InstanceDAO {
     public static ArrayList<String> userList = new ArrayList<>();
     public static EventAdapter adapter=null;
     public static HashMap<String, String> questionTypeMap = new HashMap<>();
-
-
 }

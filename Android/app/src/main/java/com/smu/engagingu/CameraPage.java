@@ -19,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,14 +37,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-
+/*
+ * CameraPage refers to the page that displays the photo-taking intent of the selfie question
+ * When the user reaches this page, the camera on the phone is dispatched
+ * Only a leader is allowed to reach this page. A informational page with instructions is displayed
+ * if user is not a leader
+ */
 public class CameraPage extends AppCompatActivity {
-    public static final String EXTRA_MESSAGE = "com.smu.engagingu.MESSAGE";
     public static final String QUESTION = "com.smu.engagingu.QUESTION";
-
     static final int REQUEST_IMAGE_CAPTURE = 1;
     Button takePictureButton;
-    ProgressBar mProgressBar;
     Button uploadButton;
     ImageView mImageView;
     Uri photoURI;
@@ -59,7 +60,6 @@ public class CameraPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_page);
         takePictureButton = findViewById(R.id.btnTakePicture);
-        String jsonResponse = null;
         Intent intent = getIntent();
         placeName = intent.getStringExtra(Narrative.EXTRA_MESSAGE2);
         TextView selfieQuestionView = findViewById(R.id.selfieQuestionView);
@@ -76,7 +76,6 @@ public class CameraPage extends AppCompatActivity {
         takePictureButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-
                 try {
                     dispatchTakePictureIntent();
 
@@ -98,7 +97,6 @@ public class CameraPage extends AppCompatActivity {
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
             } else {
-                System.out.println("Reached Here");
                 String team_id = InstanceDAO.teamID;
                 String trail_instance_id = InstanceDAO.trailInstanceID;
                 String question = targetQuestion;
@@ -109,14 +107,11 @@ public class CameraPage extends AppCompatActivity {
                         SubmissionDAO.QUESTIONS.add(question);
                         SubmissionDAO.IMAGEPATHS.add(mCurrentPhotoPath);
                     }
-
-                    System.out.println("Response Code: " + responseCode);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
-                System.out.println("CHECK THIS: "+responseCode);
                 if(responseCode.equals("fail")|| responseCode.equals("")){
                     Toast toast = Toast.makeText(CameraPage.this, "Bad Internet Connection, Try Again Later!", Toast.LENGTH_SHORT);
                     toast.show();
@@ -135,7 +130,6 @@ public class CameraPage extends AppCompatActivity {
     private void dispatchTakePictureIntent(){
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null){
-
             try{
                 photoFile = createImageFile();
             } catch (IOException e){
@@ -160,10 +154,6 @@ public class CameraPage extends AppCompatActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
             Bitmap bmp = BitmapFactory.decodeFile(mCurrentPhotoPath);
             Bitmap rotatedBmp = checkImageIfNeedRotation(bmp);
-//            Matrix matrix = new Matrix();
-//            matrix.postRotate(270);
-//            bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
-
             FileOutputStream fOut;
             try {
                 fOut = new FileOutputStream(photoFile);
@@ -178,8 +168,6 @@ public class CameraPage extends AppCompatActivity {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-
-//            galleryAddPic();
             loadImageFromFile();
         }
     }
@@ -189,20 +177,17 @@ public class CameraPage extends AppCompatActivity {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStorageDirectory();
-        System.out.println("Storage DIR" + storageDir.getAbsolutePath());
         File image = File.createTempFile(
                 imageFileName,    /*prefix */
                 ".jpg",    /*suffix */
                 storageDir    /*directory*/
         );
-
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
 
     private Bitmap checkImageIfNeedRotation(Bitmap img){
-
         try{
             ExifInterface ei = new ExifInterface(mCurrentPhotoPath);
             int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
@@ -226,16 +211,18 @@ public class CameraPage extends AppCompatActivity {
     }
 
     private Bitmap rotateImage(Bitmap img, int degree) {
-
         Matrix matrix = new Matrix();
         matrix.postRotate(degree);
         Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
         img.recycle();
         return rotatedImg;
     }
-
+    /*
+     * prepares the image for uploading to the database
+     * preparations include scaling down image to predetermined dimensions
+     * converting the image file into a bitmap
+     */
     public void loadImageFromFile(){
-
         mImageView = this.findViewById(R.id.imageView);
         mImageView.setVisibility(View.VISIBLE);
 
@@ -257,18 +244,13 @@ public class CameraPage extends AppCompatActivity {
         bmOptions.inSampleSize = scaleFactor;
 
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-//        Bitmap rotatedBitmap = checkImageIfNeedRotation(bitmap);
         mImageView.setImageBitmap(bitmap);
     }
 
-    private void galleryAddPic() {
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        mediaScanIntent.setData(photoURI);
-        this.sendBroadcast(mediaScanIntent);
-    }
-
+    /*
+     * Upload the picture taken through a multipart post
+     */
     private class PictureUploader extends AsyncTask<String,Integer,String> {
-
         @Override
         protected String doInBackground(String... params) {
             //team_id, trail_instance_id, question to get from database
@@ -277,7 +259,7 @@ public class CameraPage extends AppCompatActivity {
             jsonMap.put("trail_instance_id", params[1]);
             jsonMap.put("question", params[2]);
             jsonMap.put("hotspot",params[3]);
-            String responseCode = HttpConnectionUtility.multipartPost("http://13.229.115.32:3000/upload/uploadSubmission", jsonMap, mCurrentPhotoPath, "image", "image/png");
+            String responseCode = HttpConnectionUtility.multipartPost("https://amazingtrail.ml/api/upload/uploadSubmission", jsonMap, mCurrentPhotoPath, "image", "image/png");
             return responseCode;
         }
     }
@@ -289,7 +271,6 @@ public class CameraPage extends AppCompatActivity {
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        System.out.println(item.getItemId());
         switch (item.getItemId()) {
             case R.id.action_logout:
                 // User chose the "Settings" item, show the app settings UI...

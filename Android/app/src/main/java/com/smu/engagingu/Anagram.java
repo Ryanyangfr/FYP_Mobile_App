@@ -30,7 +30,9 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
-
+/*
+ * Anagram refers to the page used to display the Anagram game mode
+ */
 public class Anagram extends AppCompatActivity implements View.OnClickListener{
 
         private TextView wordTv;
@@ -54,7 +56,10 @@ public class Anagram extends AppCompatActivity implements View.OnClickListener{
                 public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
                 }
-
+                /*
+                 * real-time update of the current anagram by cancelling away the letters
+                 * if character that user inputs corresponds with letters in the shuffled word
+                 */
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                     String temp = wordToFind;
@@ -62,8 +67,6 @@ public class Anagram extends AppCompatActivity implements View.OnClickListener{
                     for(int k =0 ; k < sequence.length();k++){
                         temp=temp.replaceFirst(Pattern.quote(new StringBuilder().append("").append(sequence.charAt(k)).toString()),"");
                     }
-
-                    //wordToFind = wordToFind.replaceFirst(Pattern.quote(sequence),"");
                     wordTv.setText(shuffleWord(temp));
                 }
 
@@ -97,15 +100,17 @@ public class Anagram extends AppCompatActivity implements View.OnClickListener{
                 newGame();
             }
         }
-
+    /*
+     * used to check if the user's input is correct by referring to the answer
+     * obtained from the anagram end-point
+     */
         private void validate () {
             String response = null;
             String w = wordEnteredTv.getText().toString();
-
             if (wordToFind.equals(w.toUpperCase())) {
                 Toast.makeText(this, "Congratulations ! You found the word " + wordToFind, Toast.LENGTH_SHORT).show();
                 try {
-                    response = new MyHttpRequestTask2().execute("http://13.229.115.32:3000/team/updateScore").get();
+                    response = new MyHttpRequestTask2().execute("https://amazingtrail.ml/api/team/updateScore").get();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
@@ -131,7 +136,6 @@ public class Anagram extends AppCompatActivity implements View.OnClickListener{
                 Objects.requireNonNull(activity.getCurrentFocus()).getWindowToken(), 0);
     }
     public void setupUI(View view) {
-
         // Set up touch listener for non-text box views to hide keyboard.
         if (!(view instanceof EditText)) {
             view.setOnTouchListener(new View.OnTouchListener() {
@@ -150,6 +154,9 @@ public class Anagram extends AppCompatActivity implements View.OnClickListener{
             }
         }
     }
+    /*
+     * used to initialise a new anagram game
+     */
         private void newGame () {
             String word;
             try {
@@ -177,7 +184,9 @@ public class Anagram extends AppCompatActivity implements View.OnClickListener{
             wordTv.setText(wordShuffled);
             wordEnteredTv.setText("");
         }
-
+    /*
+     * method to randomly shuffle the character sequence in the word
+     */
         private String shuffleWord(String word){
             if (word != null  &&  !"".equals(word)) {
                 char a[] = word.toCharArray();
@@ -194,30 +203,33 @@ public class Anagram extends AppCompatActivity implements View.OnClickListener{
 
             return word;
         }
+    /*
+     * obtain question name and word from endpoint
+     */
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {
             Map<String, String> req = new HashMap<>();
-            String response = HttpConnectionUtility.get("http://13.229.115.32:3000/anagram/getAnagrams?trail_instance_id="+InstanceDAO.trailInstanceID);
+            String response = HttpConnectionUtility.get("https://amazingtrail.ml/api/anagram/getAnagrams?trail_instance_id="+InstanceDAO.trailInstanceID);
             if (response == null){
                 return null;
             }
             return response;
         }
     }
+    /*
+     * post score obtained from this game mode to the database
+     */
     private class MyHttpRequestTask2 extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {
             String message = Integer.toString(1);
-            //System.out.println("Score:"+score);
             HashMap<String,String> userHash = new HashMap<>();
             userHash.put("team_id",InstanceDAO.teamID);
-            System.out.println("tid: "+InstanceDAO.teamID);
             userHash.put("trail_instance_id",InstanceDAO.trailInstanceID);
             userHash.put("score",message);
             userHash.put("hotspot",placeName);
-            System.out.println("message: "+message);
-            String response = HttpConnectionUtility.post("http://13.229.115.32:3000/team/updateScore",userHash);
+            String response = HttpConnectionUtility.post("https://amazingtrail.ml/api/team/updateScore",userHash);
             return response;
         }
     }

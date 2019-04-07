@@ -50,20 +50,7 @@ import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 
 public class SubmissionsFragment extends Fragment {
-
-    //String[] HOTSPOTS = {"Li Ka Shing Library", "School of Law"};
-    //String[] MISSIONS = {"Take a selfie with mission statement", "Take a selfie in the lawyer room"};
-    //int[] IMAGES = {R.drawable.engagingulogo, R.drawable.pixel_link};
-      private String submissionResponse = null;
-//    private ArrayList<String> HOTSPOTS = new ArrayList<>();
-//    private ArrayList<String> QUESTIONS = new ArrayList<>();
-//    private ArrayList<String> IMAGEURLS = new ArrayList<>();
-//    private ArrayList<String> IMAGEPATHS = new ArrayList<>();
-//    private int oldImageSize = 0;
-//    private boolean needsToBeUpdated = false;
-//    private String teamId = InstanceDAO.teamID;
-//    private String trailInstanceId = InstanceDAO.trailInstanceID;
-//    private String submissionEndPoint = "http://13.229.115.32:3000/upload/getAllSubmissionURL?team=" + teamId + "&trail_instance_id=" + trailInstanceId;
+    private String submissionResponse = null;
 
     @Nullable
     @Override
@@ -77,8 +64,6 @@ public class SubmissionsFragment extends Fragment {
         ListView listView = view.findViewById(R.id.listView);
         startHeavyProcessing(view,listView,customAdaptor);
 
-
-        //listView.setAdapter(customAdaptor);
 
         return view;
     }
@@ -101,7 +86,6 @@ public class SubmissionsFragment extends Fragment {
                 String endpointURL = SubmissionDAO.submissionEndPoint;
                 submissionResponse = HttpConnectionUtility.get(endpointURL);
                     JSONArray submissionJsonArr = new JSONArray(submissionResponse);
-                    System.out.println(submissionJsonArr.length());
                     SubmissionDAO.IMAGEURLS = new ArrayList<>();
                     SubmissionDAO.IMAGEPATHS = new ArrayList<>();
                     SubmissionDAO.HOTSPOTS = new ArrayList<>();
@@ -144,9 +128,9 @@ public class SubmissionsFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String result) {
-            if(submissionResponse.equals("fail") || submissionResponse.equals("")){
-                Toast toast = Toast.makeText(getActivity(), "Bad Internet Connection, Try Again Later!", Toast.LENGTH_SHORT);
-                toast.show();
+            if(result.equals("fail")||result==null){
+                TextView BadConnTv = view.findViewById(R.id.textView14);
+                BadConnTv.setVisibility(view.VISIBLE);
             }
             ProgressBar pb = view.findViewById(R.id.submissionProgress);
             listView.setAdapter(customAdaptor);
@@ -164,7 +148,6 @@ public class SubmissionsFragment extends Fragment {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStorageDirectory();
-        System.out.println("Storage DIR" + storageDir.getAbsolutePath());
         File image = File.createTempFile(
                 imageFileName,    /*prefix */
                 ".jpg",    /*suffix */
@@ -203,13 +186,10 @@ public class SubmissionsFragment extends Fragment {
             imagePath = SubmissionDAO.IMAGEPATHS.get(i);
 
             loadImageFromFile(imageView, imagePath);
-//            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-//            imageView.setImageBitmap(bitmap);
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v){
                     imagePath = SubmissionDAO.IMAGEPATHS.get(i);
-                    System.out.println("image clicked...");//check logcat
 
                     onButtonShowPopupWindow(v, imagePath);
                 }
@@ -234,16 +214,12 @@ public class SubmissionsFragment extends Fragment {
             if(inflater != null) {
                 View popupView = inflater.inflate(R.layout.submission_popup_window, null);
                 popupImageView = popupView.findViewById(R.id.popupImageView);
-                System.out.println("Popup Image View: " + popupImageView);
 
                 int width = LinearLayout.LayoutParams.WRAP_CONTENT;
                 int height = LinearLayout.LayoutParams.WRAP_CONTENT;
                 boolean focusable = true;
                 final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
 
-                System.out.println("PopupImagePath: " + imagePath);
-//                Bitmap bitmap = BitmapFactory.decodeFile(popupImagePath);
-//                popupImageView.setImageBitmap(bitmap);
                 loadImageFromFile(popupImageView, imagePath);
 
                 Button downloadButton = popupView.findViewById(R.id.btnDownload);
@@ -276,7 +252,6 @@ public class SubmissionsFragment extends Fragment {
         private void loadImageFromFile(ImageView imageView, String imagePath){
 
             imageView.setVisibility(View.VISIBLE);
-            System.out.println("ImageView in loadImageFromFile: " + imageView);
 
             int targetW = imageView.getDrawable().getIntrinsicWidth();
             int targetH = imageView.getDrawable().getIntrinsicHeight();
@@ -303,7 +278,6 @@ public class SubmissionsFragment extends Fragment {
             Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
             File f = new File(photoPath);
             Uri contentUri = Uri.fromFile(f);
-            System.out.println("Uri in galleryAddPic: " + contentUri);
             mediaScanIntent.setData(contentUri);
 
             //send broadcast out must require non null

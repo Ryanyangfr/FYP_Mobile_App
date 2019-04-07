@@ -16,6 +16,11 @@ import android.view.View;
 
 import java.util.ArrayList;
 
+/*
+ * PaintView is an object that refers to the canvas used for the drawing gamemode
+ * the input parameter for initialising the object is the context that the paintView is
+ * used
+ */
 
 public class PaintView extends View {
 
@@ -58,6 +63,7 @@ public class PaintView extends View {
         mBlur = new BlurMaskFilter(5, BlurMaskFilter.Blur.NORMAL);
     }
 
+    //canvas is initialised with predetermined dimensions
     public void init(DisplayMetrics metrics) {
         int height = metrics.heightPixels;
         int width = metrics.widthPixels;
@@ -90,7 +96,7 @@ public class PaintView extends View {
         normal();
         invalidate();
     }
-
+    //initialises draw strokes from the user
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.save();
@@ -113,7 +119,7 @@ public class PaintView extends View {
         canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
         canvas.restore();
     }
-
+    //signifies the start of a draw event
     private void touchStart(float x, float y) {
         mPath = new Path();
         FingerPath fp = new FingerPath(currentColor, emboss, blur, strokeWidth, mPath);
@@ -124,7 +130,7 @@ public class PaintView extends View {
         mX = x;
         mY = y;
     }
-
+    //signifies the moving of the penstroke while drawing
     private void touchMove(float x, float y) {
         float dx = Math.abs(x - mX);
         float dy = Math.abs(y - mY);
