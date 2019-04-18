@@ -47,8 +47,11 @@ import java.util.Date;
 import java.util.Objects;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
-
-
+/*
+ * Used to display all user's submission for submission missions
+ * All submission's are clickable and a download popup would appear to prompt
+ * user to download
+ */
 public class SubmissionsFragment extends Fragment {
     private String submissionResponse = null;
 

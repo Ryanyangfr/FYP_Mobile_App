@@ -22,11 +22,13 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
-
+/*
+ * Used to prompt user for desired username, registering username onto database
+ * to establish new user
+ */
 public class UserName extends AppCompatActivity {
     private Socket mSocket;
     private String message;
-    private EditText mInputMessageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,14 +54,12 @@ public class UserName extends AppCompatActivity {
         }
     }
     private void attemptSend() {
-       // String message = mInputMessageView.getText().toString().trim();
         if (TextUtils.isEmpty(message)) {
             return;
         }
-
-        //mInputMessageView.setText("Hello World");
         mSocket.emit("new message", "Hello World - from Ryder");
     }
+    //post method to register username to the database
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
         @SuppressLint("WrongThread")
         @Override

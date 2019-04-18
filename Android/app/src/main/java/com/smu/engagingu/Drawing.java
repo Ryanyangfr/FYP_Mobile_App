@@ -267,6 +267,7 @@ public class Drawing extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+    //get drawing question mission
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {

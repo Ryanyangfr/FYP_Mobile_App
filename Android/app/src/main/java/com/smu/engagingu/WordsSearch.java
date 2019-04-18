@@ -33,7 +33,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
-
+/*
+ * WordsSearch refers to the page that displays the wordsearch game mode. The wordsearch puzzle is
+ * a tableview that displays the puzzle and 5 text fields to key in the answers in.
+ */
 public class WordsSearch extends Activity {
     public static final String CORRECT_ANSWERS = "com.smu.engagingu.CORRECTQUIZANSWERS2";
     private int SIZE = 12;
@@ -204,7 +207,7 @@ public class WordsSearch extends Activity {
             }
         }
     }
-    //creating the user layout
+    //creating the table view (Puzzle)
     public void createGrid(char[][] input){
         TableLayout table = (TableLayout) findViewById(R.id.mainLayout);
 
@@ -290,7 +293,7 @@ public class WordsSearch extends Activity {
         }
         return output.toString();
     }
-
+    //fill in alphabets to the rest of the puzzle
     public char[][] fill(char[][] input){
         char output[][] = new char[input.length][input.length];
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -308,6 +311,7 @@ public class WordsSearch extends Activity {
         }
         return output;
     }
+    //get word search words
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {
@@ -319,7 +323,7 @@ public class WordsSearch extends Activity {
             return response;
         }
     }
-
+    //post score to database
     private class MyHttpRequestTask2 extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {

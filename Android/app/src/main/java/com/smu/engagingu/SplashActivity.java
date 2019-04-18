@@ -372,6 +372,7 @@ public class SplashActivity extends AppCompatActivity {
             return false;
         }
     }
+    //get all users
     private class getAllUsers extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
@@ -396,6 +397,7 @@ public class SplashActivity extends AppCompatActivity {
         // Save a file: path for use with ACTION_VIEW intents
         return image.getAbsolutePath();
     }
+    //get starting hotspot for user
     private class getStartingHotspot extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
@@ -406,6 +408,7 @@ public class SplashActivity extends AppCompatActivity {
             return response;
         }
     }
+    //get the current activitiy feed from the database
     private class getActivityFeed extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {

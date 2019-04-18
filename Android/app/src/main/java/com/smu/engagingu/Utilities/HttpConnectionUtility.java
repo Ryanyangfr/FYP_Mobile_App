@@ -31,7 +31,7 @@ public class HttpConnectionUtility{
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             //a connection timeout is set to prevent the program from hanging
             httpURLConnection.setConnectTimeout(2000);
-            httpURLConnection.setReadTimeout(2000);
+            httpURLConnection.setReadTimeout(4000);
             // setting the  Request Method Type
             httpURLConnection.setRequestMethod("GET");
             // adding the headers for request
@@ -82,7 +82,7 @@ public class HttpConnectionUtility{
             URL url = new URL(myurl);
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setConnectTimeout(2000);
-            httpURLConnection.setReadTimeout(2000);
+            httpURLConnection.setReadTimeout(4000);
             // setting the  Request Method Type
             httpURLConnection.setRequestMethod("POST");
             // adding the headers for request
@@ -158,7 +158,7 @@ public class HttpConnectionUtility{
             URL url = new URL(urlTo);
             connection = (HttpURLConnection) url.openConnection();
             connection.setConnectTimeout(2000);
-            connection.setReadTimeout(2000);
+            connection.setReadTimeout(4000);
             connection.setDoInput(true);
             connection.setDoOutput(true);
             connection.setUseCaches(false);

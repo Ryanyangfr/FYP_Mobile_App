@@ -352,6 +352,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             InstanceDAO.hasPulled=true;
         }
     }
+    /*
+     * get all completed hotspots
+     */
     private class getCompletedList extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
@@ -362,6 +365,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             return response;
         }
     }
+    /*
+     * get all hotspots
+     */
     private class getAllHotspot extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
@@ -372,6 +378,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             return response;
         }
     }
+    /*
+     * get starting hotspot
+     */
     private class getStartingHotspot extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {

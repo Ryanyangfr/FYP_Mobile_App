@@ -84,7 +84,7 @@ public class BoardFragment extends Fragment {
                         JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
                         String teamName = jsonChildNode.optString("team");
                         int hotspotsComplete = jsonChildNode.optInt("hotspots_completed");
-                        String leaderboardEntry ="      Team: "+teamName+"      completed: "+hotspotsComplete;
+                        String leaderboardEntry ="      TEAM "+teamName+"    "+ hotspotsComplete+" / "+InstanceDAO.hotspotList.size()+" COMPLETED";
                         leaderboardList.add(leaderboardEntry);
                     }
                 } catch (JSONException e) {

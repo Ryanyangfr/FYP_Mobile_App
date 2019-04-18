@@ -145,6 +145,7 @@ public class Narrative extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+    // testing for connection
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {

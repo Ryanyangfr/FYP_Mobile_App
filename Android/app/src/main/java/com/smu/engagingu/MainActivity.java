@@ -176,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+    //get trail instance to check with trailID entered
     private static class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
 
         @Override

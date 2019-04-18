@@ -20,7 +20,11 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-
+/*
+ * Used to display team number and role (Leader or Member) to the user.
+ * User would be on a loading page while waiting for the administrator
+ * to start the trail.
+ */
 public class TeamDisplay extends AppCompatActivity {
     private String response;
     @Override
@@ -64,6 +68,7 @@ public class TeamDisplay extends AppCompatActivity {
                 myRunnable = new Runnable() {
                     @Override
                     public void run() {
+                        //while loop to listen got change in startTrail status
                         while (!InstanceDAO.startTrail) {
                             try {
                                 Thread.sleep(1000);
@@ -117,6 +122,7 @@ public class TeamDisplay extends AppCompatActivity {
         Intent intent = new Intent(this, HomePage.class);
         startActivity(intent);
     }
+    //get all users
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {

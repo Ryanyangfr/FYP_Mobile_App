@@ -322,56 +322,49 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
     private void submitScore() {
         String response = "a";
         if (InstanceDAO.isLeader) {
-            ArrayList<GameResultEntry> resultsList = new ArrayList<>();
-
-            for (String key : answersMap.keySet()) {
-                if (answersMap.get(key) == true) {
-                    score++;
-                }
-            }
-
-            for (String key : resultsMap.keySet()) {
-                String option = resultsMap.get(key);
-                String answer = optionsMap.get(key);
-                resultsList.add(new GameResultEntry("1", key, answer, option));
-            }
-            try {
-                response = new MyHttpRequestTask2().execute("https://amazingtrail.ml/api/team/updateScore").get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
             if (answersMap.size() == 4) {
-                Intent intent = new Intent(DragDrop.this, DragDropResults.class);
-                intent.putExtra("resultsList", resultsList);
-                intent.putExtra(QUESTION_COUNT_DRAGDROP, Integer.toString(optionsMap.size()));
-                intent.putExtra(CORRECT_ANSWERS_DRAGDROP, Integer.toString(score));
-                intent.putExtra(QUESTION_DRAGDROP, questionName);
-                InstanceDAO.completedList.add(placeName);
-                startActivity(intent);
+                ArrayList<GameResultEntry> resultsList = new ArrayList<>();
+                for (String key : answersMap.keySet()) {
+                    if (answersMap.get(key) == true) {
+                        score++;
+                    }
+                }
+                for (String key : resultsMap.keySet()) {
+                    String option = resultsMap.get(key);
+                    String answer = optionsMap.get(key);
+                    resultsList.add(new GameResultEntry("1", key, answer, option));
+                }
+                try {
+                    response = new MyHttpRequestTask2().execute("https://amazingtrail.ml/api/team/updateScore").get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                if (response.equals("fail") || response.equals("")) {
+                    Toast toast = Toast.makeText(DragDrop.this, "Bad Internet Connection, Try Again Later!", Toast.LENGTH_SHORT);
+                    toast.show();
+                }else {
+                    Intent intent = new Intent(DragDrop.this, DragDropResults.class);
+                    intent.putExtra("resultsList", resultsList);
+                    intent.putExtra(QUESTION_COUNT_DRAGDROP, Integer.toString(optionsMap.size()));
+                    intent.putExtra(CORRECT_ANSWERS_DRAGDROP, Integer.toString(score));
+                    intent.putExtra(QUESTION_DRAGDROP, questionName);
+                    InstanceDAO.completedList.add(placeName);
+                    startActivity(intent);
+                }
             } else {
                 Context context = getApplicationContext();
                 CharSequence text = "You have not completed the challenge!";
                 int duration = Toast.LENGTH_SHORT;
-
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
             }
-            if (response.equals("fail") || response.equals("")) {
-                Toast toast = Toast.makeText(DragDrop.this, "Bad Internet Connection, Try Again Later!", Toast.LENGTH_SHORT);
-                toast.show();
-            } else {
-                Intent intent = new Intent(DragDrop.this, HomePage.class);
-                InstanceDAO.completedList.add(placeName);
-                startActivity(intent);
-            }
-        }else {
-            Intent intent = new Intent(DragDrop.this, HomePage.class);
-            InstanceDAO.completedList.add(placeName);
-            startActivity(intent);
         }
     }
+    /*
+     * Post score for this specific hotspot to database
+     */
     private class MyHttpRequestTask2 extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {
@@ -388,6 +381,9 @@ public class DragDrop extends AppCompatActivity implements View.OnDragListener, 
             return response;
         }
     }
+    /*
+     * Get drag and drop mission
+     */
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {

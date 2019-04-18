@@ -348,6 +348,7 @@ public class QuizActivity extends AppCompatActivity {
         }
 
     }
+    //post score to database
     private class MyHttpRequestTask extends AsyncTask<String,Integer,String> {
         @Override
         protected String doInBackground(String... params) {

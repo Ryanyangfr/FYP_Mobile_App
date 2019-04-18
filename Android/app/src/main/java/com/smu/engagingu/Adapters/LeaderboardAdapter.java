@@ -26,8 +26,8 @@ public class LeaderboardAdapter extends ArrayAdapter<String> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        String entry = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
+        String entry = getItem(position);
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.leaderboard_list, parent, false);
         }
@@ -35,7 +35,7 @@ public class LeaderboardAdapter extends ArrayAdapter<String> {
             convertView.setBackgroundColor(Color.parseColor("#FFD700"));
             ImageView iv = convertView.findViewById(R.id.imageView3);
             iv.setImageResource(R.drawable.gold_medal);
-        } else if(position ==1) {
+        } else if(position == 1) {
             convertView.setBackgroundColor(Color.parseColor("#C0C0C0"));
             ImageView iv = convertView.findViewById(R.id.imageView3);
             iv.setImageResource(R.drawable.silver_medal);
@@ -44,6 +44,8 @@ public class LeaderboardAdapter extends ArrayAdapter<String> {
             ImageView iv = convertView.findViewById(R.id.imageView3);
             iv.setImageResource(R.drawable.bronze_medal);
         }else{
+            ImageView iv = convertView.findViewById((R.id.imageView3));
+            iv.setImageResource(0);
             convertView.setBackgroundColor(Color.parseColor("#ffffff"));
         }
         // Lookup view for data population
